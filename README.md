@@ -1,5 +1,6 @@
-# BadWolf
-Minimalist and privacy-oriented WebKitGTK+ browser.
+# LRRH
+Minimalist and privacy-oriented WebKitGTK+ browser cloned from BadWolf, using different keybindings.
+LRRH stands for "Little Red Riding Hood", an European fairy tale about a young girl and a Big Bad Wolf.
 
 Homepage: <https://hacktivis.me/projects/badwolf>
 
