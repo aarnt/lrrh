@@ -1,0 +1,37 @@
+image: archlinux/base:latest
+
+before_script:
+  - pacman -Syu --noconfirm make clang
+
+stages:
+  - lint
+  - test
+  - analysis
+
+test:
+  stage: test
+  script:
+  - pacman -Syu --noconfirm webkit2gtk pkg-config gettext gcc
+  - make CC=gcc test
+  - make clean
+  - make CC=clang test
+  - make install
+
+format:
+  stage: lint
+  script:
+  - pacman -Syu --noconfirm git
+  - make format
+  - git diff --exit-code
+
+scan-build:
+  stage: analysis
+  script:
+  - pacman -Syu --noconfirm webkit2gtk pkg-config gettext gcc
+  - scan-build --use-cc=gcc -o scan-build-gcc make
+  - make clean
+  - scan-build --use-cc=clang -o scan-build-clang make
+  artifacts:
+    paths:
+    - scan-build-gcc/*
+    - scan-build-clang/*

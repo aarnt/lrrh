@@ -1,0 +1,183 @@
+# Turkish translations for Badwolf package.
+# Copyright (C) 2020 Badwolf Authors <https://hacktivis.me/projects/badwolf>
+# This file is distributed under the same license as the Badwolf package.
+# Oğuz Ersen <oguzersen@protonmail.com>, 2020.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Badwolf 1.0.2+g17b9802.develop\n"
+"Report-Msgid-Bugs-To: contact+badwolf-msgid@hacktivis.me\n"
+"POT-Creation-Date: 2020-07-11 11:35+0200\n"
+"PO-Revision-Date: 2020-07-17 23:50+0300\n"
+"Last-Translator: Oğuz Ersen <oguzersen@protonmail.com>\n"
+"Language-Team: Turkish\n"
+"Language: tr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: downloads.c:117
+#, c-format
+msgid "%02i:%02i:%02i Download cancelled"
+msgstr "%02i:%02i:%02i İndirme iptal edildi"
+
+#: downloads.c:119
+#, c-format
+msgid "%02i:%02i:%02i Download error"
+msgstr "%02i:%02i:%02i İndirme hatası"
+
+#: downloads.c:141
+#, c-format
+msgid "%02i:%02i:%02i Download finished"
+msgstr "%02i:%02i:%02i İndirme tamamlandı"
+
+#: downloads.c:167
+#, c-format
+msgid "%02i:%02i:%02i Downloading…"
+msgstr "%02i:%02i:%02i İndiriliyor…"
+
+#: downloads.c:199 downloads.c:216 downloads.c:219
+msgid "Badwolf Downloads"
+msgstr "Badwolf İndirmeleri"
+
+#: badwolf.c:919
+#, c-format
+msgid "Buildtime WebKit version: %d.%d.%d\n"
+msgstr "Oluşturma zamanı WebKit sürümü: %d.%d.%d\n"
+
+#: badwolf.c:416
+msgid "Continue"
+msgstr "Devam Et"
+
+#: badwolf.c:366
+msgid ""
+"Couldn't verify the TLS certificate to ensure a better security of the "
+"connection. You might want to verify your machine and network.\n"
+"\n"
+msgstr ""
+"Bağlantının güvenliğini daha iyi sağlamak için TLS sertifikası "
+"doğrulanamadı. Makinenizi ve ağınızı doğrulamak isteyebilirsiniz.\n"
+"\n"
+
+#: badwolf.c:99
+msgid "Crashed"
+msgstr "Çöktü"
+
+#: downloads.c:39
+msgid "Download starting…"
+msgstr "İndirme başlatılıyor…"
+
+#: badwolf.c:389
+msgid "Error: Some unknown error occurred validating the certificate.\n"
+msgstr "Hata: Sertifika doğrulanırken bilinmeyen bir hata oluştu.\n"
+
+#: badwolf.c:370
+msgid "Error: The X509 Certificate Authority is unknown.\n"
+msgstr "Hata: X509 Sertifika Yetkilisi bilinmiyor.\n"
+
+#: badwolf.c:383
+msgid "Error: The certificate has been revoked.\n"
+msgstr "Hata: Sertifika yürürlükten kaldırıldı.\n"
+
+#: badwolf.c:380
+msgid "Error: The certificate has expired. Check your system's clock.\n"
+msgstr "Hata: Sertifikanın süresi doldu. Sisteminizin saatini gözden geçirin.\n"
+
+#: badwolf.c:386
+msgid "Error: The certificate is considered to be insecure.\n"
+msgstr "Hata: Sertifikanın güvensiz olduğu kabul ediliyor.\n"
+
+#: badwolf.c:377
+msgid "Error: The certificate isn't valid yet. Check your system's clock.\n"
+msgstr "Hata: Sertifika henüz geçerli değil. Sisteminizin saatini gözden geçirin.\n"
+
+#: badwolf.c:373
+msgid "Error: The given identity doesn't match the expected one.\n"
+msgstr "Hata: Verilen kimlik beklenen ile eşleşmiyor.\n"
+
+#: keybindings.c:32
+#, c-format
+msgid ""
+"Minimalist and privacy-oriented WebKitGTK+ browser\n"
+"Runtime WebKit version: %d.%d.%d"
+msgstr ""
+"Sadelik ve gizlilik odaklı WebKitGTK+ tarayıcısı\n"
+"Çalışma zamanı WebKit sürümü: %d.%d.%d"
+
+#: badwolf.c:854
+msgid "New tab"
+msgstr "Yeni sekme"
+
+#: badwolf.c:968
+msgid "Open new tab"
+msgstr "Yeni sekme aç"
+
+#: badwolf.c:103
+msgid "Out of Memory"
+msgstr "Yetersiz Bellek"
+
+#: badwolf.c:917
+#, c-format
+msgid "Running Badwolf version: %s\n"
+msgstr "Çalışan Badwolf sürümü: %s\n"
+
+#: badwolf.c:924
+#, c-format
+msgid "Runtime WebKit version: %d.%d.%d\n"
+msgstr "Çalışma zamanı WebKit sürümü: %d.%d.%d\n"
+
+#: badwolf.c:413
+#, c-format
+msgid "TLS Error for %s."
+msgstr "%s için TLS Hatası."
+
+#: badwolf.c:416
+msgid "Temporarily Add Exception"
+msgstr "Geçici Olarak İstisna Ekle"
+
+#: badwolf.c:624
+msgid "Toggle javascript"
+msgstr "Javascript'i aç/kapat"
+
+#: badwolf.c:629
+msgid "Toggle loading images automatically"
+msgstr "Resimleri otomatik yüklemeyi aç/kapat"
+
+#: badwolf.c:107
+msgid "Unknown Crash"
+msgstr "Bilinmeyen Çökme"
+
+#: badwolf.c:627
+msgid "_IMG"
+msgstr "_RSM"
+
+#: badwolf.c:622
+msgid "_JS"
+msgstr "_JS"
+
+#: badwolf.c:742
+msgid "search in current page"
+msgstr "geçerli sayfada ara"
+
+#: badwolf.c:98
+msgid "the web process crashed.\n"
+msgstr "web işlemi çöktü.\n"
+
+#: badwolf.c:102
+msgid "the web process exceeded the memory limit.\n"
+msgstr "web işlemi bellek sınırını aştı.\n"
+
+#: badwolf.c:106
+msgid "the web process terminated for an unknown reason.\n"
+msgstr "web işlemi bilinmeyen bir nedenle sona erdi.\n"
+
+#: badwolf.c:931
+#, c-format
+msgid "webkit-web-extension directory set to: %s\n"
+msgstr "webkit-web-extension dizini şuna ayarlandı: %s\n"
+
+#. TRANSLATOR Ignore this entry. Done for forcing Unicode in xgettext.
+#: badwolf.c:1002
+msgid "ø"
+msgstr ""

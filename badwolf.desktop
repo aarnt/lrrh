@@ -1,0 +1,15 @@
+# https://www.freedesktop.org/wiki/Specifications/desktop-entry-spec/
+[Desktop Entry]
+Version=1.1
+Type=Application
+Categories=Network;WebBrowser
+Comment=A minimalist and privacy-oriented web browser
+Comment[fr]=Un navigateur web minimaliste et orienté vers le respect de la vie privée
+Exec=badwolf %U
+GenericName=Web Browser
+GenericName[fr]=Navigateur Web
+Icon=badwolf
+Keywords=Internet;WWW;Browser;Web;WebKit;WebKitGTK
+Keywords[fr]=Internet;WWW;Browser;Web;Surfer;Navigateur;WebKit;WebKitGTK
+MimeType=text/html;text/xml;application/xhtml+xml;x-scheme-handler/http;x-scheme-handler/https
+Name=Badwolf

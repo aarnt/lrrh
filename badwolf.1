@@ -1,0 +1,110 @@
+./" BadWolf: Minimalist and privacy-oriented WebKitGTK+ browser
+./" Copyright © 2019-2020 Badwolf Authors <https://hacktivis.me/projects/badwolf>
+./" SPDX-License-Identifier: BSD-3-Clause
+.Dd 2019-10-31
+.Dt BADWOLF 1
+.Sh NAME
+.Nm badwolf
+.Nd minimalist and privacy-oriented WebkitGTK browser
+.Sh SYNOPSIS
+.Nm
+.Op Ar webkit/gtk options
+.Op Ar URLs or paths
+.Sh DESCRIPTION
+.Nm
+is a minimalist browser that cares about privacy, it is based on WebKitGTK and thus also accepts WebKitGTK (and dependencies) flags and environment variables, unfortunately there doesn't seems to be manpages for theses.
+.Pp
+Runtime configuration specific to
+.Nm
+will probably get added at a later release.
+.Sh KEYBINDINGS
+The following section lists the keybinding by their action, each item is described by the widget the focus is on or
+.Aq any
+if it works for the whole window, followed by the keybind it grabs.
+.Bl -tag -width Ds
+.It webview Ctrl-Scroll
+Zooms the webpage in/out.
+.It webview Ctrl-0
+Resets webpage zoom to 100%.
+.It any Ctrl-t
+Creates a new tab (in a new session, similar as pressing the button)
+.It browser Ctrl-F4, browser Alt-d
+Closes the current tab
+.It browser Ctrl-f
+Focuses on the search entry
+.It browser Ctrl-l
+Focuses on the location(URL) entry
+.It browser Ctrl-Shift-r / Ctrl-r, browser F5
+Reloads the content in the current tab (with/without clearing cache)
+.It browser Escape
+Stops loading the content in the current tab
+.It browser F7
+Toggles caret browsing.
+.It browser F12
+Opens the web inspector.
+.It browser Ctrl-[ / Ctrl-]
+Go back/forward in current tab’s history
+.It browser Ctrl-p
+Print the current page. (spawns a dialog)
+.It any Alt-Left / Alt-Right
+Go to the previous/next tab
+.It any F1
+Shows the about dialog
+.It any Alt-n
+Where n is any numeric-row key.
+Go to the n-th tab, 0 goes to the last one.
+.El
+.Ss DEFAULT ONES
+Here is a incomplete list of the default Webkit/GTK keybindings:
+.Bl -tag -width Ds
+.It any Ctrl-PageUp / Ctrl-PageDown
+Go to the previous/next tab
+.It search Ctrl-g / Ctrl-Shift-g
+When the search box is focused it goes to the Next/Previous search term.
+.It search Escape
+Cancels current search
+.El
+.Sh ENVIRONMENT
+.Bl -tag -width Ds
+.It Ev BADWOLF_L10N
+A colon-separated list in the form lang_COUNTRY where lang is in ISO-639 and COUNTRY in ISO-3166.
+For example
+.Ic BADWOLF_L10N="en_GB:fr_FR:de_DE" .
+When this variable isn't set, spelling isn't activated.
+A more generic variable name is also intended to be used in the future.
+.El
+.Sh FILES
+.Bl -tag -width Ds -compact
+.It Pa ${XDG_DATA_HOME:-$HOME/.local/share}/badwolf/webkit-web-extensions/
+Directory containing the
+.Lk https://webkitgtk.org/reference/webkit2gtk/stable/WebKitWebExtension.html WebKitWebExtensions
+to be loaded into
+.Nm . Note: They aren't the JavaScript-based Web-Extensions supported by Firefox or Chrome, but native code in shared objects using the WebKitGTK API.
+.Pp
+Examples of useful extensions may be found at:
+.Bl -item -compact
+.Lk https://hacktivis.me/git/badwolf-extensions
+.Lk https://github.com/jun7/wyebadblock
+.El
+.It Pa ${DATADIR:-/usr/local/share}/badwolf/interface.css
+.It Pa ${XDG_DATA_HOME:-$HOME/.local/share}/badwolf/interface.css
+CSS files (respectively system and user-level) for styling badwolf interface.
+See
+.Lk https://developer.gnome.org/gtk3/stable/chap-css-properties.html
+for the properties being available.
+.Pp
+For testing your styles I would recommend using the
+.Ev GTK_DEBUG=interactive
+environment variable on launching
+.Nm
+and going to the CSS tab.
+.El
+.Sh AUTHORS
+.An Haelwenn (lanodan) Monnier Aq Mt contact+badwolf@hacktivis.me
+.Sh BUGS
+You can submit contributions or tickets to
+.Lk https://gitlab.com/lanodan/badwolf
+or
+.Mt contact+badwolf@hacktivis.me ,
+with
+.Xr git-send-email 1 for patches.

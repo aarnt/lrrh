@@ -1,0 +1,2 @@
+#browser__location, #browser__statuslabel { font-family: monospace; }
+button:checked label { font-weight: bold; }

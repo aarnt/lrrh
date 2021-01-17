@@ -1,0 +1,81 @@
+# BadWolf: Minimalist and privacy-oriented WebKitGTK+ browser
+# Copyright © 2019-2020 Badwolf Authors <https://hacktivis.me/projects/badwolf>
+# SPDX-License-Identifier: BSD-3-Clause
+#
+# Made on Gentoo Linux with PREFIX=/usr
+#include <tunables/global>
+
+/usr/bin/badwolf {
+	#include <abstractions/enchant>
+	#include <abstractions/gnome>
+	#include <abstractions/ibus>
+	#include <abstractions/uim>
+	#include <abstractions/private-files-strict>
+
+	/usr/bin/badwolf mr,
+	/usr/bin/bwrap Cx,
+	/usr/libexec/webkit2gtk-4.0/WebKitNetworkProcess Cx,
+	/usr/libexec/webkit2gtk-4.0/WebKitWebProcess Cx,
+
+	owner @{PROC}/@{pid}/cmdline r,
+	owner @{PROC}/@{pid}/fd/ r,
+
+	owner @{HOME}/.local/share/badwolf/ r,
+	owner @{HOME}/.local/share/badwolf/** r,
+
+	deny @{HOME}/.local/share/webkitgtk/** rwmlk,
+
+	/ r,
+	/** r,
+
+	#include <local/usr.bin.badwolf>
+
+	profile /usr/libexec/webkit2gtk-4.0/WebKitNetworkProcess {
+		#include <abstractions/base>
+		#include <abstractions/nameservice>
+		#include <abstractions/ssl_certs>
+		#include <abstractions/private-files-strict>
+
+		network inet stream,
+		network inet6 stream,
+
+		/usr/libexec/webkit2gtk-4.0/WebKitNetworkProcess mr,
+		/** r,
+		owner /** w,
+	}
+
+	profile /usr/libexec/webkit2gtk-4.0/WebKitWebProcess {
+		#include <abstractions/base>
+		#include <abstractions/fonts>
+		#include <abstractions/gnome>
+		#include <abstractions/gstreamer>
+		#include <abstractions/audio>
+		#include <abstractions/mesa>
+		#include <abstractions/dri-common>
+		#include <abstractions/dri-enumerate>
+
+		/usr/libexec/webkit2gtk-4.0/WebKitWebProcess mr,
+
+		owner @{PROC}/@{pid}/cmdline r,
+		owner @{PROC}/@{pid}/fd/ r,
+
+		/etc/passwd r,
+		/etc/group r,
+		/etc/nsswitch.conf r,
+		/dev/ r,
+
+		owner @{HOME}/.local/share/badwolf/webkit-web-extension/ r,
+		owner @{HOME}/.local/share/badwolf/webkit-web-extension/** mr,
+	}
+
+	profile /usr/bin/bwrap {
+		#include <abstractions/base>
+
+		deny capability sys_admin,
+
+		/usr/bin/bwrap mr,
+		@{PROC}/sys/kernel/overflowuid r,
+		@{PROC}/sys/kernel/overflowgid r,
+		owner @{PROC}/@{pid}/fd/ r,
+	}
+}

@@ -1,0 +1,43 @@
+# Badwolf
+- A tablist with a new tab button at the end, right-clicking on the tablist gives you the list in a context-menu format
+- Each tab contains a Browser View or the Downloads View
+
+## Tab Labels
+- An icon to indicate if a media is playing
+- The title of the web view
+- A close button
+
+## Browser View
+
+The Browser View contains the following items:
+- Toolbar
+- WebKit WebView
+- Status Bar
+
+### Toolbar
+- Backward navigation button followed by a smaller forward navigation button
+- Separator
+- Javascript-markup toggler marked "JS" followed by an image-loading toggler marked "IMG"
+- Potentially some future elements
+- Location entry linked to the WebKit WebView, with integrated progress indication also linked to the WebKit WebView
+- Potentially some future elements
+- Print button
+- Potentially some future elements
+
+The element focused by default is the location entry.
+
+### Status bar
+- Search entry linked to the WebKit WebView
+- Potentially some future elements
+- Label showing where the mouse is pointing
+- Potentially some future elements
+
+## Downloads View
+
+The download view is a table contains the following items on each row corresponding to each download:
+- Icon linked to the network status
+- Progress bar, with integrated received-size indication
+- (when downloading) Cancelling button
+- Label about the current status
+- Link to download destination
+- Potentially some future elements

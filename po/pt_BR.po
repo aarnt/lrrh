@@ -1,0 +1,185 @@
+# BadWolf: Minimalist and privacy-oriented WebKitGTK+ browser
+# Copyright (C) 2020 Badwolf Authors <https://hacktivis.me/projects/badwolf>
+# This file is distributed under the same license as the Badwolf package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Badwolf 0.4.0+g607300e\n"
+"Report-Msgid-Bugs-To: contact+badwolf-msgid@hacktivis.me\n"
+"POT-Creation-Date: 2020-05-18 03:06+0200\n"
+"PO-Revision-Date: 2020-05-17 20:18-0300\n"
+"Last-Translator: Pedro Lucas Porcellis <porcellis@eletrotupi.com>\n"
+"Language-Team: Brazilian Portuguese\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: downloads.c:117
+#, c-format
+msgid "%02i:%02i:%02i Download cancelled"
+msgstr "%02i:%02i:%02i Transferência Cancelada"
+
+#: downloads.c:119
+#, c-format
+msgid "%02i:%02i:%02i Download error"
+msgstr "%02i:%02i:%02i Erro durante a transferência"
+
+#: downloads.c:141
+#, c-format
+msgid "%02i:%02i:%02i Download finished"
+msgstr "%02i:%02i:%02i Transferência Concluída"
+
+#: downloads.c:167
+#, c-format
+msgid "%02i:%02i:%02i Downloading…"
+msgstr "%02i:%02i:%02i Baixando…"
+
+#: downloads.c:195 downloads.c:212 downloads.c:215
+msgid "Badwolf Downloads"
+msgstr "Transferências do Badwolf"
+
+#: badwolf.c:874
+#, c-format
+msgid "Buildtime WebKit version: %d.%d.%d\n"
+msgstr "Versão do WebKit %d.%d.%d\n"
+
+#: badwolf.c:403
+msgid "Continue"
+msgstr "Continuar"
+
+#: badwolf.c:353
+msgid ""
+"Couldn't verify the TLS certificate to ensure a better security of the "
+"connection. You might want to verify your machine and network.\n"
+"\n"
+msgstr ""
+"Não foi possível verificar o certificado TLS para garantir uma melhor "
+"segurança da conexão. Talvez você deva verificar a sua máquina e rede.\n"
+"\n"
+
+#: badwolf.c:99
+msgid "Crashed"
+msgstr "Erro"
+
+#: downloads.c:39
+msgid "Download starting…"
+msgstr "Transferência Iniciada…"
+
+#: badwolf.c:376
+msgid "Error: Some unknown error occurred validating the certificate.\n"
+msgstr ""
+"Erro: Algum erro desconhecido ocorreu enquanto validava o certificado.\n"
+
+#: badwolf.c:357
+msgid "Error: The X509 Certificate Authority is unknown.\n"
+msgstr "Erro: A Autoridade de Certificados X509 é desconhecida.\n"
+
+#: badwolf.c:370
+msgid "Error: The certificate has been revoked.\n"
+msgstr "Erro: O certificado foi revogado.\n"
+
+#: badwolf.c:367
+msgid "Error: The certificate has expired. Check your system's clock.\n"
+msgstr ""
+"Erro: O certificado foi expirado. Verifique o relógio do seu sistema.\n"
+
+#: badwolf.c:373
+msgid "Error: The certificate is considered to be insecure.\n"
+msgstr "Erro: O certificado é considerado inseguro.\n"
+
+#: badwolf.c:364
+msgid "Error: The certificate isn't valid yet. Check your system's clock.\n"
+msgstr ""
+"Erro: O certificado não é válido ainda. Verifique o relógio do seu sistema.\n"
+
+#: badwolf.c:360
+msgid "Error: The given identity doesn't match the expected one.\n"
+msgstr "Erro: A identidade não confere com a esperada.\n"
+
+#: keybindings.c:32
+#, c-format
+msgid ""
+"Minimalist and privacy-oriented WebKitGTK+ browser\n"
+"Runtime WebKit version: %d.%d.%d"
+msgstr ""
+"Navegador orientado pela privacidade e minimalismo\n"
+"Versão do WebKit: %d.%d.%d"
+
+#: badwolf.c:803
+msgid "New tab"
+msgstr "Nova aba"
+
+#: badwolf.c:923
+msgid "Open new tab"
+msgstr "Abrir uma Nova aba"
+
+#: badwolf.c:103
+msgid "Out of Memory"
+msgstr "Sem memória"
+
+#: badwolf.c:872
+#, c-format
+msgid "Running Badwolf version: %s\n"
+msgstr "Rodando versão %s do Badwolf\n"
+
+#: badwolf.c:879
+#, c-format
+msgid "Runtime WebKit version: %d.%d.%d\n"
+msgstr "Versão do WebKit: %d.%d.%d\n"
+
+#: badwolf.c:400
+#, c-format
+msgid "TLS Error for %s."
+msgstr "Erro TLS para %s."
+
+#: badwolf.c:403
+msgid "Temporarily Add Exception"
+msgstr "Adicionar exceção temporária"
+
+#: badwolf.c:600
+msgid "Toggle javascript"
+msgstr "Habilitar Javascript"
+
+#: badwolf.c:605
+msgid "Toggle loading images automatically"
+msgstr "Habilitar carregamento de imagens automático"
+
+#: badwolf.c:107
+msgid "Unknown Crash"
+msgstr "Erro desconhecido"
+
+#: badwolf.c:603
+msgid "_IMG"
+msgstr "_IMG"
+
+#: badwolf.c:598
+msgid "_JS"
+msgstr "_JS"
+
+#: badwolf.c:718
+msgid "search in current page"
+msgstr "buscar na página atual"
+
+#: badwolf.c:98
+msgid "the web process crashed.\n"
+msgstr "o processo web travou.\n"
+
+#: badwolf.c:102
+msgid "the web process exceeded the memory limit.\n"
+msgstr "o processo web excedeu o limite de memória.\n"
+
+#: badwolf.c:106
+msgid "the web process terminated for an unknown reason.\n"
+msgstr "o processo web terminou por uma razão desconhecida.\n"
+
+#: badwolf.c:886
+#, c-format
+msgid "webkit-web-extension directory set to: %s\n"
+msgstr "diretório de extensões configurado para: %s\n"
+
+#. TRANSLATOR Ignore this entry. Done for forcing Unicode in xgettext.
+#: badwolf.c:957
+msgid "ø"
+msgstr ""

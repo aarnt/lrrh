@@ -1,0 +1,4 @@
+- Similar WebKitGTK+ browser: https://www.uninformativ.de/git/lariza/
+- WebKit2 Extensions Tutorial: https://blogs.igalia.com/carlosgc/2013/09/10/webkit2gtk-web-process-extensions/
+- https://trac.torproject.org/projects/tor/wiki/doc/ImportantGoogleChromeBugs / https://trac.torproject.org/projects/tor/ticket/1925
+- https://webkit.org/blog/3476/content-blockers-first-look/
