@@ -10,7 +10,7 @@ Esc         | Stop loading page
 F1          | Show about LRRH
 F5          | Reload page
 F12         | Show inspector view
-Alt+(0 to 9)| Goto first, second, third.. nineth page
+Alt+(1 to 9)| Goto first, second, third.. nineth page
 Alt+Left    | Goto previous page
 Alt+Right   | Goto next page
 Ctrl+0      | Use 100% zoom factor
