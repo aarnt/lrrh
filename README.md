@@ -14,13 +14,13 @@ Alt+(0 to 9)| Goto first, second, third.. nineth page
 Alt+Left    | Goto previous page
 Alt+Right   | Goto next page
 Ctrl+0      | Use 100% zoom factor
-Ctrl+plus   | Increase zoom factor in 10%
-Ctrl+minus  | Decrease zoom factor in 10%
+Ctrl+plus   | Increase zoom factor by 10%
+Ctrl+minus  | Decrease zoom factor by 10%
 Ctrl+Tab    | Switch to the next tab
 Ctrl+t      | Open new empty tab
 Ctrl+n      | Open link in new tab
-Ctrl+l      | Goto location Entry widget
-Ctrl+f      | Goto search Entry widget
+Ctrl+l      | Goto location widget
+Ctrl+f      | Goto search widget
 Ctrl+g      | Find next
 Ctrl+Shift+g| Find previous
 Ctrl+i      | Toggle show images on/off
