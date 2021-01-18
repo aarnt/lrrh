@@ -6,7 +6,7 @@ These are the keybinds used in LRRH
 
 Key         | Action
 --          | --
-ESC         | Stop loading page
+Esc         | Stop loading page
 F1          | Show about LRRH
 F5          | Reload page
 F12         | Show inspector view
