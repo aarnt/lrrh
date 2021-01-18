@@ -109,7 +109,7 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 
 				return TRUE;
 			case GDK_KEY_f: gtk_widget_grab_focus(browser->search); return TRUE;
-			case GDK_KEY_l: gtk_widget_grab_focus(browser->location); return TRUE;
+	
 			case GDK_KEY_0:
 				webkit_web_view_set_zoom_level(WEBKIT_WEB_VIEW(browser->webView), 1);
 				return TRUE;
@@ -172,11 +172,6 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 				return TRUE;
 
 			case GDK_KEY_Tab:
-				/*npages = gtk_notebook_get_n_pages(notebook);
-				curr = gtk_notebook_get_current_page(notebook);
-				if (curr+1 == npages)	
-					gtk_notebook_set_current_page(notebook, 1);
-				else gtk_notebook_next_page(notebook);*/
 				goto_next_tab(notebook);		
 				return TRUE;
 			}

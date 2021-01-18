@@ -1,6 +1,32 @@
 # LRRH
-Minimalist and privacy-oriented WebKitGTK+ browser cloned from BadWolf, using different keybindings.  
+Minimalist and privacy-oriented WebKitGTK+ browser cloned from BadWolf, using different keybindings.
+
 LRRH stands for "Little Red Riding Hood", an European fairy tale about a young girl and a Big Bad Wolf.
+
+These are the keybinds used in LRRH
+
+Key         | Action
+--          | --
+ESC         | Stop loading page
+F1          | Show about LRRH
+F5          | Reload page
+F12         | Show inspector view
+Alt+(0 to 9)| Goto first, second, third.. nineth page
+Alt+Left    | Goto previous page
+Alt+Right   | Goto next page
+Ctrl+0      | Use 100% zoom factor
+Ctrl+plus   | Increase zoom factor in 10%
+Ctrl+minus  | Decrease zoom factor in 10%
+Ctrl+Tab    | Switch to the next tab
+Ctrl+n      | Open link in new tab
+Ctrl+t      | Open new empty tab
+Ctrl+f      | Goto search input box
+Ctrl+i      | Toggle show images on/off
+Ctrl+j      | Toggle use javascript on/off
+Ctrl+p      | Show print dialog
+Ctrl+r      | Reload page
+Ctrl+w      | Close current tab
+Ctrl+q      | Quit LRRH
 
 Homepage: <https://hacktivis.me/projects/badwolf>
 
