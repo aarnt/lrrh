@@ -140,8 +140,8 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 				if (nbrowser != NULL)
 				{		
 					badwolf_new_tab(GTK_NOTEBOOK(window->notebook), nbrowser, FALSE);
-					gint npages = gtk_notebook_get_n_pages(GTK_NOTEBOOK(window->notebook));
-					gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook), npages-1);
+					//gint npages = gtk_notebook_get_n_pages(GTK_NOTEBOOK(window->notebook));
+					gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook), gtk_notebook_get_current_page(notebook)+1);
 				}	
 				return TRUE;	
 			case GDK_KEY_w:
