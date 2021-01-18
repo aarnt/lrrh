@@ -283,10 +283,18 @@ WebViewCb_create(WebKitWebView *related_web_view,
 	struct Window *window  = (struct Window *)user_data;
 	struct Client *browser = new_browser(window, NULL, related_web_view);
 
-	if(badwolf_new_tab(GTK_NOTEBOOK(window->notebook), browser, FALSE) < 0)
-		return NULL;
-	else
-		return browser->webView;
+	gint newtab=badwolf_new_tab(GTK_NOTEBOOK(window->notebook), browser, FALSE);
+	if(newtab == 0)
+	{
+	  gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook), 
+		gtk_notebook_get_current_page(GTK_NOTEBOOK(window->notebook))+1);
+	}
+	else if(newtab < 0)
+	{
+	  return NULL;
+	}
+
+  	return browser->webView;
 }
 
 static gboolean
@@ -569,6 +577,31 @@ SearchEntryCb_stop__search(GtkSearchEntry *search, gpointer user_data)
 	return TRUE;
 }
 
+gboolean
+WebViewCb_button_press_event(GtkWidget *widget, GdkEvent  *event, gpointer user_data)
+{
+	(void)widget;
+	struct Client *oldBrowser = (struct Client *)user_data;
+	struct Client *browser = NULL;
+	browser =  new_browser(oldBrowser->window, 
+		gtk_label_get_text(GTK_LABEL(oldBrowser->statuslabel)), NULL);
+
+	// Button3 being right-click on right-handed mode, left-click on left-handed mode
+	if(((GdkEventButton *)event)->button == 2)
+	{
+		gint newtab=badwolf_new_tab(GTK_NOTEBOOK(oldBrowser->window->notebook), browser, FALSE);
+		if(newtab == 0)
+		{
+		  gtk_notebook_set_current_page(GTK_NOTEBOOK(oldBrowser->window->notebook), 
+			gtk_notebook_get_current_page(GTK_NOTEBOOK(oldBrowser->window->notebook))+1);
+		}
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 static gboolean
 widgetCb_drop_button3_event(GtkWidget *widget, GdkEvent *event, gpointer user_data)
 {
@@ -803,6 +836,8 @@ new_browser(struct Window *window, const gchar *target_url, WebKitWebView *relat
 	                 G_CALLBACK(WebViewCb_load_failed_with_tls_errors),
 	                 browser);
 	g_signal_connect(browser->webView, "load-changed", G_CALLBACK(WebViewCb_load_changed), browser);
+
+	g_signal_connect(browser->webView, "button-press-event", G_CALLBACK(WebViewCb_button_press_event), browser);
 
 	/* signals for WebView's WebContext */
 	g_signal_connect(G_OBJECT(web_context),
