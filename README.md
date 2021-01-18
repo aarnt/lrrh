@@ -17,18 +17,18 @@ Ctrl+0      | Use 100% zoom factor
 Ctrl+plus   | Increase zoom factor by 10%
 Ctrl+minus  | Decrease zoom factor by 10%
 Ctrl+Tab    | Switch to the next tab
-Ctrl+t      | Open new empty tab
-Ctrl+n      | Open link in new tab
-Ctrl+l      | Goto location widget
-Ctrl+f      | Goto search widget
-Ctrl+g      | Find next
-Ctrl+Shift+g| Find previous
-Ctrl+i      | Toggle show images on/off
-Ctrl+j      | Toggle use javascript on/off
-Ctrl+p      | Show print dialog
-Ctrl+r      | Reload page
-Ctrl+w      | Close current tab
-Ctrl+q      | Quit LRRH
+Ctrl+T      | Open new empty tab
+Ctrl+N      | Open link in new tab
+Ctrl+L      | Goto location widget
+Ctrl+F      | Goto search widget
+Ctrl+G      | Find next
+Ctrl+Shift+G| Find previous
+Ctrl+I      | Toggle show images on/off
+Ctrl+J      | Toggle use javascript on/off
+Ctrl+P      | Show print dialog
+Ctrl+R      | Reload page
+Ctrl+W      | Close current tab
+Ctrl+Q      | Quit LRRH
 
 Homepage: <https://hacktivis.me/projects/badwolf>
 
