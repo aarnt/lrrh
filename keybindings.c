@@ -122,6 +122,9 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 					!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(browser->auto_load_images)));
 				webkit_web_view_reload(browser->webView);
 				return TRUE;
+			case GDK_KEY_l:
+				gtk_widget_grab_focus(browser->location);
+				return TRUE;
 			case GDK_KEY_j:
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(browser->javascript),
 					!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(browser->javascript)));

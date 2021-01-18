@@ -18,9 +18,12 @@ Ctrl+0      | Use 100% zoom factor
 Ctrl+plus   | Increase zoom factor in 10%
 Ctrl+minus  | Decrease zoom factor in 10%
 Ctrl+Tab    | Switch to the next tab
-Ctrl+n      | Open link in new tab
 Ctrl+t      | Open new empty tab
-Ctrl+f      | Goto search input box
+Ctrl+n      | Open link in new tab
+Ctrl+l      | Goto location Entry widget
+Ctrl+f      | Goto search Entry widget
+Ctrl+g      | Find next
+Ctrl+Shift+g| Find previous
 Ctrl+i      | Toggle show images on/off
 Ctrl+j      | Toggle use javascript on/off
 Ctrl+p      | Show print dialog
