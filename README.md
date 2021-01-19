@@ -19,7 +19,8 @@ Ctrl+minus  | Decrease zoom factor by 10%
 Ctrl+Tab    | Switch to the next tab
 Ctrl+T      | Open new empty tab
 Ctrl+N      | Open link in new tab
-Ctrl+S      | Open "https://lite.duckduckgo.com" in new tab
+Ctrl+D      | Open "https://lite.duckduckgo.com" in new tab
+Ctrl+X      | Open "https://searx.info" in new tab
 Ctrl+L      | Goto location widget
 Ctrl+F      | Goto search widget
 Ctrl+G      | Find next

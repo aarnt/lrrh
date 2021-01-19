@@ -93,7 +93,8 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 	GtkNotebook *notebook = GTK_NOTEBOOK(window->notebook);
 	struct Client *nbrowser = NULL;
 	gdouble zoom = 0;
-	const gchar *searchUrl = "https://lite.duckduckgo.com";
+	const gchar *duckUrl = "https://lite.duckduckgo.com";
+	const gchar *searxUrl = "https://searx.info";
 
 	if(((GdkEventKey *)event)->state & GDK_CONTROL_MASK)
 	{
@@ -144,14 +145,25 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 					gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook), gtk_notebook_get_current_page(notebook)+1);
 				}
 				return TRUE;
-			case GDK_KEY_s:
-				nbrowser = new_browser(window, searchUrl, NULL);
+			case GDK_KEY_d:
+				nbrowser = new_browser(window, duckUrl, NULL);
 
 				if (nbrowser != NULL)
-				{		
+				{
 					badwolf_new_tab(GTK_NOTEBOOK(window->notebook), nbrowser, FALSE);
 					gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook), gtk_notebook_get_current_page(notebook)+1);
-				}	
+				}
+
+				gtk_widget_grab_focus(GTK_WIDGET(nbrowser->webView));
+				return TRUE;
+			case GDK_KEY_x:
+				nbrowser = new_browser(window, searxUrl, NULL);
+
+				if (nbrowser != NULL)
+				{
+					badwolf_new_tab(GTK_NOTEBOOK(window->notebook), nbrowser, FALSE);
+					gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook), gtk_notebook_get_current_page(notebook)+1);
+				}
 
 				gtk_widget_grab_focus(GTK_WIDGET(nbrowser->webView));
 				return TRUE;
