@@ -93,6 +93,7 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 	GtkNotebook *notebook = GTK_NOTEBOOK(window->notebook);
 	struct Client *nbrowser = NULL;
 	gdouble zoom = 0;
+	const gchar *searchUrl = "https://lite.duckduckgo.com";
 
 	if(((GdkEventKey *)event)->state & GDK_CONTROL_MASK)
 	{
@@ -134,16 +135,26 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 				gtk_main_quit();
 				return TRUE;
 			case GDK_KEY_n:
-				nbrowser = new_browser(window, 
+				nbrowser = new_browser(window,
 				                       gtk_label_get_text(GTK_LABEL(browser->statuslabel)),
 				                       NULL);
 				if (nbrowser != NULL)
+				{
+					badwolf_new_tab(GTK_NOTEBOOK(window->notebook), nbrowser, FALSE);
+					gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook), gtk_notebook_get_current_page(notebook)+1);
+				}
+				return TRUE;
+			case GDK_KEY_s:
+				nbrowser = new_browser(window, searchUrl, NULL);
+
+				if (nbrowser != NULL)
 				{		
 					badwolf_new_tab(GTK_NOTEBOOK(window->notebook), nbrowser, FALSE);
-					//gint npages = gtk_notebook_get_n_pages(GTK_NOTEBOOK(window->notebook));
 					gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook), gtk_notebook_get_current_page(notebook)+1);
 				}	
-				return TRUE;	
+
+				gtk_widget_grab_focus(GTK_WIDGET(nbrowser->webView));
+				return TRUE;
 			case GDK_KEY_w:
 				webkit_web_view_try_close(browser->webView);
 				return TRUE;
