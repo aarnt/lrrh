@@ -42,7 +42,7 @@ badwolf_about_dialog(GtkWindow *main_window, gpointer user_data)
 	                             "SPDX-License-Identifier: BSD-3-Clause");
 	gtk_about_dialog_set_copyright(
 	    GTK_ABOUT_DIALOG(about_dialog),
-	    "2019-2020 Badwolf Authors <https://hacktivis.me/projects/badwolf>");
+	    "2019-2020 Badwolf Authors <https://hacktivis.me/projects/badwolf>\n2021 Alexandre A Arnt");
 	gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(about_dialog), homepage);
 	gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about_dialog), comments);
 	gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about_dialog), version);
