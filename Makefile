@@ -21,8 +21,8 @@ PKGCONFIG ?= pkg-config
 MSGFMT    ?= msgfmt
 INKSCAPE  ?= inkscape
 
-# for i in 24 32 48 64 128 256; do echo icons/hicolor/${i}x${i}/apps/badwolf.png; done | tr '\n' ' '
-ICON_SIZES = icons/hicolor/24x24/apps/badwolf.png icons/hicolor/32x32/apps/badwolf.png icons/hicolor/48x48/apps/badwolf.png icons/hicolor/64x64/apps/badwolf.png icons/hicolor/128x128/apps/badwolf.png icons/hicolor/256x256/apps/badwolf.png
+# for i in 24 32 48 64 128 256; do echo icons/hicolor/${i}x${i}/apps/lrrh.png; done | tr '\n' ' '
+ICON_SIZES = icons/hicolor/24x24/apps/lrrh.png icons/hicolor/32x32/apps/lrrh.png icons/hicolor/48x48/apps/lrrh.png icons/hicolor/64x64/apps/lrrh.png icons/hicolor/128x128/apps/lrrh.png icons/hicolor/256x256/apps/lrrh.png
 
 DEPS  = gtk+-3.0 webkit2gtk-4.0 libsoup-2.4
 SRCS  = uri.c uri_test.c keybindings.c downloads.c badwolf.c
