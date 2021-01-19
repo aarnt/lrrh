@@ -46,7 +46,7 @@ badwolf_about_dialog(GtkWindow *main_window, gpointer user_data)
 	gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(about_dialog), homepage);
 	gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about_dialog), comments);
 	gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about_dialog), version);
-	gtk_about_dialog_set_logo_icon_name(GTK_ABOUT_DIALOG(about_dialog), "badwolf");
+	gtk_about_dialog_set_logo_icon_name(GTK_ABOUT_DIALOG(about_dialog), "lrrh");
 
 	g_signal_connect(about_dialog, "activate-link", G_CALLBACK(about_dialogCb_activate_link), window);
 
