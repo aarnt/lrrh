@@ -1,4 +1,4 @@
-# LRRH, another tiny and functional GTK+ web browser
+# LRRH, another tiny & functional WebKitGTK browser
 
 ![Main window](https://raw.githubusercontent.com/aarnt/lrrh/master/lrrh-mainwindow.png)
 
