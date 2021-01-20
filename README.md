@@ -44,7 +44,7 @@ Dependencies are:
 - A pkg-config implementation (pkgconf is recommended)
 - (optionnal) gettext implementation (such as GNU Gettext)
 
-Compilation is done with `make`, install with `make install` (`DESTDIR` and `PREFIX` environment variables are supported, amongs other common ones). An example AppArmor profile is provided at `usr.bin.badwolf`, please do some long runtime checks before shipping it or a modified version, help can be provided but with no support.
+Compilation is done with `make`, install with `make install` (`DESTDIR` and `PREFIX` environment variables are supported, amongs other common ones). An example AppArmor profile is provided at `usr.bin.lrrh`, please do some long runtime checks before shipping it or a modified version, help can be provided but with no support.
 
 You'll also need inkscape (command line only) if you want to regenerate the icons, for example after modifying them or adding a new size. These aren't needed for normal installation as it is bundled.
 
