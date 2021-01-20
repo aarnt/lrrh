@@ -120,7 +120,10 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 	{
 		if(browser != NULL)
 		{
-			switch(((GdkEventKey *)event)->keyval)
+      gboolean jsEnabled = gtk_toggle_button_get_active((GtkToggleButton *)browser->javascript);
+      gboolean imgEnabled = gtk_toggle_button_get_active((GtkToggleButton *)browser->auto_load_images);
+
+      switch(((GdkEventKey *)event)->keyval)
 			{
 			case GDK_KEY_F4:
         webkit_web_view_try_close(browser->webView);
@@ -163,7 +166,10 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 				                       NULL);
 				if (nbrowser != NULL)
 				{
-					badwolf_new_tab(GTK_NOTEBOOK(window->notebook), nbrowser, FALSE);
+          gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(nbrowser->javascript), jsEnabled);
+          gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(nbrowser->auto_load_images), imgEnabled);
+
+          badwolf_new_tab(GTK_NOTEBOOK(window->notebook), nbrowser, FALSE);
 					gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook), 
               gtk_notebook_get_current_page(notebook)+1);
 				}
