@@ -85,7 +85,7 @@ install: all
 	cp -r locale/ $(DESTDIR)$(DATADIR)/
 	cp interface.css $(DESTDIR)$(DATADIR)/
 	mkdir -p $(DESTDIR)$(APPSDIR)
-	cp -p badwolf.desktop $(DESTDIR)$(APPSDIR)/
+	cp -p lrrh.desktop $(DESTDIR)$(APPSDIR)/
 	mkdir -p $(DESTDIR)$(DOCDIR)
 	cp -p $(DOCS) $(DESTDIR)$(DOCDIR)/
 	mkdir -p $(DESTDIR)$(PREFIX)/share
