@@ -10,8 +10,8 @@ VERSION_FULL = $(VERSION)`./version.sh`
 PREFIX  ?= /usr/local
 BINDIR  ?= $(PREFIX)/bin
 MANDIR  ?= $(PREFIX)/share/man
-DOCDIR  ?= $(PREFIX)/share/doc/badwolf-$(VERSION)
-DATADIR ?= $(PREFIX)/share/badwolf
+DOCDIR  ?= $(PREFIX)/share/doc/lrrh-$(VERSION)
+DATADIR ?= $(PREFIX)/share/lrrh
 APPSDIR ?= $(PREFIX)/share/applications
 
 CC        ?= cc
@@ -31,7 +31,7 @@ OBJS_test = uri_test.o
 EXE   = lrrh
 EXE_test = uri_test
 TRANS = fr.mo pt_BR.mo tr.mo
-DOCS  = usr.bin.badwolf README.md KnowledgeBase.md interface.txt
+DOCS  = usr.bin.lrrh README.md KnowledgeBase.md interface.txt
 
 CDEPS = -DDATADIR=\"$(DATADIR)\" -DPACKAGE=\"$(PACKAGE)\" -D_XOPEN_SOURCE=500 -D_POSIX_C_SOURCE=200809L -DVERSION=\"$(VERSION_FULL)\"
 CDEPS += `$(PKGCONFIG) --cflags $(DEPS)`
@@ -78,7 +78,7 @@ test: $(EXE_test)
 .PHONY: install
 install: all
 	mkdir -p $(DESTDIR)$(BINDIR)
-	cp -p badwolf $(DESTDIR)$(BINDIR)/
+	cp -p lrrh $(DESTDIR)$(BINDIR)/
 	mkdir -p $(DESTDIR)$(MANDIR)/man1
 	cp -p badwolf.1 $(DESTDIR)$(MANDIR)/man1/
 	mkdir -p $(DESTDIR)$(DATADIR)/locale
@@ -90,7 +90,7 @@ install: all
 	cp -p $(DOCS) $(DESTDIR)$(DOCDIR)/
 	mkdir -p $(DESTDIR)$(PREFIX)/share
 	cp -r icons $(DESTDIR)$(PREFIX)/share/
-	@printf '\nNote: An example AppArmor profile has been installed at '$(DOCDIR)/usr.bin.badwolf'\n'
+	@printf '\nNote: An example AppArmor profile has been installed at '$(DOCDIR)/usr.bin.lrrh'\n'
 
 .PHONY: clean
 clean:

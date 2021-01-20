@@ -5,14 +5,14 @@
 # Made on Gentoo Linux with PREFIX=/usr
 #include <tunables/global>
 
-/usr/bin/badwolf {
+/usr/bin/lrrh {
 	#include <abstractions/enchant>
 	#include <abstractions/gnome>
 	#include <abstractions/ibus>
 	#include <abstractions/uim>
 	#include <abstractions/private-files-strict>
 
-	/usr/bin/badwolf mr,
+	/usr/bin/lrrh mr,
 	/usr/bin/bwrap Cx,
 	/usr/libexec/webkit2gtk-4.0/WebKitNetworkProcess Cx,
 	/usr/libexec/webkit2gtk-4.0/WebKitWebProcess Cx,
@@ -20,15 +20,15 @@
 	owner @{PROC}/@{pid}/cmdline r,
 	owner @{PROC}/@{pid}/fd/ r,
 
-	owner @{HOME}/.local/share/badwolf/ r,
-	owner @{HOME}/.local/share/badwolf/** r,
+	owner @{HOME}/.local/share/lrrh/ r,
+	owner @{HOME}/.local/share/lrrh/** r,
 
 	deny @{HOME}/.local/share/webkitgtk/** rwmlk,
 
 	/ r,
 	/** r,
 
-	#include <local/usr.bin.badwolf>
+	#include <local/usr.bin.lrrh>
 
 	profile /usr/libexec/webkit2gtk-4.0/WebKitNetworkProcess {
 		#include <abstractions/base>
@@ -64,8 +64,8 @@
 		/etc/nsswitch.conf r,
 		/dev/ r,
 
-		owner @{HOME}/.local/share/badwolf/webkit-web-extension/ r,
-		owner @{HOME}/.local/share/badwolf/webkit-web-extension/** mr,
+		owner @{HOME}/.local/share/lrrh/webkit-web-extension/ r,
+		owner @{HOME}/.local/share/lrrh/webkit-web-extension/** mr,
 	}
 
 	profile /usr/bin/bwrap {

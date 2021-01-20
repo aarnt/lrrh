@@ -34,3 +34,17 @@ Ctrl+R      | Reload page
 Ctrl+W      | Close current tab
 Ctrl+Q      | Quit LRRH
 
+## Manual Installation
+Dependencies are:
+
+- C11 Compiler (such as clang or gcc)
+- [WebKitGTK](https://webkitgtk.org/), only the latest stable is supported
+- [libxml-2.0](http://www.xmlsoft.org/), no known version limitation
+- POSIX make with extension for shell in variables (works with GNU, {Net,Free,Open}BSD)
+- A pkg-config implementation (pkgconf is recommended)
+- (optionnal) gettext implementation (such as GNU Gettext)
+
+Compilation is done with `make`, install with `make install` (`DESTDIR` and `PREFIX` environment variables are supported, amongs other common ones). An example AppArmor profile is provided at `usr.bin.badwolf`, please do some long runtime checks before shipping it or a modified version, help can be provided but with no support.
+
+You'll also need inkscape (command line only) if you want to regenerate the icons, for example after modifying them or adding a new size. These aren't needed for normal installation as it is bundled.
+
