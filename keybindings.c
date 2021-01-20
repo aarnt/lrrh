@@ -42,7 +42,7 @@ badwolf_about_dialog(GtkWindow *main_window, gpointer user_data)
 	                             "SPDX-License-Identifier: BSD-3-Clause");
 	gtk_about_dialog_set_copyright(
 	    GTK_ABOUT_DIALOG(about_dialog),
-	    "2019-2020 Badwolf Authors <https://hacktivis.me/projects/badwolf>");
+	    "2019-2020 Badwolf Authors <https://hacktivis.me/projects/badwolf>\n2021 Alexandre A Arnt");
 	gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(about_dialog), homepage);
 	gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about_dialog), comments);
 	gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about_dialog), version);
@@ -93,6 +93,8 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 	GtkNotebook *notebook = GTK_NOTEBOOK(window->notebook);
 	struct Client *nbrowser = NULL;
 	gdouble zoom = 0;
+	const gchar *duckUrl = "https://lite.duckduckgo.com";
+	const gchar *searxUrl = "https://searx.info";
 
 	if(((GdkEventKey *)event)->state & GDK_CONTROL_MASK)
 	{
@@ -134,16 +136,37 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 				gtk_main_quit();
 				return TRUE;
 			case GDK_KEY_n:
-				nbrowser = new_browser(window, 
+				nbrowser = new_browser(window,
 				                       gtk_label_get_text(GTK_LABEL(browser->statuslabel)),
 				                       NULL);
 				if (nbrowser != NULL)
-				{		
+				{
 					badwolf_new_tab(GTK_NOTEBOOK(window->notebook), nbrowser, FALSE);
-					//gint npages = gtk_notebook_get_n_pages(GTK_NOTEBOOK(window->notebook));
 					gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook), gtk_notebook_get_current_page(notebook)+1);
-				}	
-				return TRUE;	
+				}
+				return TRUE;
+			case GDK_KEY_d:
+				nbrowser = new_browser(window, duckUrl, NULL);
+
+				if (nbrowser != NULL)
+				{
+					badwolf_new_tab(GTK_NOTEBOOK(window->notebook), nbrowser, FALSE);
+					gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook), gtk_notebook_get_current_page(notebook)+1);
+				}
+
+				gtk_widget_grab_focus(GTK_WIDGET(nbrowser->webView));
+				return TRUE;
+			case GDK_KEY_x:
+				nbrowser = new_browser(window, searxUrl, NULL);
+
+				if (nbrowser != NULL)
+				{
+					badwolf_new_tab(GTK_NOTEBOOK(window->notebook), nbrowser, FALSE);
+					gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook), gtk_notebook_get_current_page(notebook)+1);
+				}
+
+				gtk_widget_grab_focus(GTK_WIDGET(nbrowser->webView));
+				return TRUE;
 			case GDK_KEY_w:
 				webkit_web_view_try_close(browser->webView);
 				return TRUE;
