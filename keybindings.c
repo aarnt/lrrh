@@ -78,6 +78,26 @@ goto_next_tab(GtkNotebook *notebook)
 	else gtk_notebook_next_page(notebook);
 }
 
+/*
+ * Opens given url on new tab and focus webview widget
+ */ 
+static void
+open_site_on_new_tab(struct Window *window, const gchar *url)
+{
+	struct Client *nbrowser = NULL;
+	nbrowser = new_browser(window, url, NULL);
+  GtkNotebook *notebook = GTK_NOTEBOOK(window->notebook);
+
+	if (nbrowser != NULL)
+	{
+		badwolf_new_tab(GTK_NOTEBOOK(window->notebook), nbrowser, FALSE);
+		gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook),
+        gtk_notebook_get_current_page(notebook)+1);
+  }
+
+	gtk_widget_grab_focus(GTK_WIDGET(nbrowser->webView));
+}
+
 /* commonCb_key_press_event: Global callback for keybindings
  *
  * These shortcuts should be avoided as much as possible:
@@ -102,16 +122,18 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 		{
 			switch(((GdkEventKey *)event)->keyval)
 			{
-			case GDK_KEY_F4: webkit_web_view_try_close(browser->webView); return TRUE;
+			case GDK_KEY_F4:
+        webkit_web_view_try_close(browser->webView);
+        return TRUE;
 			case GDK_KEY_r:
 				if(((GdkEventKey *)event)->state & GDK_SHIFT_MASK)
 					webkit_web_view_reload_bypass_cache(browser->webView);
 				else
 					webkit_web_view_reload(browser->webView);
-
 				return TRUE;
-			case GDK_KEY_f: gtk_widget_grab_focus(browser->search); return TRUE;
-	
+			case GDK_KEY_f: 
+        gtk_widget_grab_focus(browser->search); 
+        return TRUE;
 			case GDK_KEY_0:
 				webkit_web_view_set_zoom_level(WEBKIT_WEB_VIEW(browser->webView), 1);
 				return TRUE;
@@ -133,7 +155,7 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 				webkit_web_view_reload(browser->webView);
 				return TRUE;
 			case GDK_KEY_q:
-				gtk_main_quit();
+        webkit_web_view_try_close(browser->webView);
 				return TRUE;
 			case GDK_KEY_n:
 				nbrowser = new_browser(window,
@@ -142,31 +164,16 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 				if (nbrowser != NULL)
 				{
 					badwolf_new_tab(GTK_NOTEBOOK(window->notebook), nbrowser, FALSE);
-					gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook), gtk_notebook_get_current_page(notebook)+1);
+					gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook), 
+              gtk_notebook_get_current_page(notebook)+1);
 				}
 				return TRUE;
 			case GDK_KEY_d:
-				nbrowser = new_browser(window, duckUrl, NULL);
-
-				if (nbrowser != NULL)
-				{
-					badwolf_new_tab(GTK_NOTEBOOK(window->notebook), nbrowser, FALSE);
-					gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook), gtk_notebook_get_current_page(notebook)+1);
-				}
-
-				gtk_widget_grab_focus(GTK_WIDGET(nbrowser->webView));
-				return TRUE;
+        open_site_on_new_tab(window, duckUrl);
+        return TRUE;
 			case GDK_KEY_x:
-				nbrowser = new_browser(window, searxUrl, NULL);
-
-				if (nbrowser != NULL)
-				{
-					badwolf_new_tab(GTK_NOTEBOOK(window->notebook), nbrowser, FALSE);
-					gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook), gtk_notebook_get_current_page(notebook)+1);
-				}
-
-				gtk_widget_grab_focus(GTK_WIDGET(nbrowser->webView));
-				return TRUE;
+        open_site_on_new_tab(window, searxUrl);
+        return TRUE;
 			case GDK_KEY_w:
 				webkit_web_view_try_close(browser->webView);
 				return TRUE;
@@ -189,14 +196,24 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 		{
 			switch(((GdkEventKey *)event)->keyval)
 			{
-			case GDK_KEY_Page_Down: gtk_notebook_next_page(notebook); return TRUE;
-			case GDK_KEY_Page_Up: gtk_notebook_prev_page(notebook); return TRUE;
-			case GDK_KEY_t: badwolf_new_tab(notebook, new_browser(window, NULL, NULL), TRUE); return TRUE;
-
+			case GDK_KEY_Page_Down:
+        gtk_notebook_next_page(notebook);
+        return TRUE;
+			case GDK_KEY_Page_Up:
+        gtk_notebook_prev_page(notebook);
+        return TRUE;
+			case GDK_KEY_t: 
+        badwolf_new_tab(notebook, new_browser(window, NULL, NULL), TRUE); 
+        return TRUE;
+      case GDK_KEY_d:
+        open_site_on_new_tab(window, duckUrl);
+        return TRUE;
+			case GDK_KEY_x:
+        open_site_on_new_tab(window, searxUrl);
+        return TRUE;
 			case GDK_KEY_q:
 				gtk_main_quit();
 				return TRUE;
-
 			case GDK_KEY_Tab:
 				goto_next_tab(notebook);		
 				return TRUE;
