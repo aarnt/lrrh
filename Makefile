@@ -80,7 +80,7 @@ install: all
 	mkdir -p $(DESTDIR)$(BINDIR)
 	cp -p lrrh $(DESTDIR)$(BINDIR)/
 	mkdir -p $(DESTDIR)$(MANDIR)/man1
-	cp -p badwolf.1 $(DESTDIR)$(MANDIR)/man1/
+	#cp -p badwolf.1 $(DESTDIR)$(MANDIR)/man1/
 	mkdir -p $(DESTDIR)$(DATADIR)/locale
 	cp -r locale/ $(DESTDIR)$(DATADIR)/
 	cp interface.css $(DESTDIR)$(DATADIR)/
