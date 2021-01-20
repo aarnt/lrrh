@@ -1,8 +1,8 @@
-# LRRH
+# LRRH, another tiny and functional GTK+ web browser
 
 ![Main window](https://raw.githubusercontent.com/aarnt/lrrh/master/lrrh-mainwindow.png)
 
-Minimalist and privacy-oriented WebKitGTK+ browser cloned from [BadWolf](https://hacktivis.me/projects/badwolf), using different keybindings.
+LRRH is a minimalist and privacy-oriented WebKitGTK+ browser cloned from [BadWolf](https://hacktivis.me/projects/badwolf), using different keybindings.
 
 LRRH stands for "Little Red Riding Hood", an European fairy tale about a young girl and a Big Bad Wolf.
 
