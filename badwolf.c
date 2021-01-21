@@ -286,15 +286,24 @@ WebViewCb_create(WebKitWebView *related_web_view,
 	gint newtab=badwolf_new_tab(GTK_NOTEBOOK(window->notebook), browser, FALSE);
 	if(newtab == 0)
 	{
-	  gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook), 
-		gtk_notebook_get_current_page(GTK_NOTEBOOK(window->notebook))+1);
+    WebKitSettings *oldSettings = webkit_web_view_get_settings(related_web_view);
+    gboolean oldJSValue = webkit_settings_get_enable_javascript_markup(oldSettings);
+    gboolean oldImgValue = webkit_settings_get_auto_load_images(oldSettings);
+
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(browser->javascript), oldJSValue);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(browser->auto_load_images), oldImgValue);
+
+    gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook),
+		  gtk_notebook_get_current_page(GTK_NOTEBOOK(window->notebook))+1);
+
+    gtk_widget_grab_focus (GTK_WIDGET (browser->webView));
 	}
 	else if(newtab < 0)
 	{
 	  return NULL;
 	}
 
-  	return browser->webView;
+	return browser->webView;
 }
 
 static gboolean
@@ -873,6 +882,7 @@ new_browser(struct Window *window, const gchar *target_url, WebKitWebView *relat
  * -1 : Failed to insert a page for browser->box
  * -2 : browser is NULL
  */
+
 int
 badwolf_new_tab(GtkNotebook *notebook, struct Client *browser, bool auto_switch)
 {

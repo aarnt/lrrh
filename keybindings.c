@@ -78,11 +78,69 @@ goto_next_tab(GtkNotebook *notebook)
 	else gtk_notebook_next_page(notebook);
 }
 
+static void
+web_view_javascript_get_selected_text_finished(GObject      *object,
+                             GAsyncResult *result,
+                             gpointer      user_data)
+{
+	WebKitJavascriptResult *js_result;
+	JSCValue               *value;
+	GError                 *error = NULL;
+  struct Window *window = (struct Window*)user_data;
+
+	js_result = webkit_web_view_run_javascript_finish (WEBKIT_WEB_VIEW (object), result, &error);
+	if (!js_result) {
+		g_warning ("Error running javascript: %s", error->message);
+		g_error_free (error);
+		return;
+	}
+
+	value = webkit_javascript_result_get_js_value (js_result);
+	if(jsc_value_is_undefined(value))
+  {
+    printf("Value is undefined!\n\n");
+  }
+  else if(jsc_value_is_string (value))
+  {
+    JSCException *exception;
+    gchar        *str_value;
+
+    str_value = jsc_value_to_string (value);
+    exception = jsc_context_get_exception (jsc_value_get_context (value));
+
+    if (!exception)
+    {
+      gchar *gtrans="https://translate.google.com/?sl=auto&tl=pt&q=";
+      char **split = g_strsplit(str_value, " ", -1);
+      g_free(str_value);
+      str_value = g_strjoinv("+", split);
+      g_strfreev(split);
+
+      gchar *url=g_strconcat(gtrans, str_value, NULL);
+      open_site_on_new_tab(window, url, true);
+      g_free(url);
+    }
+
+    g_free (str_value);
+
+    webkit_javascript_result_unref (js_result);
+  }
+}
+
+static void
+web_view_get_selected_text(WebKitWebView *web_view, struct Window *window)
+{
+  const gchar *script = "window.getSelection().toString();";
+
+	webkit_web_view_run_javascript (WEBKIT_WEB_VIEW(web_view),
+    script, NULL, web_view_javascript_get_selected_text_finished, window);
+}
+
 /*
  * Opens given url on new tab and focus webview widget
  */ 
 static void
-open_site_on_new_tab(struct Window *window, const gchar *url)
+open_site_on_new_tab(struct Window *window, const gchar *url, gboolean jsEnabled)
 {
 	struct Client *nbrowser = NULL;
 	nbrowser = new_browser(window, url, NULL);
@@ -91,6 +149,7 @@ open_site_on_new_tab(struct Window *window, const gchar *url)
 	if (nbrowser != NULL)
 	{
 		badwolf_new_tab(GTK_NOTEBOOK(window->notebook), nbrowser, FALSE);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(nbrowser->javascript), jsEnabled);
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook),
         gtk_notebook_get_current_page(notebook)+1);
   }
@@ -175,10 +234,10 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 				}
 				return TRUE;
 			case GDK_KEY_d:
-        open_site_on_new_tab(window, duckUrl);
+        open_site_on_new_tab(window, duckUrl, false);
         return TRUE;
 			case GDK_KEY_x:
-        open_site_on_new_tab(window, searxUrl);
+        open_site_on_new_tab(window, searxUrl, false);
         return TRUE;
 			case GDK_KEY_w:
 				webkit_web_view_try_close(browser->webView);
@@ -196,6 +255,9 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 			case GDK_KEY_Tab:
 				goto_next_tab(notebook);		
 				return TRUE;					
+      case GDK_KEY_z:
+        web_view_get_selected_text(WEBKIT_WEB_VIEW(browser->webView), window);
+        return TRUE;
 			}
 		}
 		else
@@ -212,10 +274,10 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
         badwolf_new_tab(notebook, new_browser(window, NULL, NULL), TRUE); 
         return TRUE;
       case GDK_KEY_d:
-        open_site_on_new_tab(window, duckUrl);
+        open_site_on_new_tab(window, duckUrl, false);
         return TRUE;
 			case GDK_KEY_x:
-        open_site_on_new_tab(window, searxUrl);
+        open_site_on_new_tab(window, searxUrl, false);
         return TRUE;
 			case GDK_KEY_q:
 				gtk_main_quit();
