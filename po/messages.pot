@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Badwolf 1.0.3+g82ac278.main\n"
+"Project-Id-Version: Badwolf 1.0.3+gb2185ca.main\n"
 "Report-Msgid-Bugs-To: contact+badwolf-msgid@hacktivis.me\n"
-"POT-Creation-Date: 2021-01-21 20:48-0300\n"
+"POT-Creation-Date: 2021-01-22 17:40-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -97,7 +97,7 @@ msgstr ""
 msgid "LRRH Downloads"
 msgstr ""
 
-#: keybindings.c:32
+#: keybindings.c:34
 #, c-format
 msgid ""
 "Minimalist and privacy-oriented WebKitGTK+ browser\n"

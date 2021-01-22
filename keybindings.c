@@ -8,6 +8,8 @@
 
 #include <glib/gi18n.h> /* _() */
 
+static void open_site_on_new_tab(struct Window *window, const gchar *url, gboolean jsEnabled);
+
 static gboolean
 about_dialogCb_activate_link(GtkAboutDialog *about_dialog, gchar *uri, gpointer user_data)
 {
@@ -67,13 +69,13 @@ toggle_caret_browsing(WebKitWebView *webView)
 
 /*
  * Goto the next tab in notebook. If current is the last one, goto the second tab!
- */ 
+ */
 static void
 goto_next_tab(GtkNotebook *notebook)
 {
 	gint npages = gtk_notebook_get_n_pages(notebook);
 	gint curr = gtk_notebook_get_current_page(notebook);
-	if (curr+1 == npages)	
+	if (curr+1 == npages)
 		gtk_notebook_set_current_page(notebook, 1);
 	else gtk_notebook_next_page(notebook);
 }
@@ -138,7 +140,7 @@ web_view_get_selected_text(WebKitWebView *web_view, struct Window *window)
 
 /*
  * Opens given url on new tab and focus webview widget
- */ 
+ */
 static void
 open_site_on_new_tab(struct Window *window, const gchar *url, gboolean jsEnabled)
 {
@@ -193,8 +195,8 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 				else
 					webkit_web_view_reload(browser->webView);
 				return TRUE;
-			case GDK_KEY_f: 
-        gtk_widget_grab_focus(browser->search); 
+			case GDK_KEY_f:
+        gtk_widget_grab_focus(browser->search);
         return TRUE;
 			case GDK_KEY_0:
 				webkit_web_view_set_zoom_level(WEBKIT_WEB_VIEW(browser->webView), 1);
@@ -229,7 +231,7 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
           gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(nbrowser->auto_load_images), imgEnabled);
 
           badwolf_new_tab(GTK_NOTEBOOK(window->notebook), nbrowser, FALSE);
-					gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook), 
+					gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook),
               gtk_notebook_get_current_page(notebook)+1);
 				}
 				return TRUE;
@@ -253,8 +255,8 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 				webkit_web_view_set_zoom_level(WEBKIT_WEB_VIEW(browser->webView), zoom);
 				return TRUE;
 			case GDK_KEY_Tab:
-				goto_next_tab(notebook);		
-				return TRUE;					
+				goto_next_tab(notebook);
+				return TRUE;
       case GDK_KEY_z:
         web_view_get_selected_text(WEBKIT_WEB_VIEW(browser->webView), window);
         return TRUE;
@@ -270,8 +272,8 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 			case GDK_KEY_Page_Up:
         gtk_notebook_prev_page(notebook);
         return TRUE;
-			case GDK_KEY_t: 
-        badwolf_new_tab(notebook, new_browser(window, NULL, NULL), TRUE); 
+			case GDK_KEY_t:
+        badwolf_new_tab(notebook, new_browser(window, NULL, NULL), TRUE);
         return TRUE;
       case GDK_KEY_d:
         open_site_on_new_tab(window, duckUrl, false);
@@ -283,7 +285,7 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 				gtk_main_quit();
 				return TRUE;
 			case GDK_KEY_Tab:
-				goto_next_tab(notebook);		
+				goto_next_tab(notebook);
 				return TRUE;
 			}
 		}
@@ -295,15 +297,15 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 		{
 			switch(((GdkEventKey *)event)->keyval)
 			{
-				case GDK_KEY_Left: 
+				case GDK_KEY_Left:
 					webkit_web_view_go_back(browser->webView);
 					return TRUE;
-				case GDK_KEY_Right: 
-					webkit_web_view_go_forward(browser->webView); 
+				case GDK_KEY_Right:
+					webkit_web_view_go_forward(browser->webView);
 					return TRUE;
 			}
 		}
-		
+
 		if((((GdkEventKey *)event)->keyval >= GDK_KEY_0) &&
 		   (((GdkEventKey *)event)->keyval <= GDK_KEY_9))
 			gtk_notebook_set_current_page(notebook, (gint)(((GdkEventKey *)event)->keyval - GDK_KEY_1));
