@@ -79,7 +79,7 @@ test: $(EXE_test)
 install: all
 	mkdir -p $(DESTDIR)$(BINDIR)
 	cp -p lrrh $(DESTDIR)$(BINDIR)/
-	mkdir -p $(DESTDIR)$(MANDIR)/man1
+	#mkdir -p $(DESTDIR)$(MANDIR)/man1
 	#cp -p badwolf.1 $(DESTDIR)$(MANDIR)/man1/
 	mkdir -p $(DESTDIR)$(DATADIR)/locale
 	cp -r locale/ $(DESTDIR)$(DATADIR)/
@@ -91,6 +91,29 @@ install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/share
 	cp -r icons $(DESTDIR)$(PREFIX)/share/
 	@printf '\nNote: An example AppArmor profile has been installed at '$(DOCDIR)/usr.bin.lrrh'\n'
+
+.PHONY: uninstall
+uninstall: all
+	rm -f $(DESTDIR)$(BINDIR)/lrrh
+	rm -f $(DESTDIR)$(DATADIR)/locale/fr/LC_MESSAGES/Badwolf.mo
+	rm -f $(DESTDIR)$(DATADIR)/locale/pt_BR/LC_MESSAGES/Badwolf.mo
+	rm -f $(DESTDIR)$(DATADIR)/locale/tr/LC_MESSAGES/Badwolf.mo
+	rm -f $(DESTDIR)$(DATADIR)/interface.css
+	rm -f $(DESTDIR)$(APPSDIR)/lrrh.desktop
+	rm -rf $(DESTDIR)$(DOCDIR)
+	rm -f $(DESTDIR)$(PREFIX)/share/icons/hicolor/24x24/apps/badwolf.png
+	rm -f $(DESTDIR)$(PREFIX)/share/icons/hicolor/24x24/apps/lrrh.png
+	rm -f $(DESTDIR)$(PREFIX)/share/icons/hicolor/32x32/apps/badwolf.png
+	rm -f $(DESTDIR)$(PREFIX)/share/icons/hicolor/32x32/apps/lrrh.png
+	rm -f $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps/badwolf.png
+	rm -f $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps/lrrh.png
+	rm -f $(DESTDIR)$(PREFIX)/share/icons/hicolor/64x64/apps/badwolf.png
+	rm -f $(DESTDIR)$(PREFIX)/share/icons/hicolor/64x64/apps/lrrh.png
+	rm -f $(DESTDIR)$(PREFIX)/share/icons/hicolor/128x128/apps/badwolf.png
+	rm -f $(DESTDIR)$(PREFIX)/share/icons/hicolor/128x128/apps/lrrh.png
+	rm -f $(DESTDIR)$(PREFIX)/share/icons/hicolor/256x256/apps/badwolf.png
+	rm -f $(DESTDIR)$(PREFIX)/share/icons/hicolor/256x256/apps/lrrh.png
+	rm -f $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps/badwolf.svg
 
 .PHONY: clean
 clean:
