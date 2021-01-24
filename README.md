@@ -7,7 +7,7 @@ LRRH is a minimalist and privacy-oriented WebKitGTK+ browser cloned from [BadWol
 LRRH stands for "Little Red Riding Hood", an European fairy tale about a young girl and a Big Bad Wolf.
 
 
-These are the keybinds used in LRRH
+These are the keybinds used in LRRH:
 
 Key         | Action
 --          | --
@@ -31,7 +31,7 @@ Ctrl+F      | Goto search widget
 Ctrl+G      | Find next
 Ctrl+Shift+G| Find previous
 Ctrl+I      | Toggle show images on/off
-Ctrl+J      | Toggle use javascript on/off
+Ctrl+J      | Toggle enable javascript on/off
 Ctrl+P      | Show print dialog
 Ctrl+R      | Reload page
 Ctrl+W      | Close current tab
