@@ -21,28 +21,36 @@ const gchar *homepage = "https://hacktivis.me/projects/badwolf";
 const gchar *version  = VERSION;
 
 static gboolean WebViewCb_close(WebKitWebView *webView, gpointer user_data);
+
 static gboolean WebViewCb_web_process_terminated(WebKitWebView *webView,
                                                  WebKitWebProcessTerminationReason reason,
                                                  gpointer user_data);
 static gboolean
 WebViewCb_notify__uri(WebKitWebView *webView, GParamSpec *pspec, gpointer user_data);
+
 static gboolean
 WebViewCb_notify__title(WebKitWebView *webView, GParamSpec *pspec, gpointer user_data);
+
 static gboolean
 WebViewCb_notify__is__playing__audio(WebKitWebView *webView, GParamSpec *pspec, gpointer user_data);
+
 static gboolean WebViewCb_notify__estimated_load_progress(WebKitWebView *webView,
                                                           GParamSpec *pspec,
                                                           gpointer user_data);
+
 static gboolean WebViewCb_mouse_target_changed(WebKitWebView *webView,
                                                WebKitHitTestResult *hit,
                                                guint modifiers,
                                                gpointer user_data);
+
 static WebKitWebView *WebViewCb_create(WebKitWebView *related_web_view,
                                        WebKitNavigationAction *navigation_action,
                                        gpointer user_data);
+
 static gboolean WebViewCb_permission_request(WebKitWebView *web_view,
                                              WebKitPermissionRequest *request,
                                              gpointer user_data);
+
 static gboolean WebViewCb_decide_policy(WebKitWebView *web_view,
                                         WebKitPolicyDecision *decision,
                                         WebKitPolicyDecisionType decision_type,
@@ -52,6 +60,7 @@ WebViewCb_load_changed(WebKitWebView *webView, WebKitLoadEvent load_event, gpoin
 static void web_contextCb_download_started(WebKitWebContext *web_context,
                                            WebKitDownload *download,
                                            gpointer user_data);
+
 static gboolean locationCb_activate(GtkEntry *location, gpointer user_data);
 static gboolean javascriptCb_toggled(GtkButton *javascript, gpointer user_data);
 static gboolean auto_load_imagesCb_toggled(GtkButton *auto_load_images, gpointer user_data);
@@ -62,8 +71,10 @@ static gboolean SearchEntryCb_next__match(GtkSearchEntry *search, gpointer user_
 static gboolean SearchEntryCb_previous__match(GtkSearchEntry *search, gpointer user_data);
 static gboolean SearchEntryCb_search__changed(GtkSearchEntry *search, gpointer user_data);
 static gboolean SearchEntryCb_stop__search(GtkSearchEntry *search, gpointer user_data);
+static gboolean SearchEntryCb_key_press__event(GtkSearchEntry *search, GdkEvent *event, gpointer user_data);
 static void new_tabCb_clicked(GtkButton *new_tab, gpointer user_data);
 static void closeCb_clicked(GtkButton *close, gpointer user_data);
+
 static void
 notebookCb_switch__page(GtkNotebook *notebook, GtkWidget *page, guint page_num, gpointer user_data);
 
@@ -586,13 +597,31 @@ SearchEntryCb_stop__search(GtkSearchEntry *search, gpointer user_data)
 	return TRUE;
 }
 
+static gboolean
+SearchEntryCb_key_press__event(GtkSearchEntry *search, GdkEvent *event, gpointer user_data)
+{
+  struct Client *browser = (struct Client *)user_data;
+  if(browser != NULL)
+  {
+    switch(((GdkEventKey *)event)->keyval)
+    {
+      case GDK_KEY_Escape:
+        gtk_entry_set_text(GTK_ENTRY(search), "");
+        gtk_widget_grab_focus(GTK_WIDGET(browser->webView));
+        return FALSE;
+    }
+  }
+
+  return FALSE;
+}
+
 gboolean
 WebViewCb_button_press_event(GtkWidget *widget, GdkEvent  *event, gpointer user_data)
 {
 	(void)widget;
 	struct Client *oldBrowser = (struct Client *)user_data;
-  gboolean jsEnabled = gtk_toggle_button_get_active((GtkToggleButton *)oldBrowser->javascript);
-  gboolean imgEnabled = gtk_toggle_button_get_active((GtkToggleButton *)oldBrowser->auto_load_images); 
+	gboolean jsEnabled = gtk_toggle_button_get_active((GtkToggleButton *)oldBrowser->javascript);
+	gboolean imgEnabled = gtk_toggle_button_get_active((GtkToggleButton *)oldBrowser->auto_load_images); 
 	struct Client *browser = NULL;
 	browser =  new_browser(oldBrowser->window, 
 		gtk_label_get_text(GTK_LABEL(oldBrowser->statuslabel)), NULL);
@@ -603,10 +632,10 @@ WebViewCb_button_press_event(GtkWidget *widget, GdkEvent  *event, gpointer user_
 		gint newtab=badwolf_new_tab(GTK_NOTEBOOK(oldBrowser->window->notebook), browser, FALSE);
 		if(newtab == 0)
 		{
-      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(browser->javascript), jsEnabled);
-      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(browser->auto_load_images), imgEnabled);
-      gtk_notebook_set_current_page(GTK_NOTEBOOK(oldBrowser->window->notebook),
-        gtk_notebook_get_current_page(GTK_NOTEBOOK(oldBrowser->window->notebook))+1);
+			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(browser->javascript), jsEnabled);
+			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(browser->auto_load_images), imgEnabled);
+			gtk_notebook_set_current_page(GTK_NOTEBOOK(oldBrowser->window->notebook),
+			gtk_notebook_get_current_page(GTK_NOTEBOOK(oldBrowser->window->notebook))+1);
 		}
 
 		return TRUE;
@@ -865,6 +894,7 @@ new_browser(struct Window *window, const gchar *target_url, WebKitWebView *relat
 	g_signal_connect(
 	    browser->search, "search-changed", G_CALLBACK(SearchEntryCb_search__changed), browser);
 	g_signal_connect(browser->search, "stop-search", G_CALLBACK(SearchEntryCb_stop__search), browser);
+  g_signal_connect(browser->search, "key-press-event", G_CALLBACK(SearchEntryCb_key_press__event), browser);
 
 	/* signals for box container */
 	g_signal_connect(browser->box, "key-press-event", G_CALLBACK(boxCb_key_press_event), browser);

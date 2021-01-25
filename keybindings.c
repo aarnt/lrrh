@@ -181,14 +181,14 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 	{
 		if(browser != NULL)
 		{
-      gboolean jsEnabled = gtk_toggle_button_get_active((GtkToggleButton *)browser->javascript);
-      gboolean imgEnabled = gtk_toggle_button_get_active((GtkToggleButton *)browser->auto_load_images);
+			gboolean jsEnabled = gtk_toggle_button_get_active((GtkToggleButton *)browser->javascript);
+			gboolean imgEnabled = gtk_toggle_button_get_active((GtkToggleButton *)browser->auto_load_images);
 
-      switch(((GdkEventKey *)event)->keyval)
+			switch(((GdkEventKey *)event)->keyval)
 			{
 			case GDK_KEY_F4:
-        webkit_web_view_try_close(browser->webView);
-        return TRUE;
+				webkit_web_view_try_close(browser->webView);
+				return TRUE;
 			case GDK_KEY_r:
 				if(((GdkEventKey *)event)->state & GDK_SHIFT_MASK)
 					webkit_web_view_reload_bypass_cache(browser->webView);
@@ -196,8 +196,8 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 					webkit_web_view_reload(browser->webView);
 				return TRUE;
 			case GDK_KEY_f:
-        gtk_widget_grab_focus(browser->search);
-        return TRUE;
+				gtk_widget_grab_focus(browser->search);
+				return TRUE;
 			case GDK_KEY_0:
 				webkit_web_view_set_zoom_level(WEBKIT_WEB_VIEW(browser->webView), 1);
 				return TRUE;
@@ -219,7 +219,7 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 				webkit_web_view_reload(browser->webView);
 				return TRUE;
 			case GDK_KEY_q:
-        webkit_web_view_try_close(browser->webView);
+				webkit_web_view_try_close(browser->webView);
 				return TRUE;
 			case GDK_KEY_n:
 				nbrowser = new_browser(window,
@@ -227,20 +227,20 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 				                       NULL);
 				if (nbrowser != NULL)
 				{
-          gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(nbrowser->javascript), jsEnabled);
-          gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(nbrowser->auto_load_images), imgEnabled);
+					gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(nbrowser->javascript), jsEnabled);
+					gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(nbrowser->auto_load_images), imgEnabled);
 
-          badwolf_new_tab(GTK_NOTEBOOK(window->notebook), nbrowser, FALSE);
+					badwolf_new_tab(GTK_NOTEBOOK(window->notebook), nbrowser, FALSE);
 					gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook),
-              gtk_notebook_get_current_page(notebook)+1);
+					gtk_notebook_get_current_page(notebook)+1);
 				}
 				return TRUE;
 			case GDK_KEY_d:
-        open_site_on_new_tab(window, duckUrl, false);
-        return TRUE;
+				open_site_on_new_tab(window, duckUrl, false);
+				return TRUE;
 			case GDK_KEY_x:
-        open_site_on_new_tab(window, searxUrl, false);
-        return TRUE;
+				open_site_on_new_tab(window, searxUrl, false);
+				return TRUE;
 			case GDK_KEY_w:
 				webkit_web_view_try_close(browser->webView);
 				return TRUE;
@@ -257,9 +257,9 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 			case GDK_KEY_Tab:
 				goto_next_tab(notebook);
 				return TRUE;
-      case GDK_KEY_z:
-        web_view_get_selected_text(WEBKIT_WEB_VIEW(browser->webView), window);
-        return TRUE;
+			case GDK_KEY_z:
+				web_view_get_selected_text(WEBKIT_WEB_VIEW(browser->webView), window);
+				return TRUE;
 			}
 		}
 		else
@@ -267,20 +267,20 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 			switch(((GdkEventKey *)event)->keyval)
 			{
 			case GDK_KEY_Page_Down:
-        gtk_notebook_next_page(notebook);
-        return TRUE;
+				gtk_notebook_next_page(notebook);
+				return TRUE;
 			case GDK_KEY_Page_Up:
-        gtk_notebook_prev_page(notebook);
-        return TRUE;
+				gtk_notebook_prev_page(notebook);
+				return TRUE;
 			case GDK_KEY_t:
-        badwolf_new_tab(notebook, new_browser(window, NULL, NULL), TRUE);
-        return TRUE;
-      case GDK_KEY_d:
-        open_site_on_new_tab(window, duckUrl, false);
-        return TRUE;
+				badwolf_new_tab(notebook, new_browser(window, NULL, NULL), TRUE);
+				return TRUE;
+			case GDK_KEY_d:
+				open_site_on_new_tab(window, duckUrl, false);
+				return TRUE;
 			case GDK_KEY_x:
-        open_site_on_new_tab(window, searxUrl, false);
-        return TRUE;
+				open_site_on_new_tab(window, searxUrl, false);
+				return TRUE;
 			case GDK_KEY_q:
 				gtk_main_quit();
 				return TRUE;
