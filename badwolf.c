@@ -894,7 +894,7 @@ new_browser(struct Window *window, const gchar *target_url, WebKitWebView *relat
 	g_signal_connect(
 	    browser->search, "search-changed", G_CALLBACK(SearchEntryCb_search__changed), browser);
 	g_signal_connect(browser->search, "stop-search", G_CALLBACK(SearchEntryCb_stop__search), browser);
-  g_signal_connect(browser->search, "key-press-event", G_CALLBACK(SearchEntryCb_key_press__event), browser);
+	g_signal_connect(browser->search, "key-press-event", G_CALLBACK(SearchEntryCb_key_press__event), browser);
 
 	/* signals for box container */
 	g_signal_connect(browser->box, "key-press-event", G_CALLBACK(boxCb_key_press_event), browser);
