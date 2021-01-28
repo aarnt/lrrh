@@ -10,7 +10,7 @@ These are the keybinds used in LRRH:
 
 Key         | Action
 --          | --
-Esc         | Stop loading page
+Esc         | Stop loading page / Clear search field and return focus to page
 F1          | Show about LRRH
 F5          | Reload page
 F12         | Show inspector view
@@ -21,20 +21,20 @@ Ctrl+0      | Use 100% zoom factor
 Ctrl+plus   | Increase zoom factor by 10%
 Ctrl+minus  | Decrease zoom factor by 10%
 Ctrl+Tab    | Switch to the next tab
-Ctrl+T      | Open new empty tab
-Ctrl+N      | Open link in new tab
 Ctrl+D      | Open "https://lite.duckduckgo.com" in new tab
-Ctrl+X      | Open "https://searx.info" in new tab
-Ctrl+L      | Goto location widget
 Ctrl+F      | Goto search widget
 Ctrl+G      | Find next
-Ctrl+Shift+G| Find previous
 Ctrl+I      | Toggle show images on/off
 Ctrl+J      | Toggle enable javascript on/off
+Ctrl+L      | Goto location widget
+Ctrl+N      | Open link in new tab
 Ctrl+P      | Show print dialog
-Ctrl+R      | Reload page
-Ctrl+W      | Close current tab
 Ctrl+Q      | Quit LRRH
+Ctrl+R      | Reload page
+Ctrl+Shift+G| Find previous
+Ctrl+T      | Open new empty tab
+Ctrl+W      | Close current tab
+Ctrl+X      | Open "https://searx.info" in new tab
 
 ## Manual Installation
 Dependencies are:
