@@ -189,37 +189,43 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 			case GDK_KEY_F4:
 				webkit_web_view_try_close(browser->webView);
 				return TRUE;
-			case GDK_KEY_r:
-				if(((GdkEventKey *)event)->state & GDK_SHIFT_MASK)
-					webkit_web_view_reload_bypass_cache(browser->webView);
-				else
-					webkit_web_view_reload(browser->webView);
+			case GDK_KEY_0:
+				webkit_web_view_set_zoom_level(WEBKIT_WEB_VIEW(browser->webView), 1);
+				return TRUE;
+			case GDK_KEY_plus:
+				zoom = webkit_web_view_get_zoom_level(WEBKIT_WEB_VIEW(browser->webView));
+				zoom += zoom * 0.1;
+				webkit_web_view_set_zoom_level(WEBKIT_WEB_VIEW(browser->webView), zoom);
+				return TRUE;
+			case GDK_KEY_minus:
+				zoom = webkit_web_view_get_zoom_level(WEBKIT_WEB_VIEW(browser->webView));
+				zoom += zoom * -0.1;
+				webkit_web_view_set_zoom_level(WEBKIT_WEB_VIEW(browser->webView), zoom);
+				return TRUE;
+			case GDK_KEY_Tab:
+				goto_next_tab(notebook);
+				return TRUE;
+			case GDK_KEY_d:
+				open_site_on_new_tab(window, duckUrl, false);
 				return TRUE;
 			case GDK_KEY_f:
 				gtk_widget_grab_focus(browser->search);
 				return TRUE;
-			case GDK_KEY_0:
-				webkit_web_view_set_zoom_level(WEBKIT_WEB_VIEW(browser->webView), 1);
-				return TRUE;
-			case GDK_KEY_p:
-				webkit_print_operation_run_dialog(webkit_print_operation_new(browser->webView),
-				                                  GTK_WINDOW(browser->window));
+			case GDK_KEY_h:
+				gtk_widget_grab_focus(GTK_WIDGET (browser->webView));
 				return TRUE;
 			case GDK_KEY_i:
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(browser->auto_load_images),
 					!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(browser->auto_load_images)));
 				webkit_web_view_reload(browser->webView);
 				return TRUE;
-			case GDK_KEY_l:
-				gtk_widget_grab_focus(browser->location);
-				return TRUE;
 			case GDK_KEY_j:
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(browser->javascript),
 					!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(browser->javascript)));
 				webkit_web_view_reload(browser->webView);
 				return TRUE;
-			case GDK_KEY_q:
-				webkit_web_view_try_close(browser->webView);
+			case GDK_KEY_l:
+				gtk_widget_grab_focus(browser->location);
 				return TRUE;
 			case GDK_KEY_n:
 				nbrowser = new_browser(window,
@@ -235,27 +241,24 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 					gtk_notebook_get_current_page(notebook)+1);
 				}
 				return TRUE;
-			case GDK_KEY_d:
-				open_site_on_new_tab(window, duckUrl, false);
+			case GDK_KEY_p:
+				webkit_print_operation_run_dialog(webkit_print_operation_new(browser->webView),
+				                                  GTK_WINDOW(browser->window));
 				return TRUE;
-			case GDK_KEY_x:
-				open_site_on_new_tab(window, searxUrl, false);
+			case GDK_KEY_q:
+				webkit_web_view_try_close(browser->webView);
+				return TRUE;
+			case GDK_KEY_r:
+				if(((GdkEventKey *)event)->state & GDK_SHIFT_MASK)
+					webkit_web_view_reload_bypass_cache(browser->webView);
+				else
+					webkit_web_view_reload(browser->webView);
 				return TRUE;
 			case GDK_KEY_w:
 				webkit_web_view_try_close(browser->webView);
 				return TRUE;
-			case GDK_KEY_plus:
-				zoom = webkit_web_view_get_zoom_level(WEBKIT_WEB_VIEW(browser->webView));
-				zoom += zoom * 0.1;
-				webkit_web_view_set_zoom_level(WEBKIT_WEB_VIEW(browser->webView), zoom);
-				return TRUE;
-			case GDK_KEY_minus:
-				zoom = webkit_web_view_get_zoom_level(WEBKIT_WEB_VIEW(browser->webView));
-				zoom += zoom * -0.1;
-				webkit_web_view_set_zoom_level(WEBKIT_WEB_VIEW(browser->webView), zoom);
-				return TRUE;
-			case GDK_KEY_Tab:
-				goto_next_tab(notebook);
+			case GDK_KEY_x:
+				open_site_on_new_tab(window, searxUrl, false);
 				return TRUE;
 			case GDK_KEY_z:
 				web_view_get_selected_text(WEBKIT_WEB_VIEW(browser->webView), window);
@@ -272,20 +275,20 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 			case GDK_KEY_Page_Up:
 				gtk_notebook_prev_page(notebook);
 				return TRUE;
-			case GDK_KEY_t:
-				badwolf_new_tab(notebook, new_browser(window, NULL, NULL), TRUE);
+			case GDK_KEY_Tab:
+				goto_next_tab(notebook);
 				return TRUE;
 			case GDK_KEY_d:
 				open_site_on_new_tab(window, duckUrl, false);
 				return TRUE;
-			case GDK_KEY_x:
-				open_site_on_new_tab(window, searxUrl, false);
-				return TRUE;
 			case GDK_KEY_q:
 				gtk_main_quit();
 				return TRUE;
-			case GDK_KEY_Tab:
-				goto_next_tab(notebook);
+			case GDK_KEY_t:
+				badwolf_new_tab(notebook, new_browser(window, NULL, NULL), TRUE);
+				return TRUE;
+			case GDK_KEY_x:
+				open_site_on_new_tab(window, searxUrl, false);
 				return TRUE;
 			}
 		}
@@ -315,8 +318,8 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 	{
 		switch(((GdkEventKey *)event)->keyval)
 		{
-		case GDK_KEY_F5: webkit_web_view_reload(browser->webView); return TRUE;
 		case GDK_KEY_Escape: webkit_web_view_stop_loading(browser->webView); return TRUE;
+		case GDK_KEY_F5: webkit_web_view_reload(browser->webView); return TRUE;
 		case GDK_KEY_F7: toggle_caret_browsing(browser->webView); return TRUE;
 		case GDK_KEY_F12:
 			webkit_web_inspector_show(webkit_web_view_get_inspector(browser->webView));
