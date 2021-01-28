@@ -66,7 +66,6 @@ static gboolean javascriptCb_toggled(GtkButton *javascript, gpointer user_data);
 static gboolean auto_load_imagesCb_toggled(GtkButton *auto_load_images, gpointer user_data);
 static void backCb_clicked(GtkButton *back, gpointer user_data);
 static void forwardCb_clicked(GtkButton *forward, gpointer user_data);
-//static void printCb_clicked(GtkButton *forward, gpointer user_data);
 static gboolean SearchEntryCb_next__match(GtkSearchEntry *search, gpointer user_data);
 static gboolean SearchEntryCb_previous__match(GtkSearchEntry *search, gpointer user_data);
 static gboolean SearchEntryCb_search__changed(GtkSearchEntry *search, gpointer user_data);
@@ -538,17 +537,6 @@ forwardCb_clicked(GtkButton *forward, gpointer user_data)
 	webkit_web_view_go_forward(browser->webView);
 }
 
-/*static void
-printCb_clicked(GtkButton *print, gpointer user_data)
-{
-	(void)print;
-	struct Client *browser = (struct Client *)user_data;
-
-	WebKitPrintOperation *print_operation = webkit_print_operation_new(browser->webView);
-
-	webkit_print_operation_run_dialog(print_operation, GTK_WINDOW(browser->window));
-}*/
-
 static gboolean
 SearchEntryCb_next__match(GtkSearchEntry *search, gpointer user_data)
 {
@@ -692,10 +680,6 @@ new_browser(struct Window *window, const gchar *target_url, WebKitWebView *relat
 	browser->location = gtk_entry_new();
 	gtk_widget_set_name(browser->location, "browser__location");
 
-	/*GtkWidget *print =
-	    gtk_button_new_from_icon_name("document-print-symbolic", GTK_ICON_SIZE_SMALL_TOOLBAR);
-	gtk_widget_set_name(browser->back, "browser__print");*/
-
 	browser->statusbar = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_widget_set_name(browser->statusbar, "browser__statusbar");
 	browser->search = gtk_search_entry_new();
@@ -769,7 +753,6 @@ new_browser(struct Window *window, const gchar *target_url, WebKitWebView *relat
 	                   TRUE,
 	                   TRUE,
 	                   BADWOLF_TOOLBAR_PADDING);
-	//gtk_box_pack_start(GTK_BOX(browser->toolbar), print, FALSE, FALSE, BADWOLF_TOOLBAR_PADDING);
 
 	gtk_container_set_focus_child(GTK_CONTAINER(browser->box), browser->toolbar);
 	gtk_container_set_focus_child(GTK_CONTAINER(browser->toolbar), browser->location);
@@ -839,12 +822,6 @@ new_browser(struct Window *window, const gchar *target_url, WebKitWebView *relat
 
 	/* signals for location entry widget */
 	g_signal_connect(browser->location, "activate", G_CALLBACK(locationCb_activate), browser);
-
-	/* signals for print button */
-	//g_signal_connect(print, "clicked", G_CALLBACK(printCb_clicked), browser);
-	/* prevents GtkNotebook from spawning it's context-menu */
-	//g_signal_connect(print, "button-press-event", G_CALLBACK(widgetCb_drop_button3_event), NULL);
-	//g_signal_connect(print, "button-release-event", G_CALLBACK(widgetCb_drop_button3_event), NULL);
 
 	/* signals for WebView widget */
 	g_signal_connect(browser->webView,
