@@ -21,7 +21,7 @@ Ctrl+0      | Use 100% zoom factor
 Ctrl+plus   | Increase zoom factor by 10%
 Ctrl+minus  | Decrease zoom factor by 10%
 Ctrl+Tab    | Switch to the next tab
-Ctrl+D      | Open "https://lite.duckduckgo.com" in new tab
+Ctrl+D      | Open https://lite.duckduckgo.com in new tab
 Ctrl+F      | Goto search widget
 Ctrl+G      | Find next
 Ctrl+H		| Return focus to page
@@ -35,7 +35,7 @@ Ctrl+R      | Reload page
 Ctrl+Shift+G| Find previous
 Ctrl+T      | Open new empty tab
 Ctrl+W      | Close current tab
-Ctrl+X      | Open "https://searx.info" in new tab
+Ctrl+X      | Open https://searx.info in new tab
 
 ## Manual Installation
 Dependencies are:
