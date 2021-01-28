@@ -24,6 +24,7 @@ Ctrl+Tab    | Switch to the next tab
 Ctrl+D      | Open "https://lite.duckduckgo.com" in new tab
 Ctrl+F      | Goto search widget
 Ctrl+G      | Find next
+Ctrl+H		| Return focus to page
 Ctrl+I      | Toggle show images on/off
 Ctrl+J      | Toggle enable javascript on/off
 Ctrl+L      | Goto location widget
