@@ -285,7 +285,7 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 				gtk_main_quit();
 				return TRUE;
 			case GDK_KEY_t:
-				badwolf_new_tab(notebook, new_browser(window, NULL, NULL), TRUE);
+        badwolf_new_tab(notebook, new_browser(window, NULL, NULL), TRUE);
 				return TRUE;
 			case GDK_KEY_x:
 				open_site_on_new_tab(window, searxUrl, false);

@@ -610,20 +610,21 @@ WebViewCb_button_press_event(GtkWidget *widget, GdkEvent  *event, gpointer user_
 	struct Client *oldBrowser = (struct Client *)user_data;
 	gboolean jsEnabled = gtk_toggle_button_get_active((GtkToggleButton *)oldBrowser->javascript);
 	gboolean imgEnabled = gtk_toggle_button_get_active((GtkToggleButton *)oldBrowser->auto_load_images); 
-	struct Client *browser = NULL;
-	browser =  new_browser(oldBrowser->window, 
+  struct Client *browser = new_browser(oldBrowser->window,
 		gtk_label_get_text(GTK_LABEL(oldBrowser->statuslabel)), NULL);
 
 	// Button3 being right-click on right-handed mode, left-click on left-handed mode
 	if(((GdkEventButton *)event)->button == 2)
 	{
-		gint newtab=badwolf_new_tab(GTK_NOTEBOOK(oldBrowser->window->notebook), browser, FALSE);
+    if (strlen(gtk_label_get_text(GTK_LABEL(oldBrowser->statuslabel)))==0) return FALSE;
+
+    gint newtab=badwolf_new_tab(GTK_NOTEBOOK(oldBrowser->window->notebook), browser, FALSE);
 		if(newtab == 0)
 		{
-			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(browser->javascript), jsEnabled);
+      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(browser->javascript), jsEnabled);
 			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(browser->auto_load_images), imgEnabled);
-			gtk_notebook_set_current_page(GTK_NOTEBOOK(oldBrowser->window->notebook),
-			gtk_notebook_get_current_page(GTK_NOTEBOOK(oldBrowser->window->notebook))+1);
+      //gtk_notebook_next_page(GTK_NOTEBOOK(oldBrowser->window->notebook));
+      //gtk_widget_grab_focus(GTK_WIDGET(browser->webView));
 		}
 
 		return TRUE;
@@ -687,7 +688,7 @@ new_browser(struct Window *window, const gchar *target_url, WebKitWebView *relat
 	browser->statuslabel = gtk_label_new(NULL);
 	gtk_widget_set_name(browser->statuslabel, "browser__statuslabel");
 
-	setenv("GTK_THEME", ":light", 0);
+  setenv("GTK_THEME", ":light", 0);
 
 	WebKitWebContext *web_context = webkit_web_context_new_ephemeral();
 	webkit_web_context_set_sandbox_enabled(web_context, TRUE);
