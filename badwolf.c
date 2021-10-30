@@ -951,6 +951,13 @@ int
 main(int argc, char *argv[])
 {
 	struct Window *window = &(struct Window){NULL, NULL, NULL, NULL};
+
+	GApplication *application;
+	application = g_application_new("me.hacktivis.badwolf",
+	                                G_APPLICATION_HANDLES_COMMAND_LINE |
+	                                    G_APPLICATION_SEND_ENVIRONMENT | G_APPLICATION_NON_UNIQUE);
+	g_application_register(application, NULL, NULL);
+
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, DATADIR "/locale");
 	bind_textdomain_codeset(PACKAGE, "UTF-8");
