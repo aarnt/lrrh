@@ -623,8 +623,9 @@ WebViewCb_button_press_event(GtkWidget *widget, GdkEvent  *event, gpointer user_
 		{
       gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(browser->javascript), jsEnabled);
 			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(browser->auto_load_images), imgEnabled);
-      //gtk_notebook_next_page(GTK_NOTEBOOK(oldBrowser->window->notebook));
-      //gtk_widget_grab_focus(GTK_WIDGET(browser->webView));
+
+      gint curr = gtk_notebook_get_current_page(GTK_NOTEBOOK(oldBrowser->window->notebook));
+      gtk_notebook_set_current_page(GTK_NOTEBOOK(oldBrowser->window->notebook), curr+1);
 		}
 
 		return TRUE;

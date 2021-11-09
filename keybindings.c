@@ -68,6 +68,19 @@ toggle_caret_browsing(WebKitWebView *webView)
 }
 
 /*
+ * Goto the previous tab in notebook. If current is the second one, goto the last tab!
+ */
+static void
+goto_prev_tab(GtkNotebook *notebook)
+{
+  gint npages = gtk_notebook_get_n_pages(notebook);
+  gint curr = gtk_notebook_get_current_page(notebook);
+  if (curr-1 == 0)
+    gtk_notebook_set_current_page(notebook, npages-1);
+  else gtk_notebook_prev_page(notebook);
+}
+
+/*
  * Goto the next tab in notebook. If current is the last one, goto the second tab!
  */
 static void
@@ -177,7 +190,19 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 	const gchar *duckUrl = "https://lite.duckduckgo.com";
 	const gchar *searxUrl = "https://searx.info";
 
-	if(((GdkEventKey *)event)->state & GDK_CONTROL_MASK)
+  if((((GdkEventKey *)event)->state & (GDK_CONTROL_MASK | GDK_SHIFT_MASK)) == (GDK_CONTROL_MASK | GDK_SHIFT_MASK))
+  {
+    if(browser != NULL)
+    {
+      switch(((GdkEventKey *)event)->keyval)
+      {
+      case GDK_KEY_ISO_Left_Tab:
+        goto_prev_tab(notebook);
+        return TRUE;
+      }
+    }
+  }
+  else if(((GdkEventKey *)event)->state & GDK_CONTROL_MASK)
 	{
 		if(browser != NULL)
 		{
@@ -293,8 +318,7 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 			}
 		}
 	}
-
-	if((((GdkEventKey *)event)->state & GDK_MOD1_MASK))
+  else if((((GdkEventKey *)event)->state & GDK_MOD1_MASK))
 	{
 		if(browser != NULL)
 		{
