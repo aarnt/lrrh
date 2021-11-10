@@ -189,7 +189,7 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 	gdouble zoom = 0;
 	const gchar *duckUrl = "https://lite.duckduckgo.com";
 	const gchar *searxUrl = "https://searx.info";
-  //GdkClipboard *clipboard;
+  gchar *statusLabel = NULL;
 
   if((((GdkEventKey *)event)->state & (GDK_CONTROL_MASK | GDK_SHIFT_MASK)) == (GDK_CONTROL_MASK | GDK_SHIFT_MASK))
   {
@@ -232,7 +232,7 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 				goto_next_tab(notebook);
 				return TRUE;
       case GDK_KEY_c:
-        gchar *statusLabel = strdup(gtk_label_get_text(GTK_LABEL(browser->statuslabel)));
+        statusLabel = strdup(gtk_label_get_text(GTK_LABEL(browser->statuslabel)));
         if (statusLabel != NULL)
         {
           /* Set clipboard text */
