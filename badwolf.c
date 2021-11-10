@@ -365,6 +365,20 @@ WebViewCb_load_changed(WebKitWebView *webView, WebKitLoadEvent load_event, gpoin
 
 	gtk_widget_set_sensitive(browser->back, webkit_web_view_can_go_back(browser->webView));
 	gtk_widget_set_sensitive(browser->forward, webkit_web_view_can_go_forward(browser->webView));
+
+  switch (load_event)
+  {
+  case WEBKIT_LOAD_STARTED:
+    break;
+  case WEBKIT_LOAD_REDIRECTED:
+    break;
+  case WEBKIT_LOAD_COMMITTED:
+    break;
+  case WEBKIT_LOAD_FINISHED:
+    /* Load finished, we can now setfocus on webview */
+    gtk_widget_grab_focus(GTK_WIDGET(webView));
+    break;
+  }
 }
 
 static char *
