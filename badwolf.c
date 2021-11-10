@@ -475,10 +475,42 @@ web_contextCb_download_started(WebKitWebContext *web_context,
 	                 user_data);
 }
 
+/*
+ * Opens givenUrl on the external application user has configured in his system
+ *
+ * returns TRUE if the url was one of the supported protocols, otherwise returns FALSE
+ */
+static gboolean
+openProtocolOnExternalApp(gchar *givenUrl)
+{
+  gchar *url = g_strdup(givenUrl);
+  gchar *urlcmp = g_utf8_substring(url, 0, 9);
+  gchar *argv[3] = {NULL, NULL, NULL};
+  argv[0] = "xdg-open";
+
+  if (strcmp(urlcmp, "gemini://") == 0)
+  {
+    argv[1] = url;
+    g_spawn_async(NULL, argv, NULL, G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, NULL);
+    free(url);
+    free(urlcmp);
+    return TRUE;
+  }
+
+  free(url);
+  free(urlcmp);
+  return FALSE;
+}
+
 static gboolean
 locationCb_activate(GtkEntry *location, gpointer user_data)
 {
-	struct Client *browser = (struct Client *)user_data;
+  if (openProtocolOnExternalApp(g_strdup(gtk_entry_get_text(location))))
+  {
+    return TRUE;
+  }
+
+  struct Client *browser = (struct Client *)user_data;
 
 	webkit_web_view_load_uri(browser->webView,
 	                         badwolf_ensure_uri_scheme(gtk_entry_get_text(location), TRUE));
@@ -647,14 +679,17 @@ widgetCb_drop_button3_event(GtkWidget *widget, GdkEvent *event, gpointer user_da
 struct Client *
 new_browser(struct Window *window, const gchar *target_url, WebKitWebView *related_web_view)
 {
-	struct Client *browser = malloc(sizeof(struct Client));
-	target_url             = badwolf_ensure_uri_scheme(target_url, (related_web_view == NULL));
-	char *badwolf_l10n     = NULL;
+  target_url = badwolf_ensure_uri_scheme(target_url, (related_web_view == NULL));
+
+  if (openProtocolOnExternalApp(strdup(target_url))) return NULL;
+
+  struct Client *browser = malloc(sizeof(struct Client));
+  char *badwolf_l10n = NULL;
 
 	if(browser == NULL) return NULL;
 
 	browser->window = window;
-	browser->box    = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+  browser->box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	gtk_widget_set_name(browser->box, "browser__box");
 
 	browser->toolbar = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);

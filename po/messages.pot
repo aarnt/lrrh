@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Badwolf 1.0.3+gb3cd35b.main\n"
+"Project-Id-Version: Badwolf 1.0.3+gca3a405.main\n"
 "Report-Msgid-Bugs-To: contact+badwolf-msgid@hacktivis.me\n"
-"POT-Creation-Date: 2021-11-09 17:51-0300\n"
+"POT-Creation-Date: 2021-11-10 10:21-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,7 +37,7 @@ msgstr ""
 msgid "%02i:%02i:%02i Downloading…"
 msgstr ""
 
-#: badwolf.c:971
+#: badwolf.c:1006
 #, c-format
 msgid "Buildtime WebKit version: %d.%d.%d\n"
 msgstr ""
@@ -104,11 +104,11 @@ msgid ""
 "Runtime WebKit version: %d.%d.%d"
 msgstr ""
 
-#: badwolf.c:899
+#: badwolf.c:934
 msgid "New tab"
 msgstr ""
 
-#: badwolf.c:1020
+#: badwolf.c:1055
 msgid "Open new tab"
 msgstr ""
 
@@ -116,12 +116,12 @@ msgstr ""
 msgid "Out of Memory"
 msgstr ""
 
-#: badwolf.c:969
+#: badwolf.c:1004
 #, c-format
 msgid "Running Badwolf version: %s\n"
 msgstr ""
 
-#: badwolf.c:976
+#: badwolf.c:1011
 #, c-format
 msgid "Runtime WebKit version: %d.%d.%d\n"
 msgstr ""
@@ -135,11 +135,11 @@ msgstr ""
 msgid "Temporarily Add Exception"
 msgstr ""
 
-#: badwolf.c:674
+#: badwolf.c:709
 msgid "Toggle javascript"
 msgstr ""
 
-#: badwolf.c:679
+#: badwolf.c:714
 msgid "Toggle loading images automatically"
 msgstr ""
 
@@ -147,15 +147,15 @@ msgstr ""
 msgid "Unknown Crash"
 msgstr ""
 
-#: badwolf.c:677
+#: badwolf.c:712
 msgid "_IMG"
 msgstr ""
 
-#: badwolf.c:672
+#: badwolf.c:707
 msgid "_JS"
 msgstr ""
 
-#: badwolf.c:789
+#: badwolf.c:824
 msgid "search in current page"
 msgstr ""
 
@@ -171,12 +171,12 @@ msgstr ""
 msgid "the web process terminated for an unknown reason.\n"
 msgstr ""
 
-#: badwolf.c:983
+#: badwolf.c:1018
 #, c-format
 msgid "webkit-web-extension directory set to: %s\n"
 msgstr ""
 
 #. TRANSLATOR Ignore this entry. Done for forcing Unicode in xgettext.
-#: badwolf.c:1066
+#: badwolf.c:1101
 msgid "ø"
 msgstr ""
