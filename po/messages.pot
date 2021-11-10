@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Badwolf 1.0.3+gca3a405.main\n"
+"Project-Id-Version: Badwolf 1.0.3+g60c3d77.main\n"
 "Report-Msgid-Bugs-To: contact+badwolf-msgid@hacktivis.me\n"
-"POT-Creation-Date: 2021-11-10 10:21-0300\n"
+"POT-Creation-Date: 2021-11-10 11:31-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
