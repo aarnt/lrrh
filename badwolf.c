@@ -373,10 +373,10 @@ WebViewCb_load_changed(WebKitWebView *webView, WebKitLoadEvent load_event, gpoin
   case WEBKIT_LOAD_REDIRECTED:
     break;
   case WEBKIT_LOAD_COMMITTED:
+    /* Load commited, we can now set the focus on webview */
+    gtk_widget_grab_focus(GTK_WIDGET(webView));
     break;
   case WEBKIT_LOAD_FINISHED:
-    /* Load finished, we can now setfocus on webview */
-    gtk_widget_grab_focus(GTK_WIDGET(webView));
     break;
   }
 }
