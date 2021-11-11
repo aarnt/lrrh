@@ -3,9 +3,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 #include "keybindings.h"
-
 #include "badwolf.h"
-
 #include <glib/gi18n.h> /* _() */
 
 static void open_site_on_new_tab(struct Window *window, const gchar *url, gboolean jsEnabled);
@@ -17,7 +15,6 @@ about_dialogCb_activate_link(GtkAboutDialog *about_dialog, gchar *uri, gpointer 
 	struct Window *window = (struct Window *)user_data;
 
 	badwolf_new_tab(GTK_NOTEBOOK(window->notebook), new_browser(window, uri, NULL), FALSE);
-
 	gtk_widget_destroy(GTK_WIDGET(about_dialog));
 
 	return TRUE;
@@ -188,7 +185,6 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 	struct Client *nbrowser = NULL;
 	gdouble zoom = 0;
 	const gchar *duckUrl = "https://lite.duckduckgo.com";
-	const gchar *searxUrl = "https://searx.info";
 	gchar *statusLabel = NULL;
 
 	if((((GdkEventKey *)event)->state & (GDK_CONTROL_MASK | GDK_SHIFT_MASK)) == (GDK_CONTROL_MASK | GDK_SHIFT_MASK))
@@ -291,9 +287,6 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 			case GDK_KEY_w:
 				webkit_web_view_try_close(browser->webView);
 				return TRUE;
-			case GDK_KEY_x:
-				open_site_on_new_tab(window, searxUrl, false);
-				return TRUE;
 			case GDK_KEY_z:
 				web_view_get_selected_text(WEBKIT_WEB_VIEW(browser->webView), window);
 				return TRUE;
@@ -320,9 +313,6 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 				return TRUE;
 			case GDK_KEY_t:
         badwolf_new_tab(notebook, new_browser(window, NULL, NULL), TRUE);
-				return TRUE;
-			case GDK_KEY_x:
-				open_site_on_new_tab(window, searxUrl, false);
 				return TRUE;
 			}
 		}
@@ -352,7 +342,8 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 		switch(((GdkEventKey *)event)->keyval)
 		{
 		case GDK_KEY_Escape: webkit_web_view_stop_loading(browser->webView); return TRUE;
-		case GDK_KEY_F5: webkit_web_view_reload(browser->webView); return TRUE;
+    case GDK_KEY_F4: toggle_dark_mode(browser->webView); return TRUE;
+    case GDK_KEY_F5: webkit_web_view_reload(browser->webView); return TRUE;
 		case GDK_KEY_F7: toggle_caret_browsing(browser->webView); return TRUE;
 		case GDK_KEY_F12:
 			webkit_web_inspector_show(webkit_web_view_get_inspector(browser->webView));

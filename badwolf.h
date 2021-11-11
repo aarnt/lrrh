@@ -35,6 +35,7 @@ struct Client
 };
 
 GtkWidget *badwolf_new_tab_box(const gchar *title, struct Client *browser);
+void toggle_dark_mode(WebKitWebView *web_view);
 void webView_tab_label_change(struct Client *browser, const gchar *title);
 struct Client *
 new_browser(struct Window *window, const gchar *target_url, WebKitWebView *related_web_view);

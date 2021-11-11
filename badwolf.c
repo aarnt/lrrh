@@ -8,6 +8,7 @@
 #include "downloads.h"
 #include "keybindings.h"
 #include "uri.h"
+#include "time.h"
 
 #include <glib/gi18n.h>   /* _() and other internationalization/localization helpers */
 #include <libsoup/soup.h> /* soup* */
@@ -19,6 +20,8 @@
 gchar *web_extensions_directory;
 const gchar *homepage = "https://hacktivis.me/projects/badwolf";
 const gchar *version  = VERSION;
+gboolean g_dark_mode = FALSE;
+static gchar *source = "a { color: lightgreen !important; } body, form, h1, h2, h3, h4, h5, div, iframe, input, label, li, option, p, pre, root, select, span, table, td, th, tr, ul  { background: none !important; background-color: #212529 !important; color: #899095 !important; }";
 
 static gboolean WebViewCb_close(WebKitWebView *webView, gpointer user_data);
 
@@ -313,7 +316,7 @@ WebViewCb_create(WebKitWebView *related_web_view,
 	  return NULL;
 	}
 
-	return browser->webView;
+  return browser->webView;
 }
 
 static gboolean
@@ -784,6 +787,7 @@ new_browser(struct Window *window, const gchar *target_url, WebKitWebView *relat
 	                                                "settings",
 	                                                settings,
 	                                                NULL));
+
 	gtk_widget_set_name(GTK_WIDGET(browser->webView), "browser__webView");
 	g_object_unref(web_context);
 	g_object_unref(settings);
@@ -943,6 +947,39 @@ new_browser(struct Window *window, const gchar *target_url, WebKitWebView *relat
 	return browser;
 }
 
+void
+toggle_dark_mode(WebKitWebView *web_view)
+{
+  g_dark_mode = !g_dark_mode;
+  WebKitUserContentManager *ucm;
+  WebKitUserStyleSheet *style;
+
+  if (g_dark_mode == TRUE)
+  {
+    ucm = webkit_web_view_get_user_content_manager(web_view);
+    if (ucm != NULL)
+    {
+      style = webkit_user_style_sheet_new(
+                    source, WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES,
+                    WEBKIT_USER_STYLE_LEVEL_USER, NULL, NULL);
+
+      webkit_user_content_manager_add_style_sheet(ucm, style);
+      webkit_user_style_sheet_unref(style);
+      //g_free(source);
+    }
+  }
+  else
+  {
+    ucm = webkit_web_view_get_user_content_manager(web_view);
+    if (ucm != NULL)
+    {
+      webkit_user_content_manager_remove_all_style_sheets(ucm);
+    }
+  }
+
+  webkit_web_view_reload(web_view);
+}
+
 /* badwolf_new_tab: Inserts struct Client *browser in GtkNotebook *notebook 
  * and optionally switches selected tab to it.
  *
@@ -974,6 +1011,28 @@ badwolf_new_tab(GtkNotebook *notebook, struct Client *browser, bool auto_switch)
 	{
 		gtk_notebook_set_current_page(notebook, gtk_notebook_page_num(notebook, browser->box));
 	}
+
+  WebKitUserContentManager *ucm;
+  WebKitUserStyleSheet *style;
+
+  ucm = webkit_web_view_get_user_content_manager(browser->webView);
+  if (ucm != NULL)
+  {
+    if (g_dark_mode)
+    {
+      style = webkit_user_style_sheet_new(
+                  source, WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES,
+                  WEBKIT_USER_STYLE_LEVEL_USER, NULL, NULL);
+
+      webkit_user_content_manager_add_style_sheet(ucm, style);
+      webkit_user_style_sheet_unref(style);
+      //gfree(style);
+    }
+    else
+    {
+      webkit_user_content_manager_remove_all_style_sheets(ucm);
+    }
+  }
 
 	return 0;
 }
@@ -1038,6 +1097,11 @@ main(int argc, char *argv[])
 	        webkit_get_minor_version(),
 	        webkit_get_micro_version());
 
+  //Let's check current time to see if we need to toggle dark_mode ON...
+  time_t t = time(NULL);
+  struct tm tm = *localtime(&t);
+  if (tm.tm_hour > 18 || tm.tm_hour < 7) g_dark_mode = TRUE;
+
 	web_extensions_directory =
 	    g_build_filename(g_get_user_data_dir(), "badwolf", "webkit-web-extension", NULL);
 	fprintf(stderr, _("webkit-web-extension directory set to: %s\n"), web_extensions_directory);
@@ -1053,7 +1117,8 @@ main(int argc, char *argv[])
 	gtk_window_set_icon_name(GTK_WINDOW(window->main_window), "badwolf");
 
 	gchar *provider_path_app = g_build_filename(DATADIR, "interface.css", NULL);
-	if(access(provider_path_app, R_OK) == 0)
+
+  if(access(provider_path_app, R_OK) == 0)
 	{
 		GtkCssProvider *css_provider_app = gtk_css_provider_new();
 		gtk_css_provider_load_from_path(css_provider_app, provider_path_app, NULL);

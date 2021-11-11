@@ -2,7 +2,7 @@
 
 ![Main window](https://raw.githubusercontent.com/aarnt/lrrh/master/lrrh-mainwindow.png)
 
-LRRH is a [BadWolf](https://hacktivis.me/projects/badwolf) derived browser with *sane keybindings*, middle mouse click to open hyperlinks on new tabs and Gemini/Gopher protocol support (trough external aplications).
+LRRH is a [BadWolf](https://hacktivis.me/projects/badwolf) derived browser with *sane keybindings*, dark mode support, middle mouse click to open hyperlinks on new tabs and Gemini/Gopher protocol support (trough external aplications).
 
 
 It stands for "Little Red Riding Hood", an European fairy tale about a young girl and a Big Bad Wolf.
@@ -14,6 +14,7 @@ Key           | Action
 --            | --
 Esc           | Stop loading page / Clear search field and return focus to page
 F1            | Show about LRRH
+F4            | Toggle Dark Mode on/off
 F5            | Reload page
 F12           | Show inspector view
 Alt+(1 to 9)  | Goto first, second, third.. nineth tab
@@ -39,7 +40,6 @@ Ctrl+Shift+C  | Copy statusbar text (hyperlink) to clipboard
 Ctrl+Shift+G  | Find previous
 Ctrl+T        | Open new empty tab
 Ctrl+W        | Close current tab
-Ctrl+X        | Open https://searx.info in new tab
 Ctrl+Z        | Translate selected text to pt-br using Google Translator
 
 ## Manual Installation
