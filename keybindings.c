@@ -44,7 +44,7 @@ badwolf_about_dialog(GtkWindow *main_window, gpointer user_data)
 	                             "SPDX-License-Identifier: BSD-3-Clause");
 	gtk_about_dialog_set_copyright(
 	    GTK_ABOUT_DIALOG(about_dialog),
-	    "2019-2020 Badwolf Authors <https://hacktivis.me/projects/badwolf>\n2021 Alexandre A Arnt");
+      "2019-2021 Badwolf Authors <https://hacktivis.me/projects/badwolf>\n2021 Alexandre A Arnt");
 	gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(about_dialog), homepage);
 	gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about_dialog), comments);
 	gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about_dialog), version);
@@ -205,7 +205,10 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 				zoom += zoom * 0.1;
 				webkit_web_view_set_zoom_level(WEBKIT_WEB_VIEW(browser->webView), zoom);
 				return TRUE;
-      			}
+      case GDK_KEY_r:
+        webkit_web_view_reload_bypass_cache(browser->webView);
+        return TRUE;
+      }
 		}
 	}
   	else if(((GdkEventKey *)event)->state & GDK_CONTROL_MASK)
@@ -283,10 +286,7 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 				webkit_web_view_try_close(browser->webView);
 				return TRUE;
 			case GDK_KEY_r:
-				if(((GdkEventKey *)event)->state & GDK_SHIFT_MASK)
-					webkit_web_view_reload_bypass_cache(browser->webView);
-				else
-					webkit_web_view_reload(browser->webView);
+        webkit_web_view_reload(browser->webView);
 				return TRUE;
 			case GDK_KEY_w:
 				webkit_web_view_try_close(browser->webView);
