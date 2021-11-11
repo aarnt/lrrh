@@ -502,7 +502,7 @@ openProtocolOnExternalApp(gchar *givenUrl)
   gchar *argv[3] = {NULL, NULL, NULL};
   argv[0] = "xdg-open";
 
-  if (strcmp(urlcmp, "gemini://") == 0 || strcmp(urlcmp, "gopher://") == 0)
+  if (urlcmp != NULL && strlen(urlcmp) == 9 && (strcmp(urlcmp, "gemini://") == 0 || strcmp(urlcmp, "gopher://") == 0))
   {
     argv[1] = url;
     g_spawn_async(NULL, argv, NULL, G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, NULL);
