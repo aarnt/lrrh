@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Badwolf 1.0.3+g38c341f.main\n"
+"Project-Id-Version: Badwolf 1.0.3+gfef9002.main\n"
 "Report-Msgid-Bugs-To: contact+badwolf-msgid@hacktivis.me\n"
-"POT-Creation-Date: 2021-11-11 12:29-0300\n"
+"POT-Creation-Date: 2021-11-11 14:23-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -35,6 +35,13 @@ msgstr ""
 #: downloads.c:167
 #, c-format
 msgid "%02i:%02i:%02i Downloading…"
+msgstr ""
+
+#: keybindings.c:34
+#, c-format
+msgid ""
+"Another tiny & fast & functional WebKitGTK browser\n"
+"Runtime WebKit version: %d.%d.%d"
 msgstr ""
 
 #: badwolf.c:1031
@@ -95,13 +102,6 @@ msgstr ""
 
 #: downloads.c:216 downloads.c:219
 msgid "LRRH Downloads"
-msgstr ""
-
-#: keybindings.c:34
-#, c-format
-msgid ""
-"Minimalist and privacy-oriented WebKitGTK+ browser\n"
-"Runtime WebKit version: %d.%d.%d"
 msgstr ""
 
 #: badwolf.c:959

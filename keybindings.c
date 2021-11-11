@@ -31,7 +31,7 @@ badwolf_about_dialog(GtkWindow *main_window, gpointer user_data)
 
 	char *comments = NULL;
 
-	comments = g_strdup_printf(_("Minimalist and privacy-oriented WebKitGTK+ browser\n"
+  comments = g_strdup_printf(_("Another tiny & fast & functional WebKitGTK browser\n"
 	                             "Runtime WebKit version: %d.%d.%d"),
 	                           webkit_get_major_version(),
 	                           webkit_get_minor_version(),
