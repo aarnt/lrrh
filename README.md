@@ -3,6 +3,8 @@
 ![Main window](https://raw.githubusercontent.com/aarnt/lrrh/master/lrrh-mainwindow.png)
 
 LRRH is a [BadWolf](https://hacktivis.me/projects/badwolf) derived browser with *sane keybindings*, middle mouse click to open hyperlinks on new tabs and Gemini/Gopher protocol support (trough external aplications).
+
+
 It stands for "Little Red Riding Hood", an European fairy tale about a young girl and a Big Bad Wolf.
 
 
