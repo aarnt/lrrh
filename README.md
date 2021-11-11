@@ -24,7 +24,6 @@ Ctrl+plus     | Increase zoom factor by 10%
 Ctrl+minus    | Decrease zoom factor by 10%
 Ctrl+Tab      | Switch to the next tab
 Ctrl+Shift+Tab| Switch to the previous tab
-Ctrl+C        | Copy statusbar text (hyperlink) to clipboard
 Ctrl+D        | Open https://lite.duckduckgo.com in new tab
 Ctrl+F        | Goto search widget
 Ctrl+G        | Find next
@@ -36,6 +35,7 @@ Ctrl+N        | Open link in new tab
 Ctrl+P        | Show print dialog
 Ctrl+Q        | Quit LRRH
 Ctrl+R        | Reload page
+Ctrl+Shift+C  | Copy statusbar text (hyperlink) to clipboard
 Ctrl+Shift+G  | Find previous
 Ctrl+T        | Open new empty tab
 Ctrl+W        | Close current tab

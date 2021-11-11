@@ -197,10 +197,18 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 		{
 			switch(((GdkEventKey *)event)->keyval)
 			{
-			case GDK_KEY_ISO_Left_Tab:
+      case GDK_KEY_C:
+        statusLabel = strdup(gtk_label_get_text(GTK_LABEL(browser->statuslabel)));
+        if (statusLabel != NULL)
+        {
+          /* Set clipboard text */
+          gtk_clipboard_set_text(gtk_widget_get_clipboard(GTK_WIDGET(browser->webView), GDK_SELECTION_CLIPBOARD), statusLabel, -1);
+        }
+        return TRUE;
+      case GDK_KEY_ISO_Left_Tab:
 				goto_prev_tab(notebook);
 				return TRUE;
-			case GDK_KEY_plus:
+      case GDK_KEY_plus:
 				zoom = webkit_web_view_get_zoom_level(WEBKIT_WEB_VIEW(browser->webView));
 				zoom += zoom * 0.1;
 				webkit_web_view_set_zoom_level(WEBKIT_WEB_VIEW(browser->webView), zoom);
@@ -233,14 +241,6 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 				return TRUE;
 			case GDK_KEY_Tab:
 				goto_next_tab(notebook);
-				return TRUE;
-			case GDK_KEY_c:
-				statusLabel = strdup(gtk_label_get_text(GTK_LABEL(browser->statuslabel)));
-				if (statusLabel != NULL)
-				{
-					/* Set clipboard text */
-					gtk_clipboard_set_text(gtk_widget_get_clipboard(GTK_WIDGET(browser->webView), GDK_SELECTION_CLIPBOARD), statusLabel, -1);
-				}
 				return TRUE;
 			case GDK_KEY_d:
 				open_site_on_new_tab(window, duckUrl, false);
