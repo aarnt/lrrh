@@ -361,7 +361,8 @@ WebViewCb_load_changed(WebKitWebView *webView, WebKitLoadEvent load_event, gpoin
 {
 	(void)webView;
 	(void)load_event;
-	struct Client *browser = (struct Client *)user_data;
+  struct Client *browser = (struct Client *)user_data;
+  gchar *location = NULL;
 
 	gtk_widget_set_sensitive(browser->back, webkit_web_view_can_go_back(browser->webView));
 	gtk_widget_set_sensitive(browser->forward, webkit_web_view_can_go_forward(browser->webView));
@@ -373,8 +374,18 @@ WebViewCb_load_changed(WebKitWebView *webView, WebKitLoadEvent load_event, gpoin
   case WEBKIT_LOAD_REDIRECTED:
     break;
   case WEBKIT_LOAD_COMMITTED:
-    /* Load commited, we can now set the focus on webview */
-    gtk_widget_grab_focus(GTK_WIDGET(webView));
+    location = strdup(gtk_entry_get_text(GTK_ENTRY(browser->location)));
+
+    if (strcmp(location, "about:blank") == 0)
+    {
+      //There is no site being displayed, let's focus the location bar
+      gtk_widget_grab_focus(browser->location);
+    }
+    else
+    {
+      //There is a site being displayed, so we can set the focus on webview
+      gtk_widget_grab_focus(GTK_WIDGET(webView));
+    }
     break;
   case WEBKIT_LOAD_FINISHED:
     break;
