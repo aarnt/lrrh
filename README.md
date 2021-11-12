@@ -41,7 +41,7 @@ Ctrl+Shift+G  | Find previous
 Ctrl+Shift+N  | Open link in new tab
 Ctrl+T        | Open new empty tab
 Ctrl+W        | Close current tab
-Ctrl+Z        | Translate selected text to pt-br using Google Translator
+Ctrl+Z        | Translate selected text to the user system LANG using Google Translator
 
 ## Manual Installation
 Dependencies are:
