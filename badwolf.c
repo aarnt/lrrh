@@ -21,11 +21,18 @@ gchar *web_extensions_directory;
 const gchar *homepage = "https://hacktivis.me/projects/badwolf";
 const gchar *version  = VERSION;
 gboolean g_dark_mode = FALSE;
+gboolean g_kiosk_mode = FALSE;
 static gchar *source = "a { color: #40ECD0 !important; }" //lightgreen
     "article, aside, body, blockquote, dd, dl, dt, form, "
     "h1, h2, h3, h4, h5, header, div, iframe, input, label, "
     "li, option, p, pre, root, select, span, table, td, th, tr, ul "
     "{ background: none !important; background-color: #212529 !important; color: #aeb3b7 !important; }"; //#a3aaaf #899095
+
+static gboolean
+openProtocolOnExternalApp(gchar *givenUrl);
+
+static gboolean
+WebViewCb_button_press_event(GtkWidget *widget, GdkEvent  *event, gpointer user_data);
 
 static gboolean WebViewCb_close(WebKitWebView *webView, gpointer user_data);
 
@@ -67,7 +74,6 @@ WebViewCb_load_changed(WebKitWebView *webView, WebKitLoadEvent load_event, gpoin
 static void web_contextCb_download_started(WebKitWebContext *web_context,
                                            WebKitDownload *download,
                                            gpointer user_data);
-
 static gboolean locationCb_activate(GtkEntry *location, gpointer user_data);
 static gboolean javascriptCb_toggled(GtkButton *javascript, gpointer user_data);
 static gboolean auto_load_imagesCb_toggled(GtkButton *auto_load_images, gpointer user_data);
@@ -78,6 +84,7 @@ static gboolean SearchEntryCb_previous__match(GtkSearchEntry *search, gpointer u
 static gboolean SearchEntryCb_search__changed(GtkSearchEntry *search, gpointer user_data);
 static gboolean SearchEntryCb_stop__search(GtkSearchEntry *search, gpointer user_data);
 static gboolean SearchEntryCb_key_press__event(GtkSearchEntry *search, GdkEvent *event, gpointer user_data);
+
 static void new_tabCb_clicked(GtkButton *new_tab, gpointer user_data);
 static void closeCb_clicked(GtkButton *close, gpointer user_data);
 
@@ -363,42 +370,6 @@ WebViewCb_decide_policy(WebKitWebView *web_view,
 	return TRUE;
 }
 
-static void
-WebViewCb_load_changed(WebKitWebView *webView, WebKitLoadEvent load_event, gpointer user_data)
-{
-	(void)webView;
-	(void)load_event;
-  struct Client *browser = (struct Client *)user_data;
-  gchar *location = NULL;
-
-	gtk_widget_set_sensitive(browser->back, webkit_web_view_can_go_back(browser->webView));
-	gtk_widget_set_sensitive(browser->forward, webkit_web_view_can_go_forward(browser->webView));
-
-  switch (load_event)
-  {
-  case WEBKIT_LOAD_STARTED:
-    break;
-  case WEBKIT_LOAD_REDIRECTED:
-    break;
-  case WEBKIT_LOAD_COMMITTED:
-    location = strdup(gtk_entry_get_text(GTK_ENTRY(browser->location)));
-
-    if (strcmp(location, "about:blank") == 0)
-    {
-      //There is no site being displayed, let's focus the location bar
-      gtk_widget_grab_focus(browser->location);
-    }
-    else
-    {
-      //There is a site being displayed, so we can set the focus on webview
-      gtk_widget_grab_focus(GTK_WIDGET(webView));
-    }
-    break;
-  case WEBKIT_LOAD_FINISHED:
-    break;
-  }
-}
-
 static char *
 detail_tls_certificate_flags(GTlsCertificateFlags tls_errors)
 {
@@ -507,52 +478,6 @@ web_contextCb_download_started(WebKitWebContext *web_context,
 	                 user_data);
 }
 
-/*
- * Opens givenUrl on the external application user has configured in his system
- *
- * returns TRUE if the url was one of the supported protocols, otherwise returns FALSE
- */
-static gboolean
-openProtocolOnExternalApp(gchar *givenUrl)
-{
-  gchar *url = g_strdup(givenUrl);
-  gchar *urlcmp = g_utf8_substring(url, 0, 9);
-  gchar *argv[3] = {NULL, NULL, NULL};
-  argv[0] = "xdg-open";
-
-  if (urlcmp != NULL && strlen(urlcmp) == 9 && (strcmp(urlcmp, "gemini://") == 0 || strcmp(urlcmp, "gopher://") == 0))
-  {
-    argv[1] = url;
-    g_spawn_async(NULL, argv, NULL, G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, NULL);
-    free(url);
-    free(urlcmp);
-    return TRUE;
-  }
-
-  free(url);
-  free(urlcmp);
-  return FALSE;
-}
-
-static gboolean
-locationCb_activate(GtkEntry *location, gpointer user_data)
-{
-  if (openProtocolOnExternalApp(g_strdup(gtk_entry_get_text(location))))
-  {
-    return TRUE;
-  }
-
-  struct Client *browser = (struct Client *)user_data;
-
-	webkit_web_view_load_uri(browser->webView,
-	                         badwolf_ensure_uri_scheme(gtk_entry_get_text(location), TRUE));
-
-	if(browser != NULL)
-		gtk_widget_grab_focus (GTK_WIDGET (browser->webView));
-	
-	return TRUE;
-}
-
 static gboolean
 javascriptCb_toggled(GtkButton *javascript, gpointer user_data)
 {
@@ -647,55 +572,6 @@ SearchEntryCb_stop__search(GtkSearchEntry *search, gpointer user_data)
 	webkit_find_controller_search_finish(findController);
 
 	return TRUE;
-}
-
-static gboolean
-SearchEntryCb_key_press__event(GtkSearchEntry *search, GdkEvent *event, gpointer user_data)
-{
-  struct Client *browser = (struct Client *)user_data;
-  if(browser != NULL)
-  {
-    switch(((GdkEventKey *)event)->keyval)
-    {
-      case GDK_KEY_Escape:
-        gtk_entry_set_text(GTK_ENTRY(search), "");
-        gtk_widget_grab_focus(GTK_WIDGET(browser->webView));
-        return FALSE;
-    }
-  }
-
-  return FALSE;
-}
-
-gboolean
-WebViewCb_button_press_event(GtkWidget *widget, GdkEvent  *event, gpointer user_data)
-{
-	(void)widget;
-	struct Client *oldBrowser = (struct Client *)user_data;
-	gboolean jsEnabled = gtk_toggle_button_get_active((GtkToggleButton *)oldBrowser->javascript);
-	gboolean imgEnabled = gtk_toggle_button_get_active((GtkToggleButton *)oldBrowser->auto_load_images); 
-  struct Client *browser = new_browser(oldBrowser->window,
-		gtk_label_get_text(GTK_LABEL(oldBrowser->statuslabel)), NULL);
-
-	// Button3 being right-click on right-handed mode, left-click on left-handed mode
-	if(((GdkEventButton *)event)->button == 2)
-	{
-    if (strlen(gtk_label_get_text(GTK_LABEL(oldBrowser->statuslabel)))==0) return FALSE;
-
-    gint newtab=badwolf_new_tab(GTK_NOTEBOOK(oldBrowser->window->notebook), browser, FALSE);
-		if(newtab == 0)
-		{
-      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(browser->javascript), jsEnabled);
-			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(browser->auto_load_images), imgEnabled);
-
-      gint curr = gtk_notebook_get_current_page(GTK_NOTEBOOK(oldBrowser->window->notebook));
-      gtk_notebook_set_current_page(GTK_NOTEBOOK(oldBrowser->window->notebook), curr+1);
-		}
-
-		return TRUE;
-	}
-
-	return FALSE;
 }
 
 static gboolean
@@ -951,39 +827,6 @@ new_browser(struct Window *window, const gchar *target_url, WebKitWebView *relat
 	return browser;
 }
 
-void
-toggle_dark_mode(WebKitWebView *web_view)
-{
-  g_dark_mode = !g_dark_mode;
-  WebKitUserContentManager *ucm;
-  WebKitUserStyleSheet *style;
-
-  if (g_dark_mode == TRUE)
-  {
-    ucm = webkit_web_view_get_user_content_manager(web_view);
-    if (ucm != NULL)
-    {
-      style = webkit_user_style_sheet_new(
-                    source, WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES,
-                    WEBKIT_USER_STYLE_LEVEL_USER, NULL, NULL);
-
-      webkit_user_content_manager_add_style_sheet(ucm, style);
-      webkit_user_style_sheet_unref(style);
-      //g_free(source);
-    }
-  }
-  else
-  {
-    ucm = webkit_web_view_get_user_content_manager(web_view);
-    if (ucm != NULL)
-    {
-      webkit_user_content_manager_remove_all_style_sheets(ucm);
-    }
-  }
-
-  webkit_web_view_reload(web_view);
-}
-
 /* badwolf_new_tab: Inserts struct Client *browser in GtkNotebook *notebook 
  * and optionally switches selected tab to it.
  *
@@ -1016,27 +859,10 @@ badwolf_new_tab(GtkNotebook *notebook, struct Client *browser, bool auto_switch)
 		gtk_notebook_set_current_page(notebook, gtk_notebook_page_num(notebook, browser->box));
 	}
 
-  WebKitUserContentManager *ucm;
-  WebKitUserStyleSheet *style;
+  g_signal_connect(notebook, "switch-page", G_CALLBACK(notebookCb_switch__page), browser);
 
-  ucm = webkit_web_view_get_user_content_manager(browser->webView);
-  if (ucm != NULL)
-  {
-    if (g_dark_mode)
-    {
-      style = webkit_user_style_sheet_new(
-                  source, WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES,
-                  WEBKIT_USER_STYLE_LEVEL_USER, NULL, NULL);
-
-      webkit_user_content_manager_add_style_sheet(ucm, style);
-      webkit_user_style_sheet_unref(style);
-      //gfree(style);
-    }
-    else
-    {
-      webkit_user_content_manager_remove_all_style_sheets(ucm);
-    }
-  }
+  set_dark_mode(browser->webView);
+  set_kiosk_mode(browser);
 
 	return 0;
 }
@@ -1058,17 +884,6 @@ closeCb_clicked(GtkButton *close, gpointer user_data)
 	struct Client *browser = (struct Client *)user_data;
 
 	webkit_web_view_try_close(browser->webView);
-}
-
-static void
-notebookCb_switch__page(GtkNotebook *notebook, GtkWidget *page, guint page_num, gpointer user_data)
-{
-	(void)page_num;
-	struct Window *window = (struct Window *)user_data;
-	GtkWidget *label      = gtk_notebook_get_tab_label(notebook, page);
-
-	// TODO: Maybe find a better way to store the title
-	gtk_window_set_title(GTK_WINDOW(window->main_window), gtk_widget_get_tooltip_text(label));
 }
 
 int
@@ -1104,7 +919,7 @@ main(int argc, char *argv[])
   //Let's check current time to see if we need to toggle dark_mode ON...
   time_t t = time(NULL);
   struct tm tm = *localtime(&t);
-  if (tm.tm_hour > 18 || tm.tm_hour < 7) g_dark_mode = TRUE;
+  if (tm.tm_hour >= 18 || tm.tm_hour < 7) g_dark_mode = TRUE;
 
 	web_extensions_directory =
 	    g_build_filename(g_get_user_data_dir(), "badwolf", "webkit-web-extension", NULL);
@@ -1135,7 +950,8 @@ main(int argc, char *argv[])
 
 	gchar *provider_path_user =
 	    g_build_filename(g_get_user_data_dir(), "badwolf", "interface.css", NULL);
-	if(access(provider_path_user, R_OK) == 0)
+
+  if(access(provider_path_user, R_OK) == 0)
 	{
 		GtkCssProvider *css_provider_user = gtk_css_provider_new();
 		gtk_css_provider_load_from_path(css_provider_user, provider_path_user, NULL);
@@ -1163,7 +979,7 @@ main(int argc, char *argv[])
 
 	g_signal_connect(window->main_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 	g_signal_connect(window->new_tab, "clicked", G_CALLBACK(new_tabCb_clicked), window);
-	g_signal_connect(window->notebook, "switch-page", G_CALLBACK(notebookCb_switch__page), window);
+  //g_signal_connect(window->notebook, "switch-page", G_CALLBACK(notebookCb_switch__page), window);
 
 	gtk_widget_show(window->new_tab);
 	gtk_widget_show_all(window->main_window);
@@ -1186,8 +1002,8 @@ main(int argc, char *argv[])
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook), 1);
 
 	if(browser != NULL)
-		gtk_widget_grab_focus (GTK_WIDGET (browser->webView));
-	
+		gtk_widget_grab_focus (GTK_WIDGET (browser->webView));	  
+
 	gtk_main();
 
 #if 0
@@ -1196,4 +1012,261 @@ main(int argc, char *argv[])
 #endif
 
 	return 0;
+}
+
+//-------------------------------- LRRH changes -------------------------------------//
+
+/*
+ * Whenever we press escape key in the search widget...
+ */
+static gboolean
+SearchEntryCb_key_press__event(GtkSearchEntry *search, GdkEvent *event, gpointer user_data)
+{
+  struct Client *browser = (struct Client *)user_data;
+  if(browser != NULL)
+  {
+    switch(((GdkEventKey *)event)->keyval)
+    {
+      case GDK_KEY_Escape:
+        gtk_entry_set_text(GTK_ENTRY(search), "");
+        gtk_widget_grab_focus(GTK_WIDGET(browser->webView));
+        return FALSE;
+    }
+  }
+
+  return FALSE;
+}
+
+/*
+ * Responds to middle mouse button press events
+ */
+static gboolean
+WebViewCb_button_press_event(GtkWidget *widget, GdkEvent  *event, gpointer user_data)
+{
+  (void)widget;
+  struct Client *oldBrowser = (struct Client *)user_data;
+  gboolean jsEnabled = gtk_toggle_button_get_active((GtkToggleButton *)oldBrowser->javascript);
+  gboolean imgEnabled = gtk_toggle_button_get_active((GtkToggleButton *)oldBrowser->auto_load_images);
+  struct Client *browser = new_browser(oldBrowser->window,
+    gtk_label_get_text(GTK_LABEL(oldBrowser->statuslabel)), NULL);
+
+  // Button3 being right-click on right-handed mode, left-click on left-handed mode
+  if(((GdkEventButton *)event)->button == 2)
+  {
+    if (strlen(gtk_label_get_text(GTK_LABEL(oldBrowser->statuslabel)))==0) return FALSE;
+
+    gint newtab=badwolf_new_tab(GTK_NOTEBOOK(oldBrowser->window->notebook), browser, FALSE);
+    if(newtab == 0)
+    {
+      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(browser->javascript), jsEnabled);
+      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(browser->auto_load_images), imgEnabled);
+
+      gint curr = gtk_notebook_get_current_page(GTK_NOTEBOOK(oldBrowser->window->notebook));
+      gtk_notebook_set_current_page(GTK_NOTEBOOK(oldBrowser->window->notebook), curr+1);
+
+      set_kiosk_mode(browser);
+    }
+
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+/*
+ * Whenever a hyperlink is requested...
+ * Let's see if it is a Gemini or Gopher protocol, so we can handle it
+ */
+static gboolean
+locationCb_activate(GtkEntry *location, gpointer user_data)
+{
+  if (openProtocolOnExternalApp(g_strdup(gtk_entry_get_text(location))))
+  {
+    return TRUE;
+  }
+
+  struct Client *browser = (struct Client *)user_data;
+
+  webkit_web_view_load_uri(browser->webView,
+                           badwolf_ensure_uri_scheme(gtk_entry_get_text(location), TRUE));
+
+  if(browser != NULL)
+    gtk_widget_grab_focus (GTK_WIDGET (browser->webView));
+
+  return TRUE;
+}
+
+/*
+ * Change widget focus based on page being rendered or not
+ */
+static void
+WebViewCb_load_changed(WebKitWebView *webView, WebKitLoadEvent load_event, gpointer user_data)
+{
+  (void)webView;
+  (void)load_event;
+  struct Client *browser = (struct Client *)user_data;
+  gchar *location = NULL;
+
+  gtk_widget_set_sensitive(browser->back, webkit_web_view_can_go_back(browser->webView));
+  gtk_widget_set_sensitive(browser->forward, webkit_web_view_can_go_forward(browser->webView));
+
+  switch (load_event)
+  {
+  case WEBKIT_LOAD_STARTED:
+    break;
+  case WEBKIT_LOAD_REDIRECTED:
+    break;
+  case WEBKIT_LOAD_COMMITTED:
+    location = strdup(gtk_entry_get_text(GTK_ENTRY(browser->location)));
+
+    if (strcmp(location, "about:blank") == 0)
+    {
+      //There is no site being displayed, let's focus the location bar
+      gtk_widget_grab_focus(browser->location);
+    }
+    else
+    {
+      //There is a site being displayed, so we can set the focus on webview
+      gtk_widget_grab_focus(GTK_WIDGET(webView));
+    }
+    break;
+  case WEBKIT_LOAD_FINISHED:
+    break;
+  }
+}
+
+/*
+ * Whenever user switches the notebook page...
+ */
+static void
+notebookCb_switch__page(GtkNotebook *notebook, GtkWidget *page, guint page_num, gpointer user_data)
+{
+  (void)page_num;
+  //struct Window *window = (struct Window *)user_data;
+  struct Client *browser = (struct Client *)user_data;
+  struct Window *window = browser->window;
+  GtkWidget *label      = gtk_notebook_get_tab_label(notebook, page);
+
+  // TODO: Maybe find a better way to store the title
+  gtk_window_set_title(GTK_WINDOW(window->main_window), gtk_widget_get_tooltip_text(label));
+
+  set_kiosk_mode(browser);
+
+  gchar *location = strdup(gtk_entry_get_text(GTK_ENTRY(browser->location)));
+  if (strcmp(location, "about:blank") == 0)
+  {
+    //There is no site being displayed, let's focus the location bar
+    gtk_widget_grab_focus(browser->location);
+  }
+  else
+  {
+    //There is a site being displayed, so we can set the focus on webview
+    gtk_widget_grab_focus(GTK_WIDGET(browser->webView));
+  }
+}
+
+/*
+ * Opens givenUrl on the external application user has configured in his system
+ *
+ * returns TRUE if the url was one of the supported protocols, otherwise returns FALSE
+ */
+static gboolean
+openProtocolOnExternalApp(gchar *givenUrl)
+{
+  gchar *url = g_strdup(givenUrl);
+  gchar *urlcmp = g_utf8_substring(url, 0, 9);
+  gchar *argv[3] = {NULL, NULL, NULL};
+  argv[0] = "xdg-open";
+
+  if (urlcmp != NULL && strlen(urlcmp) == 9 && (strcmp(urlcmp, "gemini://") == 0 || strcmp(urlcmp, "gopher://") == 0))
+  {
+    argv[1] = url;
+    g_spawn_async(NULL, argv, NULL, G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, NULL);
+    free(url);
+    free(urlcmp);
+    return TRUE;
+  }
+
+  free(url);
+  free(urlcmp);
+  return FALSE;
+}
+
+/*
+ * Toggles between KIOSK and NORMAL modes
+ * KIOK means status bar and tabs are invisible
+ */
+void
+toggle_kiosk_mode(struct Client *browser)
+{
+  g_kiosk_mode = !g_kiosk_mode;
+  set_kiosk_mode(browser);
+}
+
+/*
+ * Show/Hide Window widgets based on g_kiosk_mode value
+ */
+void
+set_kiosk_mode(struct Client *browser)
+{
+  if (browser != NULL)
+  {
+    //Let's maximize webkit view
+    if (g_kiosk_mode == TRUE)
+    {
+      gtk_notebook_set_show_tabs((GtkNotebook*)browser->window->notebook, FALSE);
+      gtk_widget_hide(browser->toolbar);
+      gtk_widget_hide(browser->statusbar);
+    }
+    //Let's return with widgets...
+    else
+    {
+      gtk_notebook_set_show_tabs((GtkNotebook*)browser->window->notebook, TRUE);
+      gtk_widget_show(browser->toolbar);
+      gtk_widget_show(browser->statusbar);
+    }
+  }
+}
+/*
+ * Toggles between DARK and NORMAL modes, calling the stylesheet
+ * method and refreshing the webpage
+ */
+void
+toggle_dark_mode(WebKitWebView *web_view)
+{
+  g_dark_mode = !g_dark_mode;
+  set_dark_mode(web_view);
+  webkit_web_view_reload(web_view);
+}
+
+/*
+ * Applies or removes the DARK stylesheet based on g_dark_mode value
+ */
+void
+set_dark_mode(WebKitWebView *web_view)
+{
+  WebKitUserContentManager *ucm;
+  WebKitUserStyleSheet *style;
+
+  if (g_dark_mode == TRUE)
+  {
+    ucm = webkit_web_view_get_user_content_manager(web_view);
+    if (ucm != NULL)
+    {
+      style = webkit_user_style_sheet_new(
+                    source, WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES,
+                    WEBKIT_USER_STYLE_LEVEL_USER, NULL, NULL);
+
+      webkit_user_content_manager_add_style_sheet(ucm, style);
+      webkit_user_style_sheet_unref(style);
+    }
+  }
+  else
+  {
+    ucm = webkit_web_view_get_user_content_manager(web_view);
+    if (ucm != NULL)
+    {
+      webkit_user_content_manager_remove_all_style_sheets(ucm);
+    }
+  }
 }

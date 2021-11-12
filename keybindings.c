@@ -7,6 +7,7 @@
 #include <glib/gi18n.h> /* _() */
 
 static void open_site_on_new_tab(struct Window *window, const gchar *url, gboolean jsEnabled);
+static gboolean isKioskMode();
 
 static gboolean
 about_dialogCb_activate_link(GtkAboutDialog *about_dialog, gchar *uri, gpointer user_data)
@@ -90,6 +91,39 @@ goto_next_tab(GtkNotebook *notebook)
 	else gtk_notebook_next_page(notebook);
 }
 
+/*
+ * Removes a substring sub from a given string str
+ */
+gchar *strremove(gchar *str, const gchar *sub)
+{
+  size_t len = strlen(sub);
+  if (len > 0) {
+    char *p = str;
+    while ((p = strstr(p, sub)) != NULL)
+    {
+      memmove(p, p + len, strlen(p + len) + 1);
+    }
+  }
+  return str;
+}
+
+/*
+ * Retrives given system LANGUAGE code, based on LC_TIME environment var
+ */
+gchar *getLangCode()
+{
+  gchar *result = "";
+  result = strremove(getenv("LC_TIME"), ".UTF-8");
+
+  char *pos = strchr(result, '_');
+  if(pos != NULL)
+  {
+    result = strremove(strdup(result), pos);
+  }
+
+  return result;
+}
+
 static void
 web_view_javascript_get_selected_text_finished(GObject      *object,
                              GAsyncResult *result,
@@ -99,6 +133,7 @@ web_view_javascript_get_selected_text_finished(GObject      *object,
 	JSCValue               *value;
 	GError                 *error = NULL;
   struct Window *window = (struct Window*)user_data;
+  gchar *lang = NULL;
 
 	js_result = webkit_web_view_run_javascript_finish (WEBKIT_WEB_VIEW (object), result, &error);
 	if (!js_result) {
@@ -122,7 +157,14 @@ web_view_javascript_get_selected_text_finished(GObject      *object,
 
     if (!exception)
     {
-      gchar *gtrans="https://translate.google.com/?sl=auto&tl=pt&q=";
+      lang = getLangCode();
+
+      gchar gtrans[64]="";
+      gchar *gsite="https://translate.google.com/?sl=auto&tl=";
+      strcat(gtrans, gsite);
+      strcat(gtrans, lang);
+      strcat(gtrans, "&q=");
+
       char **split = g_strsplit(str_value, " ", -1);
       g_free(str_value);
       str_value = g_strjoinv("+", split);
@@ -148,27 +190,6 @@ web_view_get_selected_text(WebKitWebView *web_view, struct Window *window)
     script, NULL, web_view_javascript_get_selected_text_finished, window);
 }
 
-/*
- * Opens given url on new tab and focus webview widget
- */
-static void
-open_site_on_new_tab(struct Window *window, const gchar *url, gboolean jsEnabled)
-{
-	struct Client *nbrowser = NULL;
-	nbrowser = new_browser(window, url, NULL);
-  GtkNotebook *notebook = GTK_NOTEBOOK(window->notebook);
-
-	if (nbrowser != NULL)
-	{
-		badwolf_new_tab(GTK_NOTEBOOK(window->notebook), nbrowser, FALSE);
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(nbrowser->javascript), jsEnabled);
-		gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook),
-        gtk_notebook_get_current_page(notebook)+1);
-  }
-
-	gtk_widget_grab_focus(GTK_WIDGET(nbrowser->webView));
-}
-
 /* commonCb_key_press_event: Global callback for keybindings
  *
  * These shortcuts should be avoided as much as possible:
@@ -189,7 +210,7 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 
 	if((((GdkEventKey *)event)->state & (GDK_CONTROL_MASK | GDK_SHIFT_MASK)) == (GDK_CONTROL_MASK | GDK_SHIFT_MASK))
  	{
-		if(browser != NULL)
+    if(browser != NULL)
 		{
       gboolean jsEnabled = gtk_toggle_button_get_active((GtkToggleButton *)browser->javascript);
       gboolean imgEnabled = gtk_toggle_button_get_active((GtkToggleButton *)browser->auto_load_images);
@@ -215,7 +236,6 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
         {
           gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(nbrowser->javascript), jsEnabled);
           gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(nbrowser->auto_load_images), imgEnabled);
-
           badwolf_new_tab(GTK_NOTEBOOK(window->notebook), nbrowser, FALSE);
           gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook),
           gtk_notebook_get_current_page(notebook)+1);
@@ -232,15 +252,15 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
       }
 		}
 	}
-  	else if(((GdkEventKey *)event)->state & GDK_CONTROL_MASK)
+  else if(((GdkEventKey *)event)->state & GDK_CONTROL_MASK)
 	{
-		if(browser != NULL)
+    if(browser != NULL)
 		{
 			switch(((GdkEventKey *)event)->keyval)
 			{
-			case GDK_KEY_F4:
+      /*case GDK_KEY_F4:
 				webkit_web_view_try_close(browser->webView);
-				return TRUE;
+        return TRUE;*/
 			case GDK_KEY_0:
 				webkit_web_view_set_zoom_level(WEBKIT_WEB_VIEW(browser->webView), 1);
 				return TRUE;
@@ -292,7 +312,7 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 				return TRUE;
 			}
 		}
-		else
+    else
 		{
 			switch(((GdkEventKey *)event)->keyval)
 			{
@@ -317,9 +337,9 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 			}
 		}
 	}
-  else if((((GdkEventKey *)event)->state & GDK_MOD1_MASK))
+  else if(((GdkEventKey *)event)->state & GDK_MOD1_MASK)
 	{
-		if(browser != NULL)
+    if(browser != NULL && !isKioskMode(browser))
 		{
 			switch(((GdkEventKey *)event)->keyval)
 			{
@@ -337,7 +357,7 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 			gtk_notebook_set_current_page(notebook, (gint)(((GdkEventKey *)event)->keyval - GDK_KEY_1));
 	}
 
-	if(browser != NULL)
+  if(browser != NULL)
 	{
 		switch(((GdkEventKey *)event)->keyval)
 		{
@@ -345,17 +365,26 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
     case GDK_KEY_F4: toggle_dark_mode(browser->webView); return TRUE;
     case GDK_KEY_F5: webkit_web_view_reload(browser->webView); return TRUE;
 		case GDK_KEY_F7: toggle_caret_browsing(browser->webView); return TRUE;
-		case GDK_KEY_F12:
+    case GDK_KEY_F11: toggle_kiosk_mode(browser); return TRUE;
+    case GDK_KEY_F12:
 			webkit_web_inspector_show(webkit_web_view_get_inspector(browser->webView));
 			return TRUE;
 		}
-	}
-	else
+	}  
+  /*else if(browser != NULL)
+  {
+    switch(((GdkEventKey *)event)->keyval)
+    {
+    case GDK_KEY_F1: badwolf_about_dialog(GTK_WINDOW(window->main_window), window); return TRUE;
+    case GDK_KEY_F11: toggle_kiosk_mode(browser); return TRUE;
+    }
+  }*/
+  else
 	{
 		switch(((GdkEventKey *)event)->keyval)
 		{
 		case GDK_KEY_F1: badwolf_about_dialog(GTK_WINDOW(window->main_window), window); return TRUE;
-		}
+    }
 	}
 
 	return FALSE;
@@ -392,4 +421,40 @@ main_windowCb_key_press_event(GtkWidget *widget, GdkEvent *event, gpointer user_
 	if(commonCb_key_press_event(window, event, NULL)) return TRUE;
 
 	return FALSE;
+}
+
+//-------------------------------- LRRH changes -------------------------------------//
+
+/*
+ * Checks if Kiosk mode is enabled
+ */
+static gboolean isKioskMode(struct Client *browser)
+{
+  if (browser != NULL)
+  {
+    return !(gtk_widget_is_visible(browser->statusbar));
+  }
+  else
+    return FALSE;
+}
+
+/*
+ * Opens given url on new tab and focus webview widget
+ */
+static void
+open_site_on_new_tab(struct Window *window, const gchar *url, gboolean jsEnabled)
+{
+  struct Client *nbrowser = NULL;
+  nbrowser = new_browser(window, url, NULL);
+  GtkNotebook *notebook = GTK_NOTEBOOK(window->notebook);
+
+  if (nbrowser != NULL)
+  {
+    badwolf_new_tab(GTK_NOTEBOOK(window->notebook), nbrowser, FALSE);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(nbrowser->javascript), jsEnabled);
+    gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook),
+        gtk_notebook_get_current_page(notebook)+1);
+  }
+
+  gtk_widget_grab_focus(GTK_WIDGET(nbrowser->webView));
 }
