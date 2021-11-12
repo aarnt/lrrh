@@ -191,7 +191,10 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
  	{
 		if(browser != NULL)
 		{
-			switch(((GdkEventKey *)event)->keyval)
+      gboolean jsEnabled = gtk_toggle_button_get_active((GtkToggleButton *)browser->javascript);
+      gboolean imgEnabled = gtk_toggle_button_get_active((GtkToggleButton *)browser->auto_load_images);
+
+      switch(((GdkEventKey *)event)->keyval)
 			{
       case GDK_KEY_C:
         statusLabel = strdup(gtk_label_get_text(GTK_LABEL(browser->statuslabel)));
@@ -204,6 +207,20 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
       case GDK_KEY_ISO_Left_Tab:
 				goto_prev_tab(notebook);
 				return TRUE;
+      case GDK_KEY_N:
+        nbrowser = new_browser(window,
+                               gtk_label_get_text(GTK_LABEL(browser->statuslabel)),
+                               NULL);
+        if (nbrowser != NULL)
+        {
+          gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(nbrowser->javascript), jsEnabled);
+          gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(nbrowser->auto_load_images), imgEnabled);
+
+          badwolf_new_tab(GTK_NOTEBOOK(window->notebook), nbrowser, FALSE);
+          gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook),
+          gtk_notebook_get_current_page(notebook)+1);
+        }
+        return TRUE;
       case GDK_KEY_plus:
 				zoom = webkit_web_view_get_zoom_level(WEBKIT_WEB_VIEW(browser->webView));
 				zoom += zoom * 0.1;
@@ -219,9 +236,6 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 	{
 		if(browser != NULL)
 		{
-			gboolean jsEnabled = gtk_toggle_button_get_active((GtkToggleButton *)browser->javascript);
-			gboolean imgEnabled = gtk_toggle_button_get_active((GtkToggleButton *)browser->auto_load_images);
-
 			switch(((GdkEventKey *)event)->keyval)
 			{
 			case GDK_KEY_F4:
@@ -259,20 +273,6 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 				return TRUE;
 			case GDK_KEY_l:
 				gtk_widget_grab_focus(browser->location);
-				return TRUE;
-			case GDK_KEY_n:
-				nbrowser = new_browser(window,
-				                       gtk_label_get_text(GTK_LABEL(browser->statuslabel)),
-				                       NULL);
-				if (nbrowser != NULL)
-				{
-					gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(nbrowser->javascript), jsEnabled);
-					gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(nbrowser->auto_load_images), imgEnabled);
-
-					badwolf_new_tab(GTK_NOTEBOOK(window->notebook), nbrowser, FALSE);
-					gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook),
-					gtk_notebook_get_current_page(notebook)+1);
-				}
 				return TRUE;
 			case GDK_KEY_p:
 				webkit_print_operation_run_dialog(webkit_print_operation_new(browser->webView),

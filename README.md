@@ -32,12 +32,12 @@ Ctrl+H        | Return focus to page
 Ctrl+I        | Toggle show images on/off
 Ctrl+J        | Toggle enable javascript on/off
 Ctrl+L        | Goto location widget
-Ctrl+N        | Open link in new tab
 Ctrl+P        | Show print dialog
 Ctrl+Q        | Quit LRRH
 Ctrl+R        | Reload page
 Ctrl+Shift+C  | Copy statusbar text (hyperlink) to clipboard
 Ctrl+Shift+G  | Find previous
+Ctrl+Shift+N  | Open link in new tab
 Ctrl+T        | Open new empty tab
 Ctrl+W        | Close current tab
 Ctrl+Z        | Translate selected text to pt-br using Google Translator
