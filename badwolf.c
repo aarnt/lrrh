@@ -21,8 +21,8 @@ gchar *web_extensions_directory;
 const gchar *homepage = "https://hacktivis.me/projects/badwolf";
 const gchar *version  = VERSION;
 gboolean g_dark_mode = FALSE;
-static gchar *source = "a { color: lightgreen !important; }"
-    "article, aside, body, dd, dl, dt, form, "
+static gchar *source = "a { color: #40ECD0 !important; }" //lightgreen
+    "article, aside, body, blockquote, dd, dl, dt, form, "
     "h1, h2, h3, h4, h5, header, div, iframe, input, label, "
     "li, option, p, pre, root, select, span, table, td, th, tr, ul "
     "{ background: none !important; background-color: #212529 !important; color: #aeb3b7 !important; }"; //#a3aaaf #899095
