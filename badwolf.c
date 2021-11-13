@@ -842,7 +842,7 @@ badwolf_new_tab(GtkNotebook *notebook, struct Client *browser, bool auto_switch)
 	gint current_page = gtk_notebook_get_current_page(notebook);
 	gchar *title      = _("New tab");
 
-	if(browser == NULL) return -2;
+  if(browser == NULL || isKioskMode()) return -2;
 
 	gtk_widget_show_all(browser->box);
 
