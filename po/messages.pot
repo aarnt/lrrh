@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Badwolf 1.0.3+g9d04c1e.main\n"
+"Project-Id-Version: Badwolf 1.0.3+ge4c0643.main\n"
 "Report-Msgid-Bugs-To: contact+badwolf-msgid@hacktivis.me\n"
-"POT-Creation-Date: 2021-11-12 18:14-0300\n"
+"POT-Creation-Date: 2021-11-12 23:02-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,7 +37,7 @@ msgstr ""
 msgid "%02i:%02i:%02i Downloading…"
 msgstr ""
 
-#: keybindings.c:32
+#: keybindings.c:31
 #, c-format
 msgid ""
 "Another tiny & fast & functional WebKitGTK browser\n"
@@ -177,6 +177,6 @@ msgid "webkit-web-extension directory set to: %s\n"
 msgstr ""
 
 #. TRANSLATOR Ignore this entry. Done for forcing Unicode in xgettext.
-#: badwolf.c:1011
+#: badwolf.c:1013
 msgid "ø"
 msgstr ""

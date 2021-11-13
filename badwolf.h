@@ -36,6 +36,7 @@ struct Client
 
 GtkWidget *badwolf_new_tab_box(const gchar *title, struct Client *browser);
 
+gboolean isKioskMode();
 void toggle_kiosk_mode(struct Client *browser);
 void set_kiosk_mode(struct Client *browser);
 void toggle_dark_mode(WebKitWebView *web_view);

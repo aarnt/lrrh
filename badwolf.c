@@ -140,7 +140,7 @@ WebViewCb_notify__uri(WebKitWebView *webView, GParamSpec *pspec, gpointer user_d
 
 	location_uri = webkit_web_view_get_uri(browser->webView);
 
-	gtk_entry_set_text(GTK_ENTRY(browser->location), location_uri);
+  gtk_entry_set_text(GTK_ENTRY(browser->location), location_uri);
 
 	if(webkit_uri_for_display(location_uri) != location_uri)
 		gtk_widget_set_tooltip_text(browser->location, webkit_uri_for_display(location_uri));
@@ -859,7 +859,7 @@ badwolf_new_tab(GtkNotebook *notebook, struct Client *browser, bool auto_switch)
 		gtk_notebook_set_current_page(notebook, gtk_notebook_page_num(notebook, browser->box));
 	}
 
-  g_signal_connect(notebook, "switch-page", G_CALLBACK(notebookCb_switch__page), browser);
+  //g_signal_connect(notebook, "switch-page", G_CALLBACK(notebookCb_switch__page), browser);
 
   set_dark_mode(browser->webView);
   set_kiosk_mode(browser);
@@ -979,7 +979,7 @@ main(int argc, char *argv[])
 
 	g_signal_connect(window->main_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 	g_signal_connect(window->new_tab, "clicked", G_CALLBACK(new_tabCb_clicked), window);
-  //g_signal_connect(window->notebook, "switch-page", G_CALLBACK(notebookCb_switch__page), window);
+  g_signal_connect(window->notebook, "switch-page", G_CALLBACK(notebookCb_switch__page), window);
 
 	gtk_widget_show(window->new_tab);
 	gtk_widget_show_all(window->main_window);
@@ -1004,6 +1004,8 @@ main(int argc, char *argv[])
 	if(browser != NULL)
 		gtk_widget_grab_focus (GTK_WIDGET (browser->webView));	  
 
+  //g_signal_connect(window->notebook, "switch-page", G_CALLBACK(notebookCb_switch__page), browser);
+
 	gtk_main();
 
 #if 0
@@ -1015,6 +1017,12 @@ main(int argc, char *argv[])
 }
 
 //-------------------------------- LRRH changes -------------------------------------//
+
+gboolean
+isKioskMode()
+{
+  return g_kiosk_mode;
+}
 
 /*
  * Whenever we press escape key in the search widget...
@@ -1055,14 +1063,11 @@ WebViewCb_button_press_event(GtkWidget *widget, GdkEvent  *event, gpointer user_
   {
     if (strlen(gtk_label_get_text(GTK_LABEL(oldBrowser->statuslabel)))==0) return FALSE;
 
-    gint newtab=badwolf_new_tab(GTK_NOTEBOOK(oldBrowser->window->notebook), browser, FALSE);
+    gint newtab=badwolf_new_tab(GTK_NOTEBOOK(oldBrowser->window->notebook), browser, TRUE);
     if(newtab == 0)
     {
       gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(browser->javascript), jsEnabled);
       gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(browser->auto_load_images), imgEnabled);
-
-      gint curr = gtk_notebook_get_current_page(GTK_NOTEBOOK(oldBrowser->window->notebook));
-      gtk_notebook_set_current_page(GTK_NOTEBOOK(oldBrowser->window->notebook), curr+1);
 
       set_kiosk_mode(browser);
     }
@@ -1142,15 +1147,16 @@ static void
 notebookCb_switch__page(GtkNotebook *notebook, GtkWidget *page, guint page_num, gpointer user_data)
 {
   (void)page_num;
-  //struct Window *window = (struct Window *)user_data;
-  struct Client *browser = (struct Client *)user_data;
-  struct Window *window = browser->window;
+  struct Window *window = (struct Window *)user_data;
+  //struct Client *browser = (struct Client *)user_data;
+  //struct Window *window = browser->window;
+
   GtkWidget *label      = gtk_notebook_get_tab_label(notebook, page);
 
   // TODO: Maybe find a better way to store the title
   gtk_window_set_title(GTK_WINDOW(window->main_window), gtk_widget_get_tooltip_text(label));
 
-  set_kiosk_mode(browser);
+  /*set_kiosk_mode(browser);
 
   gchar *location = strdup(gtk_entry_get_text(GTK_ENTRY(browser->location)));
   if (strcmp(location, "about:blank") == 0)
@@ -1162,7 +1168,7 @@ notebookCb_switch__page(GtkNotebook *notebook, GtkWidget *page, guint page_num, 
   {
     //There is a site being displayed, so we can set the focus on webview
     gtk_widget_grab_focus(GTK_WIDGET(browser->webView));
-  }
+  }*/
 }
 
 /*
@@ -1217,6 +1223,7 @@ set_kiosk_mode(struct Client *browser)
       gtk_notebook_set_show_tabs((GtkNotebook*)browser->window->notebook, FALSE);
       gtk_widget_hide(browser->toolbar);
       gtk_widget_hide(browser->statusbar);
+      gtk_widget_grab_focus (GTK_WIDGET (browser->webView));
     }
     //Let's return with widgets...
     else

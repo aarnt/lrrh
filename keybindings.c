@@ -7,7 +7,6 @@
 #include <glib/gi18n.h> /* _() */
 
 static void open_site_on_new_tab(struct Window *window, const gchar *url, gboolean jsEnabled);
-static gboolean isKioskMode();
 
 static gboolean
 about_dialogCb_activate_link(GtkAboutDialog *about_dialog, gchar *uri, gpointer user_data)
@@ -94,7 +93,8 @@ goto_next_tab(GtkNotebook *notebook)
 /*
  * Removes a substring sub from a given string str
  */
-gchar *strremove(gchar *str, const gchar *sub)
+gchar *
+strremove(gchar *str, const gchar *sub)
 {
   size_t len = strlen(sub);
   if (len > 0) {
@@ -110,7 +110,8 @@ gchar *strremove(gchar *str, const gchar *sub)
 /*
  * Retrives given system LANGUAGE code, based on LC_TIME environment var
  */
-gchar *getLangCode()
+gchar *
+getLangCode()
 {
   gchar *result = "";
   result = strremove(getenv("LC_TIME"), ".UTF-8");
@@ -186,7 +187,7 @@ web_view_get_selected_text(WebKitWebView *web_view, struct Window *window)
 {
   const gchar *script = "window.getSelection().toString();";
 
-	webkit_web_view_run_javascript (WEBKIT_WEB_VIEW(web_view),
+  webkit_web_view_run_javascript (WEBKIT_WEB_VIEW(web_view),
     script, NULL, web_view_javascript_get_selected_text_finished, window);
 }
 
@@ -208,7 +209,7 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 	const gchar *duckUrl = "https://lite.duckduckgo.com";
 	gchar *statusLabel = NULL;
 
-	if((((GdkEventKey *)event)->state & (GDK_CONTROL_MASK | GDK_SHIFT_MASK)) == (GDK_CONTROL_MASK | GDK_SHIFT_MASK))
+  if((((GdkEventKey *)event)->state & (GDK_CONTROL_MASK | GDK_SHIFT_MASK)) == (GDK_CONTROL_MASK | GDK_SHIFT_MASK) && !isKioskMode())
  	{
     if(browser != NULL)
 		{
@@ -252,15 +253,12 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
       }
 		}
 	}
-  else if(((GdkEventKey *)event)->state & GDK_CONTROL_MASK)
+  else if(((GdkEventKey *)event)->state & GDK_CONTROL_MASK && !isKioskMode())
 	{
     if(browser != NULL)
 		{
 			switch(((GdkEventKey *)event)->keyval)
 			{
-      /*case GDK_KEY_F4:
-				webkit_web_view_try_close(browser->webView);
-        return TRUE;*/
 			case GDK_KEY_0:
 				webkit_web_view_set_zoom_level(WEBKIT_WEB_VIEW(browser->webView), 1);
 				return TRUE;
@@ -305,14 +303,14 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
         webkit_web_view_reload(browser->webView);
 				return TRUE;
 			case GDK_KEY_w:
-				webkit_web_view_try_close(browser->webView);
+        webkit_web_view_try_close(browser->webView);
 				return TRUE;
 			case GDK_KEY_z:
 				web_view_get_selected_text(WEBKIT_WEB_VIEW(browser->webView), window);
 				return TRUE;
 			}
 		}
-    else
+    else if (!isKioskMode())
 		{
 			switch(((GdkEventKey *)event)->keyval)
 			{
@@ -337,7 +335,7 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 			}
 		}
 	}
-  else if(((GdkEventKey *)event)->state & GDK_MOD1_MASK)
+  else if(((GdkEventKey *)event)->state & GDK_MOD1_MASK && !isKioskMode())
 	{
     if(browser != NULL && !isKioskMode(browser))
 		{
@@ -371,14 +369,6 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 			return TRUE;
 		}
 	}  
-  /*else if(browser != NULL)
-  {
-    switch(((GdkEventKey *)event)->keyval)
-    {
-    case GDK_KEY_F1: badwolf_about_dialog(GTK_WINDOW(window->main_window), window); return TRUE;
-    case GDK_KEY_F11: toggle_kiosk_mode(browser); return TRUE;
-    }
-  }*/
   else
 	{
 		switch(((GdkEventKey *)event)->keyval)
@@ -424,19 +414,6 @@ main_windowCb_key_press_event(GtkWidget *widget, GdkEvent *event, gpointer user_
 }
 
 //-------------------------------- LRRH changes -------------------------------------//
-
-/*
- * Checks if Kiosk mode is enabled
- */
-static gboolean isKioskMode(struct Client *browser)
-{
-  if (browser != NULL)
-  {
-    return !(gtk_widget_is_visible(browser->statusbar));
-  }
-  else
-    return FALSE;
-}
 
 /*
  * Opens given url on new tab and focus webview widget
