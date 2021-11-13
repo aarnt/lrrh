@@ -1224,6 +1224,8 @@ set_kiosk_mode(struct Client *browser)
       gtk_widget_hide(browser->toolbar);
       gtk_widget_hide(browser->statusbar);
       gtk_widget_grab_focus (GTK_WIDGET (browser->webView));
+
+      gtk_window_fullscreen (GTK_WINDOW(browser->window->main_window));
     }
     //Let's return with widgets...
     else
@@ -1231,6 +1233,8 @@ set_kiosk_mode(struct Client *browser)
       gtk_notebook_set_show_tabs((GtkNotebook*)browser->window->notebook, TRUE);
       gtk_widget_show(browser->toolbar);
       gtk_widget_show(browser->statusbar);
+
+      gtk_window_unfullscreen (GTK_WINDOW(browser->window->main_window));
     }
   }
 }
