@@ -209,9 +209,9 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 	const gchar *duckUrl = "https://lite.duckduckgo.com";
 	gchar *statusLabel = NULL;
 
-  if((((GdkEventKey *)event)->state & (GDK_CONTROL_MASK | GDK_SHIFT_MASK)) == (GDK_CONTROL_MASK | GDK_SHIFT_MASK) && !isKioskMode())
+  if ((((GdkEventKey *)event)->state & (GDK_CONTROL_MASK | GDK_SHIFT_MASK)) == (GDK_CONTROL_MASK | GDK_SHIFT_MASK) && !isKioskMode())
  	{
-    if(browser != NULL)
+    if (browser != NULL)
 		{
       gboolean jsEnabled = gtk_toggle_button_get_active((GtkToggleButton *)browser->javascript);
       gboolean imgEnabled = gtk_toggle_button_get_active((GtkToggleButton *)browser->auto_load_images);
@@ -355,7 +355,7 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 			gtk_notebook_set_current_page(notebook, (gint)(((GdkEventKey *)event)->keyval - GDK_KEY_1));
 	}
 
-  if(browser != NULL)
+  if (browser != NULL && !isKioskMode())
 	{
 		switch(((GdkEventKey *)event)->keyval)
 		{
@@ -368,8 +368,15 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 			webkit_web_inspector_show(webkit_web_view_get_inspector(browser->webView));
 			return TRUE;
 		}
-	}  
-  else
+  }
+  else if (browser != NULL)
+  {
+    switch(((GdkEventKey *)event)->keyval)
+    {
+    case GDK_KEY_F11: toggle_kiosk_mode(browser); return TRUE;
+    }
+  }
+  else if (!isKioskMode())
 	{
 		switch(((GdkEventKey *)event)->keyval)
 		{
