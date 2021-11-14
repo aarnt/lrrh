@@ -22,7 +22,7 @@ const gchar *homepage = "https://hacktivis.me/projects/badwolf";
 const gchar *version  = VERSION;
 gboolean g_dark_mode = FALSE;
 gboolean g_kiosk_mode = FALSE;
-static gchar *source = "a { color: #40ECD0 !important; }" //lightgreen
+static gchar *dark_mode_css = "a { color: #40ECD0 !important; }" //lightgreen
     "article, aside, body, blockquote, dd, dl, dt, form, "
     "h1, h2, h3, h4, h5, header, div, iframe, input, label, "
     "li, option, p, pre, root, select, span, table, td, th, tr, ul "
@@ -1265,7 +1265,7 @@ set_dark_mode(WebKitWebView *web_view)
     if (ucm != NULL)
     {
       style = webkit_user_style_sheet_new(
-                    source, WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES,
+                    dark_mode_css, WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES,
                     WEBKIT_USER_STYLE_LEVEL_USER, NULL, NULL);
 
       webkit_user_content_manager_add_style_sheet(ucm, style);
