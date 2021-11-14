@@ -1155,20 +1155,6 @@ notebookCb_switch__page(GtkNotebook *notebook, GtkWidget *page, guint page_num, 
 
   // TODO: Maybe find a better way to store the title
   gtk_window_set_title(GTK_WINDOW(window->main_window), gtk_widget_get_tooltip_text(label));
-
-  /*set_kiosk_mode(browser);
-
-  gchar *location = strdup(gtk_entry_get_text(GTK_ENTRY(browser->location)));
-  if (strcmp(location, "about:blank") == 0)
-  {
-    //There is no site being displayed, let's focus the location bar
-    gtk_widget_grab_focus(browser->location);
-  }
-  else
-  {
-    //There is a site being displayed, so we can set the focus on webview
-    gtk_widget_grab_focus(GTK_WIDGET(browser->webView));
-  }*/
 }
 
 /*

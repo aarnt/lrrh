@@ -7,6 +7,10 @@
 #include <glib/gi18n.h> /* _() */
 
 static void open_site_on_new_tab(struct Window *window, const gchar *url, gboolean jsEnabled);
+static void refreshWebView(WebKitWebView* webView);
+static void goto_prev_tab(GtkNotebook *notebook);
+static void goto_next_tab(GtkNotebook *notebook);
+static void web_view_get_selected_text(WebKitWebView *web_view, struct Window *window);
 
 static gboolean
 about_dialogCb_activate_link(GtkAboutDialog *about_dialog, gchar *uri, gpointer user_data)
@@ -62,133 +66,6 @@ toggle_caret_browsing(WebKitWebView *webView)
 	                                          !webkit_settings_get_enable_caret_browsing(settings));
 
 	webkit_web_view_set_settings(webView, settings);
-}
-
-/*
- * Goto the previous tab in notebook. If current is the second one, goto the last tab!
- */
-static void
-goto_prev_tab(GtkNotebook *notebook)
-{
-  gint npages = gtk_notebook_get_n_pages(notebook);
-  gint curr = gtk_notebook_get_current_page(notebook);
-  if (curr-1 == 0)
-    gtk_notebook_set_current_page(notebook, npages-1);
-  else gtk_notebook_prev_page(notebook);
-}
-
-/*
- * Goto the next tab in notebook. If current is the last one, goto the second tab!
- */
-static void
-goto_next_tab(GtkNotebook *notebook)
-{
-	gint npages = gtk_notebook_get_n_pages(notebook);
-	gint curr = gtk_notebook_get_current_page(notebook);
-	if (curr+1 == npages)
-		gtk_notebook_set_current_page(notebook, 1);
-	else gtk_notebook_next_page(notebook);
-}
-
-/*
- * Removes a substring sub from a given string str
- */
-gchar *
-strremove(gchar *str, const gchar *sub)
-{
-  size_t len = strlen(sub);
-  if (len > 0) {
-    char *p = str;
-    while ((p = strstr(p, sub)) != NULL)
-    {
-      memmove(p, p + len, strlen(p + len) + 1);
-    }
-  }
-  return str;
-}
-
-/*
- * Retrives given system LANGUAGE code, based on LC_TIME environment var
- */
-gchar *
-getLangCode()
-{
-  gchar *result = "";
-  result = strremove(getenv("LC_TIME"), ".UTF-8");
-
-  char *pos = strchr(result, '_');
-  if(pos != NULL)
-  {
-    result = strremove(strdup(result), pos);
-  }
-
-  return result;
-}
-
-static void
-web_view_javascript_get_selected_text_finished(GObject      *object,
-                             GAsyncResult *result,
-                             gpointer      user_data)
-{
-	WebKitJavascriptResult *js_result;
-	JSCValue               *value;
-	GError                 *error = NULL;
-  struct Window *window = (struct Window*)user_data;
-  gchar *lang = NULL;
-
-	js_result = webkit_web_view_run_javascript_finish (WEBKIT_WEB_VIEW (object), result, &error);
-	if (!js_result) {
-		g_warning ("Error running javascript: %s", error->message);
-		g_error_free (error);
-		return;
-	}
-
-	value = webkit_javascript_result_get_js_value (js_result);
-	if(jsc_value_is_undefined(value))
-  {
-    printf("Value is undefined!\n\n");
-  }
-  else if(jsc_value_is_string (value))
-  {
-    JSCException *exception;
-    gchar        *str_value;
-
-    str_value = jsc_value_to_string (value);
-    exception = jsc_context_get_exception (jsc_value_get_context (value));
-
-    if (!exception)
-    {
-      lang = getLangCode();
-
-      gchar gtrans[64]="";
-      gchar *gsite="https://translate.google.com/?sl=auto&tl=";
-      strcat(gtrans, gsite);
-      strcat(gtrans, lang);
-      strcat(gtrans, "&q=");
-
-      char **split = g_strsplit(str_value, " ", -1);
-      g_free(str_value);
-      str_value = g_strjoinv("+", split);
-      g_strfreev(split);
-
-      gchar *url=g_strconcat(gtrans, str_value, NULL);
-      open_site_on_new_tab(window, url, true);
-      g_free(url);
-    }
-
-    g_free (str_value);
-
-    webkit_javascript_result_unref (js_result);
-  }
-}
-
-static void
-web_view_get_selected_text(WebKitWebView *web_view, struct Window *window)
-{
-  const gchar *script = "window.getSelection().toString();";
-
-  webkit_web_view_run_javascript (WEBKIT_WEB_VIEW(web_view),
-    script, NULL, web_view_javascript_get_selected_text_finished, window);
 }
 
 /* commonCb_key_press_event: Global callback for keybindings
@@ -361,7 +238,7 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 		{
 		case GDK_KEY_Escape: webkit_web_view_stop_loading(browser->webView); return TRUE;
     case GDK_KEY_F4: toggle_dark_mode(browser->webView); return TRUE;
-    case GDK_KEY_F5: webkit_web_view_reload(browser->webView); return TRUE;
+    case GDK_KEY_F5: refreshWebView(browser->webView); return TRUE;
 		case GDK_KEY_F7: toggle_caret_browsing(browser->webView); return TRUE;
     case GDK_KEY_F11: toggle_kiosk_mode(browser); return TRUE;
     case GDK_KEY_F12:
@@ -423,6 +300,16 @@ main_windowCb_key_press_event(GtkWidget *widget, GdkEvent *event, gpointer user_
 //-------------------------------- LRRH changes -------------------------------------//
 
 /*
+  Whenever user presses F5 key...
+*/
+static void
+refreshWebView(WebKitWebView* webView)
+{
+  webkit_web_view_reload(webView);
+  set_dark_mode(webView);
+}
+
+/*
  * Opens given url on new tab and focus webview widget
  */
 static void
@@ -441,4 +328,137 @@ open_site_on_new_tab(struct Window *window, const gchar *url, gboolean jsEnabled
   }
 
   gtk_widget_grab_focus(GTK_WIDGET(nbrowser->webView));
+}
+
+/*
+ * Goto the previous tab in notebook. If current is the second one, goto the last tab!
+ */
+static void
+goto_prev_tab(GtkNotebook *notebook)
+{
+  gint npages = gtk_notebook_get_n_pages(notebook);
+  gint curr = gtk_notebook_get_current_page(notebook);
+  if (curr-1 == 0)
+    gtk_notebook_set_current_page(notebook, npages-1);
+  else gtk_notebook_prev_page(notebook);
+}
+
+/*
+ * Goto the next tab in notebook. If current is the last one, goto the second tab!
+ */
+static void
+goto_next_tab(GtkNotebook *notebook)
+{
+	gint npages = gtk_notebook_get_n_pages(notebook);
+	gint curr = gtk_notebook_get_current_page(notebook);
+	if (curr+1 == npages)
+		gtk_notebook_set_current_page(notebook, 1);
+	else gtk_notebook_next_page(notebook);
+}
+
+/*
+ * Removes a substring sub from a given string str
+ */
+gchar *
+strremove(gchar *str, const gchar *sub)
+{
+  size_t len = strlen(sub);
+  if (len > 0) {
+    char *p = str;
+    while ((p = strstr(p, sub)) != NULL)
+    {
+      memmove(p, p + len, strlen(p + len) + 1);
+    }
+  }
+  return str;
+}
+
+/*
+ * Retrives given system LANGUAGE code, based on LC_TIME environment var
+ */
+gchar *
+getLangCode()
+{
+  gchar *result = "";
+  result = strremove(getenv("LC_TIME"), ".UTF-8");
+
+  char *pos = strchr(result, '_');
+  if(pos != NULL)
+  {
+    result = strremove(strdup(result), pos);
+  }
+
+  return result;
+}
+
+/*
+  Opens the Google translate site to get a translated version of the user selected content
+*/
+static void
+web_view_javascript_get_selected_text_finished(GObject  *object,
+                             GAsyncResult *result,
+                             gpointer      user_data)
+{
+	WebKitJavascriptResult *js_result;
+	JSCValue               *value;
+	GError                 *error = NULL;
+  struct Window *window = (struct Window*)user_data;
+  gchar *lang = NULL;
+
+	js_result = webkit_web_view_run_javascript_finish (WEBKIT_WEB_VIEW (object), result, &error);
+	if (!js_result) {
+		g_warning ("Error running javascript: %s", error->message);
+		g_error_free (error);
+		return;
+	}
+
+	value = webkit_javascript_result_get_js_value (js_result);
+	if(jsc_value_is_undefined(value))
+  {
+    printf("Value is undefined!\n\n");
+  }
+  else if(jsc_value_is_string (value))
+  {
+    JSCException *exception;
+    gchar        *str_value;
+
+    str_value = jsc_value_to_string (value);
+    exception = jsc_context_get_exception (jsc_value_get_context (value));
+
+    if (!exception)
+    {
+      lang = getLangCode();
+
+      gchar gtrans[64]="";
+      gchar *gsite="https://translate.google.com/?sl=auto&tl=";
+      strcat(gtrans, gsite);
+      strcat(gtrans, lang);
+      strcat(gtrans, "&q=");
+
+      char **split = g_strsplit(str_value, " ", -1);
+      g_free(str_value);
+      str_value = g_strjoinv("+", split);
+      g_strfreev(split);
+
+      gchar *url=g_strconcat(gtrans, str_value, NULL);
+      open_site_on_new_tab(window, url, true);
+      g_free(url);
+    }
+
+    g_free (str_value);
+
+    webkit_javascript_result_unref (js_result);
+  }
+}
+
+/*
+  Calls a javascript script to execute some computation over the user selected text
+*/
+static void
+web_view_get_selected_text(WebKitWebView *web_view, struct Window *window)
+{
+  const gchar *script = "window.getSelection().toString();";
+
+  webkit_web_view_run_javascript (WEBKIT_WEB_VIEW(web_view),
+    script, NULL, web_view_javascript_get_selected_text_finished, window);
 }
