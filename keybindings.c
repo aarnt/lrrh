@@ -380,7 +380,10 @@ gchar *
 getLangCode()
 {
   gchar *result = "";
-  result = strremove(getenv("LC_TIME"), ".UTF-8");
+  gchar *lctime = getenv("LC_TIME");
+  if (lctime == NULL) return "";
+
+  result = strremove(lctime, ".UTF-8");
 
   char *pos = strchr(result, '_');
   if(pos != NULL)
