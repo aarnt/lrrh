@@ -1,0 +1,237 @@
+# Vietnamese translations for Badwolf package
+# Bản dịch Tiếng Việt dành cho gói Badwolf.
+# Copyright (C) 2021 Badwolf Authors <https://hacktivis.me/projects/badwolf>
+# This file is distributed under the same license as the Badwolf package.
+# Ngô Ngọc Đức Huy <huyngo@disroot.org>, 2021.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Badwolf 1.0.3+gedbbb27.develop\n"
+"Report-Msgid-Bugs-To: contact+badwolf-msgid@hacktivis.me\n"
+"POT-Creation-Date: 2021-04-09 08:48+0200\n"
+"PO-Revision-Date: 2021-09-29 10:51+0700\n"
+"Last-Translator: Ngô Ngọc Đức Huy <huyngo@disroot.org>\n"
+"Language-Team: Vietnamese\n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: downloads.c:117
+#, c-format
+msgid "%02i:%02i:%02i Download cancelled"
+msgstr "%02i:%02i:%02i Đã huỷ tải xuống"
+
+#: downloads.c:119
+#, c-format
+msgid "%02i:%02i:%02i Download error"
+msgstr "%02i:%02i:%02i Lỗi tải xuống"
+
+#: downloads.c:141
+#, c-format
+msgid "%02i:%02i:%02i Download finished"
+msgstr "%02i:%02i:%02i Đã tải xong"
+
+#: downloads.c:167
+#, c-format
+msgid "%02i:%02i:%02i Downloading…"
+msgstr "%02i:%02i:%02i Đang tải…"
+
+#: downloads.c:199 downloads.c:216 downloads.c:219
+msgid "Badwolf Downloads"
+msgstr "Các tệp tin đã tải từ Badwolf"
+
+#: bookmarks.c:116
+msgid "Bookmarks: Done.\n"
+msgstr "Dấu trang: Xong.\n"
+
+#: bookmarks.c:59
+#, c-format
+msgid "Bookmarks: Found %d bookmarks.\n"
+msgstr "Dấu trang: Đã tìm thấy %d dấu trang.\n"
+
+#: bookmarks.c:81
+#, c-format
+msgid "Bookmarks: No loadable file found at %s\n"
+msgstr "Dấu trang: Không có tệp tin nào được tìm thấy tại %s\n"
+
+#: bookmarks.c:85
+#, c-format
+msgid "Bookmarks: loading at %s\n"
+msgstr "Dấu trang: đang tải ở %s\n"
+
+#: bookmarks.c:99
+msgid "Bookmarks: unable to create new XPath context\n"
+msgstr "Dấu trang: không thể tạo context XPath mới\n"
+
+#: bookmarks.c:107
+#, c-format
+msgid "Bookmarks: unable to evaluate XPath expression \"%s\"\n"
+msgstr "Dấu trang: không thể tính biểu thức XPath \"%s\"\n"
+
+#: bookmarks.c:89
+#, c-format
+msgid "Bookmarks: unable to parse file \"%s\"\n"
+msgstr "Dấu trang: không thể đọc tệp tin \"%s\"\n"
+
+#: badwolf.c:1034
+#, c-format
+msgid "Buildtime WebKit version: %d.%d.%d\n"
+msgstr "Phiên bản WebKit tại thời điểm dựng: %d.%d.%d\n"
+
+#: badwolf.c:440
+msgid "Continue"
+msgstr "Tiếp tục"
+
+#: badwolf.c:390
+msgid ""
+"Couldn't verify the TLS certificate to ensure a better security of the "
+"connection. You might want to verify your machine and network.\n"
+"\n"
+msgstr ""
+"Không thể xác thực chứng thực TLS để đảm bảo tính bảo mật của kết nối này."
+"Bạn có thể muống xác thực máy của bạn và mạng.\n"
+
+#: badwolf.c:100
+msgid "Crashed"
+msgstr "Gặp sự cố"
+
+#: downloads.c:39
+msgid "Download starting…"
+msgstr "Bắt đầu tải xuống…"
+
+#: badwolf.c:413
+msgid "Error: Some unknown error occurred validating the certificate.\n"
+msgstr "Lỗi: Có một lỗi không xác định đã xảy ra khi đang hợp lệ hoá chứng thực.\n"
+
+#: badwolf.c:394
+msgid "Error: The X509 Certificate Authority is unknown.\n"
+msgstr "Lỗi: Nhà cung cấp Chứng thực X509 không được biết đến.\n"
+
+#: badwolf.c:407
+msgid "Error: The certificate has been revoked.\n"
+msgstr "Lỗi: Chứng thực đã bị vô hiệu hoá.\n"
+
+#: badwolf.c:404
+msgid "Error: The certificate has expired. Check your system's clock.\n"
+msgstr "Lỗi: Chứng thực đã hết hạn. Hãy kiểm tra đồng hồ hệ thống của bạn.\n"
+
+#: badwolf.c:410
+msgid "Error: The certificate is considered to be insecure.\n"
+msgstr "Lỗi: Chứng thực được cho là không bảo mật.\n"
+
+#: badwolf.c:401
+msgid "Error: The certificate isn't valid yet. Check your system's clock.\n"
+msgstr ""
+"Lỗi: Chứng thực chưa có hiệu lực. Hãy kiểm tra đồng hồ hệ thống của bạn.\n"
+
+#: badwolf.c:397
+msgid "Error: The given identity doesn't match the expected one.\n"
+msgstr "Lỗi: Danh tính nhận được không trùng khớp với danh tính mong đợi.\n"
+
+#: keybindings.c:32
+#, c-format
+msgid ""
+"Minimalist and privacy-oriented web browser based on WebKitGTK\n"
+"Runtime WebKit version: %d.%d.%d"
+msgstr ""
+"Trình duyệt web tối giản và hướng đến sự riêng tư dựa trên WebKitGTK\n"
+"Phiên bản WebKit tại thời điểm chạy: %d.%d.%d"
+
+#: badwolf.c:904
+msgid "New tab"
+msgstr "Tab mới"
+
+#: badwolf.c:1102
+msgid "Open new tab"
+msgstr "Mở tab mới"
+
+#: badwolf.c:104
+msgid "Out of Memory"
+msgstr "Đầy bộ nhớ"
+
+#: badwolf.c:1032
+#, c-format
+msgid "Running Badwolf version: %s\n"
+msgstr "Phiên bản Badwolf đang chạy: %s\n"
+
+#: badwolf.c:1039
+#, c-format
+msgid "Runtime WebKit version: %d.%d.%d\n"
+msgstr "Phiên bản WebKit tại thời điểm chạy: %d.%d.%d\n"
+
+#: badwolf.c:437
+#, c-format
+msgid "TLS Error for %s."
+msgstr "Lỗi TLS cho %s."
+
+#: badwolf.c:440
+msgid "Temporarily Add Exception"
+msgstr "Tạm thời thêm ngoại lệ"
+
+#: badwolf.c:650
+msgid "Toggle javascript"
+msgstr "Bật/tắt javascript"
+
+#: badwolf.c:655
+msgid "Toggle loading images automatically"
+msgstr "Bật/tắt tự động tải ảnh"
+
+#: badwolf.c:108
+msgid "Unknown Crash"
+msgstr "Gặp sự cố không xác định"
+
+#: badwolf.c:653
+msgid "_IMG"
+msgstr "_IMG"
+
+#: badwolf.c:648
+msgid "_JS"
+msgstr "_JS"
+
+#: badwolf.c:982
+#, c-format
+msgid "badwolf: content-filter loaded, adding to content-manager…\n"
+msgstr "badwolf: đã tải bộ lọc nội dung, đang thêm vào trình quản lý nội dung…\n"
+
+#: badwolf.c:1002 badwolf.c:1009
+#, c-format
+msgid "badwolf: failed to compile content-filters.json, err: [%d] %s\n"
+msgstr "badwolf: biên dịch content-filters.json thất bại, lỗi: [%d] %s\n"
+
+#: badwolf.c:970 badwolf.c:975
+#, c-format
+msgid "badwolf: failed to load content-filter, err: [%d] %s\n"
+msgstr "badwolf: tải bộ lọc nội dung thất bại, lỗi: [%d] %s\n"
+
+#: badwolf.c:1060
+#, c-format
+msgid "content-filters file set to: %s\n"
+msgstr "tệp tin chứa bộ lọc nội dung đã được cài thành: %s\n"
+
+#: badwolf.c:792
+msgid "search in current page"
+msgstr "tìm trong trang hiện tại"
+
+#: badwolf.c:99
+msgid "the web process crashed.\n"
+msgstr "tiến trình web gặp sự cố.\n"
+
+#: badwolf.c:103
+msgid "the web process exceeded the memory limit.\n"
+msgstr "tiến trình web dùng quá giới hạn bộ nhớ.\n"
+
+#: badwolf.c:107
+msgid "the web process terminated for an unknown reason.\n"
+msgstr "tiến trình web đã kết thúc với lý do không xác định.\n"
+
+#: badwolf.c:1046
+#, c-format
+msgid "webkit-web-extension directory set to: %s\n"
+msgstr "thư mục chứa tiện ích mở rộng webkit đực cài thành: %s\n"
+
+#. TRANSLATOR Ignore this entry. Done for forcing Unicode in xgettext.
+#: badwolf.c:1138
+msgid "ø"
+msgstr ""

@@ -190,13 +190,14 @@ badwolf_downloads_tab_attach(struct Window *window)
 	gtk_container_add(GTK_CONTAINER(scrolled_window), window->downloads_tab);
 	gtk_notebook_insert_page(GTK_NOTEBOOK(window->notebook), scrolled_window, NULL, 0);
 
-	gtk_notebook_set_tab_reorderable(GTK_NOTEBOOK(window->notebook), scrolled_window, TRUE);
+  //gtk_notebook_set_tab_reorderable(GTK_NOTEBOOK(window->notebook), scrolled_window, TRUE);
 
 	GtkWidget *tab_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_widget_set_name(tab_box, "browser__tabbox");
 	GtkWidget *icon = gtk_image_new_from_icon_name("emblem-downloads", GTK_ICON_SIZE_SMALL_TOOLBAR);
 	gtk_widget_set_name(icon, "browser__tabbox__icon");
-	GtkWidget *label = gtk_label_new(_("Downloads"));
+
+  GtkWidget *label = gtk_label_new(_("Downloads"));
 	gtk_widget_set_name(label, "browser__tabbox__label");
 
 #ifdef BADWOLF_TAB_BOX_WIDTH
@@ -210,7 +211,7 @@ badwolf_downloads_tab_attach(struct Window *window)
 	gtk_label_set_ellipsize(GTK_LABEL(label), BADWOLF_TAB_LABEL_ELLIPSIZE);
 	gtk_label_set_single_line_mode(GTK_LABEL(label), TRUE);
 
-	gtk_box_pack_start(GTK_BOX(tab_box), icon, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(tab_box), icon, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(tab_box), label, TRUE, TRUE, 0);
 
 	gtk_widget_set_tooltip_text(tab_box, _("LRRH Downloads"));

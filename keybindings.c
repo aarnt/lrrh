@@ -1,5 +1,5 @@
 // BadWolf: Minimalist and privacy-oriented WebKitGTK+ browser
-// Copyright © 2019-2020 Badwolf Authors <https://hacktivis.me/projects/badwolf>
+// Copyright © 2019-2021 Badwolf Authors <https://hacktivis.me/projects/badwolf>
 // SPDX-License-Identifier: BSD-3-Clause
 
 #include "keybindings.h"
@@ -18,8 +18,8 @@ about_dialogCb_activate_link(GtkAboutDialog *about_dialog, gchar *uri, gpointer 
 	(void)about_dialog;
 	struct Window *window = (struct Window *)user_data;
 
-	badwolf_new_tab(GTK_NOTEBOOK(window->notebook), new_browser(window, uri, NULL), FALSE);
-	gtk_widget_destroy(GTK_WIDGET(about_dialog));
+  badwolf_new_tab(GTK_NOTEBOOK(window->notebook), new_browser(window, uri, NULL), TRUE);
+  gtk_window_close(GTK_WINDOW(about_dialog));
 
 	return TRUE;
 }
@@ -174,7 +174,7 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 				                                  GTK_WINDOW(browser->window));
 				return TRUE;
 			case GDK_KEY_q:
-				webkit_web_view_try_close(browser->webView);
+        gtk_main_quit(); //webkit_web_view_try_close(browser->webView);
 				return TRUE;
 			case GDK_KEY_r:
         webkit_web_view_reload(browser->webView);
@@ -187,7 +187,7 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 				return TRUE;
 			}
 		}
-    else if (!isKioskMode())
+    else
 		{
 			switch(((GdkEventKey *)event)->keyval)
 			{
@@ -204,7 +204,7 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 				open_site_on_new_tab(window, duckUrl, false);
 				return TRUE;
 			case GDK_KEY_q:
-				gtk_main_quit();
+        gtk_main_quit();
 				return TRUE;
 			case GDK_KEY_t:
         badwolf_new_tab(notebook, new_browser(window, NULL, NULL), TRUE);
@@ -295,6 +295,20 @@ main_windowCb_key_press_event(GtkWidget *widget, GdkEvent *event, gpointer user_
 	if(commonCb_key_press_event(window, event, NULL)) return TRUE;
 
 	return FALSE;
+}
+
+gboolean
+tab_boxCb_button_release_event(GtkWidget *widget, GdkEvent *event, gpointer user_data)
+{
+  (void)widget;
+  struct Client *browser = (struct Client *)user_data;
+
+  if(((GdkEventButton *)event)->button == GDK_BUTTON_MIDDLE)
+  {
+    webkit_web_view_try_close(browser->webView);
+    return TRUE;
+  }
+  return FALSE;
 }
 
 //-------------------------------- LRRH changes -------------------------------------//

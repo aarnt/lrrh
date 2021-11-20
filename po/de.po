@@ -1,87 +1,90 @@
-# Turkish translations for Badwolf package.
-# Copyright (C) 2020 Badwolf Authors <https://hacktivis.me/projects/badwolf>
+# German translations for Badwolf package.
+# Copyright (C) 2021 Badwolf Authors <https://hacktivis.me/projects/badwolf>
 # This file is distributed under the same license as the Badwolf package.
-# Oğuz Ersen <oguzersen@protonmail.com>, 2020, 2021.
+# Ben K. <ben-k@tutanota.com>, 2021.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Badwolf 1.0.2+g17b9802.develop\n"
+"Project-Id-Version: Badwolf 1.0.3+g1b10b33.develop\n"
 "Report-Msgid-Bugs-To: contact+badwolf-msgid@hacktivis.me\n"
-"POT-Creation-Date: 2021-04-10 20:38+0300\n"
-"PO-Revision-Date: 2021-04-10 20:38+0300\n"
-"Last-Translator: Oğuz Ersen <oguzersen@protonmail.com>\n"
-"Language-Team: Turkish\n"
-"Language: tr\n"
+"POT-Creation-Date: 2021-04-11 14:10+0200\n"
+"PO-Revision-Date: 2021-04-11 14:32+0200\n"
+"Last-Translator: Ben K. <ben-k@tutanota.com>\n"
+"Language-Team: German\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 2.4.2\n"
 
 #: downloads.c:117
 #, c-format
 msgid "%02i:%02i:%02i Download cancelled"
-msgstr "%02i:%02i:%02i İndirme iptal edildi"
+msgstr "%02i:%02i:%02i Herunterladen abgebrochen"
 
 #: downloads.c:119
 #, c-format
 msgid "%02i:%02i:%02i Download error"
-msgstr "%02i:%02i:%02i İndirme hatası"
+msgstr "%02i:%02i:%02i Herunterladen fehlgeschlagen"
 
 #: downloads.c:141
 #, c-format
 msgid "%02i:%02i:%02i Download finished"
-msgstr "%02i:%02i:%02i İndirme tamamlandı"
+msgstr "%02i:%02i:%02i Fertig Heruntergeladen"
 
 #: downloads.c:167
 #, c-format
 msgid "%02i:%02i:%02i Downloading…"
-msgstr "%02i:%02i:%02i İndiriliyor…"
+msgstr "%02i:%02i:%02i Lade herunter…"
 
 #: downloads.c:199 downloads.c:216 downloads.c:219
 msgid "Badwolf Downloads"
-msgstr "Badwolf İndirmeleri"
+msgstr "Heruntergeladene Dateien"
 
 #: bookmarks.c:116
 msgid "Bookmarks: Done.\n"
-msgstr "Yer imleri: Bitti.\n"
+msgstr "Lesezeichen: Erledigt. \n"
 
 #: bookmarks.c:59
 #, c-format
 msgid "Bookmarks: Found %d bookmarks.\n"
-msgstr "Yer imleri: %d yer imi bulundu.\n"
+msgstr "Lesezeichen: %d Lesezeichen gefunden. \n"
 
 #: bookmarks.c:81
 #, c-format
 msgid "Bookmarks: No loadable file found at %s\n"
-msgstr "Yer imleri: %s konumunda yüklenebilir dosya bulunamadı\n"
+msgstr "Lesezeichen: Keine ladbare Datei unter %s gefunden\n"
 
 #: bookmarks.c:85
 #, c-format
 msgid "Bookmarks: loading at %s\n"
-msgstr "Yer imleri: %s konumunda yükleniyor\n"
+msgstr "Lesezeichen: %s geladen\n"
 
 #: bookmarks.c:99
+#, fuzzy
 msgid "Bookmarks: unable to create new XPath context\n"
-msgstr "Yer imleri: yeni XPath içeriği oluşturulamadı\n"
+msgstr "Lesezeichen: Kein neuer XPath-Kontext konnte erstellen werden\n"
 
 #: bookmarks.c:107
-#, c-format
+#, fuzzy, c-format
 msgid "Bookmarks: unable to evaluate XPath expression \"%s\"\n"
-msgstr "Yer imleri: \"%s\" XPath ifadesi değerlendirilemedi\n"
+msgstr ""
+"Leisezeichen: Der XPath-Ausdruck \"%s\" konnte nicht ausgewertet werden\n"
 
 #: bookmarks.c:89
 #, c-format
 msgid "Bookmarks: unable to parse file \"%s\"\n"
-msgstr "Yer imleri: \"%s\" dosyası ayrıştırılamadı\n"
+msgstr "Lesezeichen: Die Datei \"%s\" konnte nicht geparst werden\n"
 
 #: badwolf.c:1036
-#, c-format
+#, fuzzy, c-format
 msgid "Buildtime WebKit version: %d.%d.%d\n"
-msgstr "Derleme zamanı WebKit sürümü: %d.%d.%d\n"
+msgstr "Buildtime WebKit version: %d.%d.%d\n"
 
 #: badwolf.c:441
 msgid "Continue"
-msgstr "Devam et"
+msgstr "Weiter"
 
 #: badwolf.c:391
 msgid ""
@@ -89,47 +92,54 @@ msgid ""
 "connection. You might want to verify your machine and network.\n"
 "\n"
 msgstr ""
-"Bağlantının güvenliğini daha iyi sağlamak için TLS sertifikası "
-"doğrulanamadı. Makinenizi ve ağınızı doğrulamak isteyebilirsiniz.\n"
-"\n"
+"Das TLS-Zertifikat konnte nicht verifiziert werden, um eine bessere "
+"Sicherheit der Verbindung sicherzustellen. Sie möchten vielleicht ihr Gerät "
+"und ihr Netzwerk überprüfen. \n"
 
 #: badwolf.c:101
 msgid "Crashed"
-msgstr "Çöktü"
+msgstr "Abgestürtzt"
 
 #: downloads.c:39
 msgid "Download starting…"
-msgstr "İndirme başlatılıyor…"
+msgstr "Download startet…"
 
 #: badwolf.c:414
 msgid "Error: Some unknown error occurred validating the certificate.\n"
-msgstr "Hata: Sertifika doğrulanırken bilinmeyen bir hata oluştu.\n"
+msgstr ""
+"Fehler: Es ist ein unbekannter Fehler beim überprüfen des Zertifikats "
+"aufgetreten.\n"
 
 #: badwolf.c:395
+#, fuzzy
 msgid "Error: The X509 Certificate Authority is unknown.\n"
-msgstr "Hata: X509 Sertifika Yetkilisi bilinmiyor.\n"
+msgstr "Fehler: Die X509 Zertifikatsautorität ist unbekannt.\n"
 
 #: badwolf.c:408
+#, fuzzy
 msgid "Error: The certificate has been revoked.\n"
-msgstr "Hata: Sertifika yürürlükten kaldırıldı.\n"
+msgstr "Fehler: Das Zertifikat wurde widerrufen.\n"
 
 #: badwolf.c:405
 msgid "Error: The certificate has expired. Check your system's clock.\n"
 msgstr ""
-"Hata: Sertifikanın süresi doldu. Sisteminizin saatini gözden geçirin.\n"
+"Fehler: Das Zertifikat ist abgelaufen. Bitte überprüfen Sie, ob die Uhr "
+"ihres Systems richtig eingestellt ist.\n"
 
 #: badwolf.c:411
 msgid "Error: The certificate is considered to be insecure.\n"
-msgstr "Hata: Sertifikanın güvensiz olduğu kabul ediliyor.\n"
+msgstr "Fehler: Das Zertifikat wird als unsicher angesehen.\n"
 
 #: badwolf.c:402
 msgid "Error: The certificate isn't valid yet. Check your system's clock.\n"
 msgstr ""
-"Hata: Sertifika henüz geçerli değil. Sisteminizin saatini gözden geçirin.\n"
+"Fehler: Das Zertifikat ist noch nicht gültig. Bitte überprüfen Sie, ob die "
+"Uhr ihres Systems richtig eingestellt ist.\n"
 
 #: badwolf.c:398
 msgid "Error: The given identity doesn't match the expected one.\n"
-msgstr "Hata: Verilen kimlik beklenen ile eşleşmiyor.\n"
+msgstr ""
+"Fehler: Die gegebene Identität passt nicht mit der Erwarteten zusammen.\n"
 
 #: keybindings.c:32
 #, c-format
@@ -137,102 +147,104 @@ msgid ""
 "Minimalist and privacy-oriented web browser based on WebKitGTK\n"
 "Runtime WebKit version: %d.%d.%d"
 msgstr ""
-"WebKitGTK tabanlı sadelik ve gizlilik odaklı web tarayıcısı\n"
-"Çalışma zamanı WebKit sürümü: %d.%d.%d"
+"Minimalistischer und Privatsphäre-orientierter Internetbrowser basierend of "
+"WebKitGTK\n"
+"Runtime WebKit version: %d.%d.%d"
 
 #: badwolf.c:906
 msgid "New tab"
-msgstr "Yeni sekme"
+msgstr "Neuer Reiter"
 
 #: badwolf.c:1104
 msgid "Open new tab"
-msgstr "Yeni sekme aç"
+msgstr "Neuen Reiter öffnen"
 
 #: badwolf.c:105
 msgid "Out of Memory"
-msgstr "Yetersiz Bellek"
+msgstr "Ihnen scheint der Arbeitsspeicher ausgegangen zu sein! (Out of Memory)"
 
 #: badwolf.c:1034
 #, c-format
 msgid "Running Badwolf version: %s\n"
-msgstr "Çalışan Badwolf sürümü: %s\n"
+msgstr "Ausführende Badwolf-Version: %s\n"
 
 #: badwolf.c:1041
 #, c-format
 msgid "Runtime WebKit version: %d.%d.%d\n"
-msgstr "Çalışma zamanı WebKit sürümü: %d.%d.%d\n"
+msgstr "Ausführende WebKit-Version: %d.%d.%d\n"
 
 #: badwolf.c:438
 #, c-format
 msgid "TLS Error for %s."
-msgstr "%s için TLS Hatası."
+msgstr "TLS-Fehler für %s."
 
 #: badwolf.c:441
 msgid "Temporarily Add Exception"
-msgstr "Geçici Olarak İstisna Ekle"
+msgstr "Eine Ausnahme machen"
 
 #: badwolf.c:653
 msgid "Toggle javascript"
-msgstr "Javascript'i aç/kapat"
+msgstr "JavaScript ein-/ausschalten"
 
 #: badwolf.c:658
 msgid "Toggle loading images automatically"
-msgstr "Resimleri otomatik yüklemeyi aç/kapat"
+msgstr "Das automatische Laden von Bildern ein-/ausschalten"
 
 #: badwolf.c:109
 msgid "Unknown Crash"
-msgstr "Bilinmeyen Çökme"
+msgstr "Unbekannter Absturz"
 
 #: badwolf.c:656
 msgid "_IMG"
-msgstr "_RSM"
+msgstr "_IMG"
 
 #: badwolf.c:651
 msgid "_JS"
 msgstr "_JS"
 
 #: badwolf.c:984
-#, c-format
+#, fuzzy, c-format
 msgid "badwolf: content-filter loaded, adding to content-manager…\n"
-msgstr "badwolf: content-filter yüklendi, content-manager'e ekleniyor…\n"
+msgstr "badwolf: Inhaltsfilter wurde geladen, füge zum Inhaltsmanager hinzu…\n"
 
 #: badwolf.c:1004 badwolf.c:1011
 #, c-format
 msgid "badwolf: failed to compile content-filters.json, err: [%d] %s\n"
-msgstr "badwolf: content-filters.json derlenemedi, hata: [%d] %s\n"
+msgstr ""
+"badwolf: kompilieren von content-filters.json fehlgeschlagen, err: [%d] %s\n"
 
 #: badwolf.c:972 badwolf.c:977
-#, c-format
+#, fuzzy, c-format
 msgid "badwolf: failed to load content-filter, err: [%d] %s\n"
-msgstr "badwolf: content-filter yüklenemedi, hata: [%d] %s\n"
+msgstr "badwolf: konnte Inhaltsfilter nicht laden, err: [%d] %s\n"
 
 #: badwolf.c:1062
 #, c-format
 msgid "content-filters file set to: %s\n"
-msgstr "content-filters dosyası şuna ayarlandı: %s\n"
+msgstr "Inhaltsfilter-Datei wurde gesetzt auf: %s\n"
 
 #: badwolf.c:800
 msgid "search in current page"
-msgstr "geçerli sayfada ara"
+msgstr "Die aktuelle Seite durchsuchen"
 
 #: badwolf.c:100
 msgid "the web process crashed.\n"
-msgstr "web işlemi çöktü.\n"
+msgstr "Der Webprozess ist abgestürzt.\n"
 
 #: badwolf.c:104
 msgid "the web process exceeded the memory limit.\n"
-msgstr "web işlemi bellek sınırını aştı.\n"
+msgstr "Der Webprozess hat das Arbeitsspeicherlimit überschritten.\n"
 
 #: badwolf.c:108
 msgid "the web process terminated for an unknown reason.\n"
-msgstr "web işlemi bilinmeyen bir nedenle sona erdi.\n"
+msgstr "Der Webprozess wurde aus unbekannten Gründen beendet.\n"
 
 #: badwolf.c:1048
-#, c-format
+#, fuzzy, c-format
 msgid "webkit-web-extension directory set to: %s\n"
-msgstr "webkit-web-extension dizini şuna ayarlandı: %s\n"
+msgstr "Das WebKit-Web-Erweiterungs-Verzeichnis wurde gesetzt auf: %s\n"
 
 #. TRANSLATOR Ignore this entry. Done for forcing Unicode in xgettext.
 #: badwolf.c:1140
 msgid "ø"
-msgstr ""
+msgstr "ø"

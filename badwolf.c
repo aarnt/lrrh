@@ -1,25 +1,31 @@
 // BadWolf: Minimalist and privacy-oriented WebKitGTK+ browser
-// Copyright © 2019-2020 Badwolf Authors <https://hacktivis.me/projects/badwolf>
+// Copyright © 2019-2021 Badwolf Authors <https://hacktivis.me/projects/badwolf>
 // SPDX-License-Identifier: BSD-3-Clause
 
 #include "badwolf.h"
 
+#include "bookmarks.h"
 #include "config.h"
 #include "downloads.h"
 #include "keybindings.h"
 #include "uri.h"
 #include "time.h"
 
+#include <assert.h>
 #include <glib/gi18n.h>   /* _() and other internationalization/localization helpers */
 #include <libsoup/soup.h> /* soup* */
 #include <locale.h>       /* LC_* */
-#include <stdio.h>        /* perror(), fprintf() */
+#include <stdio.h>        /* perror(), fprintf(), snprintf() */
 #include <stdlib.h>       /* malloc() */
 #include <unistd.h>       /* access() */
 
-gchar *web_extensions_directory;
 const gchar *homepage = "https://hacktivis.me/projects/badwolf";
 const gchar *version  = VERSION;
+
+static gchar *web_extensions_directory;
+static uint64_t context_id_counter = 0;
+GtkTreeModel *bookmarks_completion_model;
+
 gboolean g_dark_mode = FALSE;
 gboolean g_kiosk_mode = FALSE;
 static gchar *dark_mode_css = "a { color: #40ECD0 !important; }" //lightgreen
@@ -75,6 +81,12 @@ static void web_contextCb_download_started(WebKitWebContext *web_context,
                                            WebKitDownload *download,
                                            gpointer user_data);
 static gboolean locationCb_activate(GtkEntry *location, gpointer user_data);
+static gboolean
+locationCompletion_match_selected(GtkEntryCompletion *widget,
+                                   GtkTreeModel       *model,
+                                   GtkTreeIter        *iter,
+                                   gpointer            user_data);
+
 static gboolean javascriptCb_toggled(GtkButton *javascript, gpointer user_data);
 static gboolean auto_load_imagesCb_toggled(GtkButton *auto_load_images, gpointer user_data);
 static void backCb_clicked(GtkButton *back, gpointer user_data);
@@ -90,6 +102,8 @@ static void closeCb_clicked(GtkButton *close, gpointer user_data);
 
 static void
 notebookCb_switch__page(GtkNotebook *notebook, GtkWidget *page, guint page_num, gpointer user_data);
+
+void content_managerCb_ready(GObject *store, GAsyncResult *result, gpointer user_data);
 
 static gboolean
 WebViewCb_close(WebKitWebView *webView, gpointer user_data)
@@ -154,16 +168,24 @@ GtkWidget *
 badwolf_new_tab_box(const gchar *title, struct Client *browser)
 {
 	(void)browser;
-	GtkWidget *tab_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+
+  GtkWidget *tab_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_widget_set_name(tab_box, "browser__tabbox");
+
 	GtkWidget *close =
 	    gtk_button_new_from_icon_name("window-close-symbolic", GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_set_name(close, "browser__tabbox__close");
 	GtkWidget *label = gtk_label_new(title);
 	gtk_widget_set_name(label, "browser__tabbox__label");
-	GtkWidget *playing =
+
+  GtkWidget *label_event_box = gtk_event_box_new();
+  gtk_container_add(GTK_CONTAINER(label_event_box), label);
+
+  GtkWidget *playing =
 	    gtk_image_new_from_icon_name("audio-volume-high-symbolic", GTK_ICON_SIZE_SMALL_TOOLBAR);
 	gtk_widget_set_name(playing, "browser__tabbox__playing");
+  GtkWidget *playing_event_box = gtk_event_box_new();
+  gtk_container_add(GTK_CONTAINER(playing_event_box), playing);
 
 #ifdef BADWOLF_TAB_BOX_WIDTH
 	gtk_widget_set_size_request(label, BADWOLF_TAB_BOX_WIDTH, -1);
@@ -175,9 +197,11 @@ badwolf_new_tab_box(const gchar *title, struct Client *browser)
 
 	gtk_label_set_ellipsize(GTK_LABEL(label), BADWOLF_TAB_LABEL_ELLIPSIZE);
 	gtk_label_set_single_line_mode(GTK_LABEL(label), TRUE);
+  //gtk_label_set_single_line_mode(GTK_LABEL(context_label), TRUE);
 
-	gtk_box_pack_start(GTK_BOX(tab_box), playing, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(tab_box), label, TRUE, TRUE, 0);
+  //gtk_box_pack_start(GTK_BOX(tab_box), context_label_event_box, TRUE, TRUE, 0);
+  gtk_box_pack_start(GTK_BOX(tab_box), playing_event_box, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(tab_box), label_event_box, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(tab_box), close, FALSE, FALSE, 0);
 
 	gtk_button_set_relief(GTK_BUTTON(close), GTK_RELIEF_NONE);
@@ -187,7 +211,10 @@ badwolf_new_tab_box(const gchar *title, struct Client *browser)
 	gtk_widget_set_tooltip_text(tab_box, title);
 
 	gtk_widget_show_all(tab_box);
-	gtk_widget_set_visible(playing, webkit_web_view_is_playing_audio(browser->webView));
+	gtk_widget_set_visible(playing, webkit_web_view_is_playing_audio(browser->webView));  
+  gtk_widget_set_events(label, GDK_BUTTON_RELEASE_MASK);
+  g_signal_connect(
+      tab_box, "button-release-event", G_CALLBACK(tab_boxCb_button_release_event), browser);
 
 	return tab_box;
 }
@@ -304,10 +331,24 @@ WebViewCb_create(WebKitWebView *related_web_view,
                  gpointer user_data)
 {
 	(void)navigation_action;
-	struct Window *window  = (struct Window *)user_data;
-	struct Client *browser = new_browser(window, NULL, related_web_view);
 
-	gint newtab=badwolf_new_tab(GTK_NOTEBOOK(window->notebook), browser, FALSE);
+  struct Client *old_browser = (struct Client *)user_data;
+  struct Client *browser     = NULL;
+  // shouldn't be needed but better be safe
+  old_browser->webView = related_web_view;
+
+  browser = new_browser(old_browser->window, NULL, old_browser);
+
+  /*if(badwolf_new_tab(GTK_NOTEBOOK(old_browser->window->notebook), browser, FALSE) < 0)
+    return NULL;
+  else
+    return browser->webView;
+  */
+
+  //struct Window *window  = (struct Window *)user_data;
+  //struct Client *browser = new_browser(window, NULL, related_web_view);
+
+  gint newtab=badwolf_new_tab(GTK_NOTEBOOK(old_browser->window->notebook), browser, FALSE);
 	if(newtab == 0)
 	{
     WebKitSettings *oldSettings = webkit_web_view_get_settings(related_web_view);
@@ -317,8 +358,8 @@ WebViewCb_create(WebKitWebView *related_web_view,
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(browser->javascript), oldJSValue);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(browser->auto_load_images), oldImgValue);
 
-    gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook),
-		  gtk_notebook_get_current_page(GTK_NOTEBOOK(window->notebook))+1);
+    gtk_notebook_set_current_page(GTK_NOTEBOOK(browser->window->notebook),
+    gtk_notebook_get_current_page(GTK_NOTEBOOK(browser->window->notebook))+1);
 
     gtk_widget_grab_focus (GTK_WIDGET (browser->webView));
 	}
@@ -417,7 +458,12 @@ WebViewCb_load_failed_with_tls_errors(WebKitWebView *web_view,
 	struct Client *browser = (struct Client *)user_data;
 	gchar *error_details   = detail_tls_certificate_flags(errors);
 	gint dialog_response;
-	SoupURI *failing_uri = soup_uri_new(failing_text);
+
+#ifndef USE_LIBSOUP2
+  GUri *failing_uri = g_uri_parse(failing_text, G_URI_FLAGS_NONE, NULL);
+#else
+  SoupURI *failing_uri = soup_uri_new(failing_text);
+#endif
 
 	GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(browser->window->main_window),
 	                                           GTK_DIALOG_MODAL & GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -427,6 +473,12 @@ WebViewCb_load_failed_with_tls_errors(WebKitWebView *web_view,
 	                                           failing_text);
 	gtk_dialog_add_buttons(
 	    GTK_DIALOG(dialog), _("Temporarily Add Exception"), 1, _("Continue"), 0, NULL);
+
+  if(!failing_uri)
+  {
+    gtk_dialog_set_response_sensitive(GTK_DIALOG(dialog), 1, FALSE);
+  }
+
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), 0);
 	gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog), "%s\n", error_details);
 
@@ -434,12 +486,31 @@ WebViewCb_load_failed_with_tls_errors(WebKitWebView *web_view,
 
 	if(dialog_response == 1)
 	{
-		webkit_web_context_allow_tls_certificate_for_host(
-		    webkit_web_view_get_context(browser->webView), certificate, failing_uri->host);
-		webkit_web_view_reload(browser->webView);
+#ifndef USE_LIBSOUP2
+    webkit_web_context_allow_tls_certificate_for_host(
+        webkit_web_view_get_context(browser->webView), certificate, g_uri_get_host(failing_uri));
+#else
+    webkit_web_context_allow_tls_certificate_for_host(
+        webkit_web_view_get_context(browser->webView), certificate, failing_uri->host);
+#endif
+    webkit_web_view_reload(browser->webView);
 	}
 
-	soup_uri_free(failing_uri);
+#ifndef USE_LIBSOUP2
+  /* Calling g_free(failing_uri) ought to be the correct way but this causes a segfault.
+   *
+   * - documentation describes it as something which should be free
+   * - implementation seems to make it a pointer that should be freed
+   * - epiphany doesn't seems to free/unref it but gnome code seems to frequently have memleaks
+   *
+   * Decided to at least continue to try with using g_uri_unref(failing_uri) instead.
+   * Related fediverse post: <https://queer.hacktivis.me/objects/cec7c4e8-6a58-4358-85bf-b66f9bb21a98>
+   */
+  g_uri_unref(failing_uri);
+#else
+  soup_uri_free(failing_uri);
+#endif
+
 	g_free(error_details);
 	gtk_widget_destroy(dialog);
 
@@ -453,7 +524,9 @@ web_contextCb_download_started(WebKitWebContext *web_context,
 {
 	(void)web_context;
 	struct Client *browser    = (struct Client *)user_data;
-	struct Download *download = malloc(sizeof(struct Client));
+  struct Download *download = malloc(sizeof(struct Download));
+
+  assert(webkit_download);
 
 	if(download != NULL)
 	{
@@ -585,18 +658,20 @@ widgetCb_drop_button3_event(GtkWidget *widget, GdkEvent *event, gpointer user_da
 }
 
 struct Client *
-new_browser(struct Window *window, const gchar *target_url, WebKitWebView *related_web_view)
+new_browser(struct Window *window, const gchar *target_url, struct Client *old_browser)
 {
-  target_url = badwolf_ensure_uri_scheme(target_url, (related_web_view == NULL));
+  target_url = badwolf_ensure_uri_scheme(target_url, (old_browser == NULL));
 
   if (openProtocolOnExternalApp(strdup(target_url))) return NULL;
 
   struct Client *browser = malloc(sizeof(struct Client));
   char *badwolf_l10n = NULL;
+  WebKitWebContext *web_context;
 
 	if(browser == NULL) return NULL;
 
 	browser->window = window;
+  browser->context_id = old_browser == NULL ? context_id_counter++ : old_browser->context_id;
   browser->box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	gtk_widget_set_name(browser->box, "browser__box");
 
@@ -632,14 +707,27 @@ new_browser(struct Window *window, const gchar *target_url, WebKitWebView *relat
 	browser->statuslabel = gtk_label_new(NULL);
 	gtk_widget_set_name(browser->statuslabel, "browser__statuslabel");
 
-  setenv("GTK_THEME", ":light", 0);
+  if(old_browser == NULL)
+  {
+    WebKitWebsiteDataManager *website_data_manager = webkit_website_data_manager_new_ephemeral();
+    webkit_website_data_manager_set_itp_enabled(website_data_manager, TRUE);
 
-	WebKitWebContext *web_context = webkit_web_context_new_ephemeral();
-	webkit_web_context_set_sandbox_enabled(web_context, TRUE);
-	webkit_web_context_set_process_model(web_context,
-	                                     WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES);
+    web_context = webkit_web_context_new_with_website_data_manager(website_data_manager);
+    g_object_unref(website_data_manager);
+    webkit_web_context_set_sandbox_enabled(web_context, TRUE);
+    webkit_web_context_set_process_model(web_context,
+                                         WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES);
+    webkit_web_context_set_web_extensions_directory(web_context, web_extensions_directory);
 
-	webkit_web_context_set_web_extensions_directory(web_context, web_extensions_directory);
+    g_signal_connect(G_OBJECT(web_context),
+                     "download-started",
+                     G_CALLBACK(web_contextCb_download_started),
+                     browser);
+  }
+  else
+  {
+    web_context = webkit_web_view_get_context(old_browser->webView);
+  }
 
 	badwolf_l10n = getenv("BADWOLF_L10N");
 
@@ -663,14 +751,21 @@ new_browser(struct Window *window, const gchar *target_url, WebKitWebView *relat
 	                                                "web-context",
 	                                                web_context,
 	                                                "related-view",
-	                                                related_web_view,
+                                                  old_browser == NULL ? NULL : old_browser->webView,
 	                                                "settings",
 	                                                settings,
+                                                  "user-content-manager",
+                                                  window->content_manager,
 	                                                NULL));
 
 	gtk_widget_set_name(GTK_WIDGET(browser->webView), "browser__webView");
-	g_object_unref(web_context);
-	g_object_unref(settings);
+
+  if(old_browser == NULL)
+  {
+    g_object_unref(web_context);
+  }
+
+  g_object_unref(settings);
 
 	gtk_box_pack_start(
 	    GTK_BOX(browser->toolbar), GTK_WIDGET(browser->back), FALSE, FALSE, BADWOLF_TOOLBAR_PADDING);
@@ -726,6 +821,17 @@ new_browser(struct Window *window, const gchar *target_url, WebKitWebView *relat
 
 	gtk_label_set_single_line_mode(GTK_LABEL(browser->statuslabel), TRUE);
 	gtk_label_set_ellipsize(GTK_LABEL(browser->statuslabel), BADWOLF_STATUSLABEL_ELLIPSIZE);
+
+  if(bookmarks_completion_model != NULL)
+  {
+    GtkEntryCompletion *location_completion = gtk_entry_completion_new();
+    GtkTreeModel *location_completion_model = bookmarks_completion_model;
+
+    bookmarks_completion_setup(location_completion, location_completion_model);
+    gtk_entry_set_completion(GTK_ENTRY(browser->location), location_completion);
+
+    g_signal_connect(G_OBJECT(location_completion), "match-selected", G_CALLBACK(locationCompletion_match_selected), browser); //(gpointer)NULL);
+  }
 
 	gtk_entry_set_text(GTK_ENTRY(browser->location), target_url);
 	gtk_entry_set_input_purpose(GTK_ENTRY(browser->location), GTK_INPUT_PURPOSE_URL);
@@ -788,7 +894,7 @@ new_browser(struct Window *window, const gchar *target_url, WebKitWebView *relat
 	                 "notify::estimated-load-progress",
 	                 G_CALLBACK(WebViewCb_notify__estimated_load_progress),
 	                 browser);
-	g_signal_connect(browser->webView, "create", G_CALLBACK(WebViewCb_create), window);
+  g_signal_connect(browser->webView, "create", G_CALLBACK(WebViewCb_create), browser);
 	g_signal_connect(browser->webView, "close", G_CALLBACK(WebViewCb_close), browser);
 	g_signal_connect(
 	    browser->webView, "key-press-event", G_CALLBACK(WebViewCb_key_press_event), browser);
@@ -805,10 +911,10 @@ new_browser(struct Window *window, const gchar *target_url, WebKitWebView *relat
 	g_signal_connect(browser->webView, "button-press-event", G_CALLBACK(WebViewCb_button_press_event), browser);
 
 	/* signals for WebView's WebContext */
-	g_signal_connect(G_OBJECT(web_context),
+  /*g_signal_connect(G_OBJECT(web_context),
 	                 "download-started",
 	                 G_CALLBACK(web_contextCb_download_started),
-	                 browser);
+                   browser);*/
 
 	/* signals for search widget */
 	g_signal_connect(browser->search, "next-match", G_CALLBACK(SearchEntryCb_next__match), browser);
@@ -822,7 +928,7 @@ new_browser(struct Window *window, const gchar *target_url, WebKitWebView *relat
 	/* signals for box container */
 	g_signal_connect(browser->box, "key-press-event", G_CALLBACK(boxCb_key_press_event), browser);
 
-	if(related_web_view == NULL) webkit_web_view_load_uri(browser->webView, target_url);
+  if(old_browser == NULL) webkit_web_view_load_uri(browser->webView, target_url);
 
 	return browser;
 }
@@ -848,7 +954,7 @@ badwolf_new_tab(GtkNotebook *notebook, struct Client *browser, bool auto_switch)
 
 	if(gtk_notebook_insert_page(notebook, browser->box, NULL, (current_page + 1)) == -1) return -1;
 
-	gtk_notebook_set_tab_reorderable(notebook, browser->box, TRUE);
+  //gtk_notebook_set_tab_reorderable(notebook, browser->box, TRUE);
 	gtk_notebook_set_tab_label(notebook, browser->box, badwolf_new_tab_box(title, browser));
 	gtk_notebook_set_menu_label_text(GTK_NOTEBOOK(notebook), browser->box, title);
 
@@ -858,8 +964,6 @@ badwolf_new_tab(GtkNotebook *notebook, struct Client *browser, bool auto_switch)
 	{
 		gtk_notebook_set_current_page(notebook, gtk_notebook_page_num(notebook, browser->box));
 	}
-
-  //g_signal_connect(notebook, "switch-page", G_CALLBACK(notebookCb_switch__page), browser);
 
   set_dark_mode(browser->webView);
   set_kiosk_mode(browser);
@@ -886,10 +990,75 @@ closeCb_clicked(GtkButton *close, gpointer user_data)
 	webkit_web_view_try_close(browser->webView);
 }
 
+void
+content_managerCb_ready(GObject *store, GAsyncResult *result, gpointer user_data)
+{
+  (void)store;
+  struct Window *window = (struct Window *)user_data;
+  GError *err           = NULL;
+
+  WebKitUserContentFilter *filter =
+      webkit_user_content_filter_store_load_finish(window->content_store, result, &err);
+
+  if(filter == NULL)
+  {
+    if(err == NULL)
+    {
+      fprintf(stderr, _("badwolf: failed to load content-filter, err: [%d] %s\n"), -1, "unknown");
+    }
+    else
+    {
+      fprintf(stderr,
+              _("badwolf: failed to load content-filter, err: [%d] %s\n"),
+              err->code,
+              err->message);
+    }
+  }
+  else
+  {
+    fprintf(stderr, _("badwolf: content-filter loaded, adding to content-manager…\n"));
+    webkit_user_content_manager_add_filter(window->content_manager, filter);
+  }
+}
+
+static void
+storeCb_finish(WebKitUserContentFilterStore *store, GAsyncResult *result, gpointer user_data)
+{
+  (void)store;
+  struct Window *window = (struct Window *)user_data;
+  GError *err           = NULL;
+
+  WebKitUserContentFilter *filter =
+      webkit_user_content_filter_store_save_finish(window->content_store, result, &err);
+
+  if(filter == NULL)
+  {
+    if(err == NULL)
+    {
+      fprintf(stderr,
+              _("badwolf: failed to compile content-filters.json, err: [%d] %s\n"),
+              -1,
+              "unknown");
+    }
+    else
+    {
+      fprintf(stderr,
+              _("badwolf: failed to compile content-filters.json, err: [%d] %s\n"),
+              err->code,
+              err->message);
+    }
+  }
+  else
+  {
+    webkit_user_content_filter_store_load(
+        window->content_store, "a", NULL, content_managerCb_ready, window);
+  }
+}
+
 int
 main(int argc, char *argv[])
 {
-	struct Window *window = &(struct Window){NULL, NULL, NULL, NULL};
+  struct Window *window = &(struct Window){NULL, NULL, NULL, NULL, NULL, NULL};
 
 	GApplication *application;
 	application = g_application_new("me.hacktivis.badwolf",
@@ -925,10 +1094,30 @@ main(int argc, char *argv[])
 	    g_build_filename(g_get_user_data_dir(), "badwolf", "webkit-web-extension", NULL);
 	fprintf(stderr, _("webkit-web-extension directory set to: %s\n"), web_extensions_directory);
 
+  bookmarks_completion_model = bookmarks_completion_init();
+  g_object_ref(bookmarks_completion_model);
+
 	window->main_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	window->notebook    = gtk_notebook_new();
 	window->new_tab = gtk_button_new_from_icon_name("tab-new-symbolic", GTK_ICON_SIZE_SMALL_TOOLBAR);
 	window->downloads_tab = badwolf_downloads_tab_new();
+
+  window->content_manager = webkit_user_content_manager_new();
+
+  gchar *contentFilterPath =
+      g_build_filename(g_get_user_config_dir(), g_get_prgname(), "content-filters.json", NULL);
+  GFile *contentFilterFile = g_file_new_for_path(contentFilterPath);
+  fprintf(stderr, _("content-filters file set to: %s\n"), contentFilterPath);
+
+  gchar *filtersPath = g_build_filename(g_get_user_cache_dir(), g_get_prgname(), "filters", NULL);
+  window->content_store = webkit_user_content_filter_store_new(filtersPath);
+
+  webkit_user_content_filter_store_save_from_file(window->content_store,
+                                                  "a",
+                                                  contentFilterFile,
+                                                  NULL,
+                                                  (GAsyncReadyCallback)storeCb_finish,
+                                                  window);
 
 	gtk_window_set_default_size(
 	    GTK_WINDOW(window->main_window), BADWOLF_DEFAULT_WIDTH, BADWOLF_DEFAULT_HEIGHT);
@@ -974,8 +1163,8 @@ main(int argc, char *argv[])
 
 	badwolf_downloads_tab_attach(window);
 
-	g_signal_connect(
-	    window->main_window, "key-press-event", G_CALLBACK(main_windowCb_key_press_event), window);
+  g_signal_connect(
+      window->main_window, "key-press-event", G_CALLBACK(main_windowCb_key_press_event), window);
 
 	g_signal_connect(window->main_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 	g_signal_connect(window->new_tab, "clicked", G_CALLBACK(new_tabCb_clicked), window);
@@ -984,29 +1173,30 @@ main(int argc, char *argv[])
 	gtk_widget_show(window->new_tab);
 	gtk_widget_show_all(window->main_window);
 
-	struct Client *browser = NULL;
-	if(argc == 1)
-	{	
-		browser = new_browser(window, NULL, NULL);
-		badwolf_new_tab(GTK_NOTEBOOK(window->notebook), browser, FALSE);
-	}	
-	else
-	{	
-		for(int i = 1; i < argc; ++i)
-		{
-			browser = new_browser(window, argv[i], NULL);
-			badwolf_new_tab(GTK_NOTEBOOK(window->notebook), browser, FALSE);
-		}
-	}	
+  struct Client *browser=NULL;
 
-	gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook), 1);
+  if(argc == 1)
+  {
+    browser = new_browser(window, NULL, NULL);
+    badwolf_new_tab(GTK_NOTEBOOK(window->notebook), browser, FALSE);
+  }
+  else
+  {
+    for(int i = 1; i < argc; ++i)
+    {
+      browser = new_browser(window, argv[i], NULL);
+      badwolf_new_tab(GTK_NOTEBOOK(window->notebook), browser, FALSE);
+    }
+  }
 
-	if(browser != NULL)
-		gtk_widget_grab_focus (GTK_WIDGET (browser->webView));	  
+  gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook), 1);
 
-  //g_signal_connect(window->notebook, "switch-page", G_CALLBACK(notebookCb_switch__page), browser);
+  if(browser != NULL)
+    gtk_widget_grab_focus (GTK_WIDGET (browser->webView));
 
-	gtk_main();
+  gtk_main();
+
+  g_object_unref(bookmarks_completion_model);
 
 #if 0
 	/* TRANSLATOR Ignore this entry. Done for forcing Unicode in xgettext. */
@@ -1084,7 +1274,7 @@ WebViewCb_button_press_event(GtkWidget *widget, GdkEvent  *event, gpointer user_
  */
 static gboolean
 locationCb_activate(GtkEntry *location, gpointer user_data)
-{
+{ 
   if (openProtocolOnExternalApp(g_strdup(gtk_entry_get_text(location))))
   {
     return TRUE;
@@ -1094,6 +1284,35 @@ locationCb_activate(GtkEntry *location, gpointer user_data)
 
   webkit_web_view_load_uri(browser->webView,
                            badwolf_ensure_uri_scheme(gtk_entry_get_text(location), TRUE));
+
+  if(browser != NULL)
+    gtk_widget_grab_focus (GTK_WIDGET (browser->webView));
+
+  return TRUE;
+}
+
+/*
+ * Whenever user selects an item in the bookmark combobox
+ */
+static gboolean
+locationCompletion_match_selected(GtkEntryCompletion *widget,
+                                   GtkTreeModel       *model,
+                                   GtkTreeIter        *iter,
+                                   gpointer            user_data)
+{
+  (void)widget;
+  (void)model;
+  (void)iter;
+
+  struct Client *browser = (struct Client *)user_data;
+
+  if (openProtocolOnExternalApp(g_strdup(gtk_entry_get_text(GTK_ENTRY(browser->location)))))
+  {
+    return TRUE;
+  }
+
+  webkit_web_view_load_uri(browser->webView,
+                           badwolf_ensure_uri_scheme(gtk_entry_get_text(GTK_ENTRY(browser->location)), TRUE));
 
   if(browser != NULL)
     gtk_widget_grab_focus (GTK_WIDGET (browser->webView));

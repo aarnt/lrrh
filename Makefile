@@ -3,42 +3,44 @@
 # - Usage of ?= for defining variables when not already defined
 # - Usage of += for appending to a variable
 
-PACKAGE = Badwolf
-VERSION = 1.0.3
-VERSION_FULL = $(VERSION)`./version.sh`
+include config.mk
 
-PREFIX  ?= /usr/local
-BINDIR  ?= $(PREFIX)/bin
-MANDIR  ?= $(PREFIX)/share/man
-DOCDIR  ?= $(PREFIX)/share/doc/lrrh-$(VERSION)
-DATADIR ?= $(PREFIX)/share/lrrh
-APPSDIR ?= $(PREFIX)/share/applications
+#PACKAGE = Badwolf
+#VERSION = 1.0.3
+#VERSION_FULL = $(VERSION)`./version.sh`
 
-CC        ?= cc
-CFLAGS    ?= -g -Wall -Wextra -Wconversion -Wsign-conversion -O2
-DBG       ?=
-PKGCONFIG ?= pkg-config
-MSGFMT    ?= msgfmt
-INKSCAPE  ?= inkscape
+#PREFIX  ?= /usr/local
+#BINDIR  ?= $(PREFIX)/bin
+#MANDIR  ?= $(PREFIX)/share/man
+#DOCDIR  ?= $(PREFIX)/share/doc/lrrh-$(VERSION)
+#DATADIR ?= $(PREFIX)/share/lrrh
+#APPSDIR ?= $(PREFIX)/share/applications
+
+#CC        ?= cc
+#CFLAGS    ?= -g -Wall -Wextra -Wconversion -Wsign-conversion -O2
+#DBG       ?=
+#PKGCONFIG ?= pkg-config
+#MSGFMT    ?= msgfmt
+#INKSCAPE  ?= inkscape
 
 # for i in 24 32 48 64 128 256; do echo icons/hicolor/${i}x${i}/apps/lrrh.png; done | tr '\n' ' '
-ICON_SIZES = icons/hicolor/24x24/apps/lrrh.png icons/hicolor/32x32/apps/lrrh.png icons/hicolor/48x48/apps/lrrh.png icons/hicolor/64x64/apps/lrrh.png icons/hicolor/128x128/apps/lrrh.png icons/hicolor/256x256/apps/lrrh.png
+#ICON_SIZES = icons/hicolor/24x24/apps/lrrh.png icons/hicolor/32x32/apps/lrrh.png icons/hicolor/48x48/apps/lrrh.png icons/hicolor/64x64/apps/lrrh.png icons/hicolor/128x128/apps/lrrh.png icons/hicolor/256x256/apps/lrrh.png
 
-DEPS  = gtk+-3.0 webkit2gtk-4.0 libsoup-2.4
-SRCS  = uri.c uri_test.c keybindings.c downloads.c badwolf.c
-OBJS  = uri.o keybindings.o downloads.o badwolf.o
+#DEPS  = gtk+-3.0 webkit2gtk-4.0 libsoup-2.4 xml2
+SRCS  = bookmarks.c uri.c uri_test.c keybindings.c downloads.c badwolf.c
+OBJS  = bookmarks.o uri.o keybindings.o downloads.o badwolf.o
 OBJS_test = uri_test.o
 EXE   = lrrh
 EXE_test = uri_test
-TRANS = fr.mo pt_BR.mo tr.mo
+TRANS = fr.mo pt_BR.mo tr.mo de.mo vi.mo
 DOCS  = usr.bin.lrrh README.md KnowledgeBase.md interface.txt
 
-CDEPS = -DDATADIR=\"$(DATADIR)\" -DPACKAGE=\"$(PACKAGE)\" -D_XOPEN_SOURCE=500 -D_POSIX_C_SOURCE=200809L -DVERSION=\"$(VERSION_FULL)\"
-CDEPS += `$(PKGCONFIG) --cflags $(DEPS)`
-LIBS   = `$(PKGCONFIG) --libs $(DEPS)`
+all: config.mk $(EXE) $(TRANS) po/messages.pot
 
-all: $(EXE) $(TRANS) po/messages.pot
-
+config.mk: configure 
+	@echo "Error: You need to execute ./configure before running make" 
+	@exit 1
+ 
 icons: $(ICON_SIZES)
 
 icons/hicolor/scalable/apps/badwolf.svg: badwolf.svg
