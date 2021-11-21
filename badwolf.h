@@ -52,6 +52,6 @@ void set_dark_mode(WebKitWebView *web_view);
 void webView_tab_label_change(struct Client *browser, const gchar *title);
 struct Client *
 new_browser(struct Window *window, const gchar *target_url, struct Client *old_browser);
-int badwolf_new_tab(GtkNotebook *notebook, struct Client *browser, bool auto_switch);
+int badwolf_new_tab(GtkNotebook *notebook, struct Client *browser, bool auto_switch, bool force_kiosk_mode);
 gint badwolf_get_tab_position(GtkContainer *notebook, GtkWidget *child);
 #endif /* BADWOLF_H_INCLUDED */

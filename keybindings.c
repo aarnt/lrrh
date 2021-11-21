@@ -18,7 +18,7 @@ about_dialogCb_activate_link(GtkAboutDialog *about_dialog, gchar *uri, gpointer 
 	(void)about_dialog;
 	struct Window *window = (struct Window *)user_data;
 
-  badwolf_new_tab(GTK_NOTEBOOK(window->notebook), new_browser(window, uri, NULL), TRUE);
+  badwolf_new_tab(GTK_NOTEBOOK(window->notebook), new_browser(window, uri, NULL), TRUE, FALSE);
   gtk_window_close(GTK_WINDOW(about_dialog));
 
 	return TRUE;
@@ -114,7 +114,7 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
         {
           gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(nbrowser->javascript), jsEnabled);
           gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(nbrowser->auto_load_images), imgEnabled);
-          badwolf_new_tab(GTK_NOTEBOOK(window->notebook), nbrowser, FALSE);
+          badwolf_new_tab(GTK_NOTEBOOK(window->notebook), nbrowser, FALSE, FALSE);
           gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook),
           gtk_notebook_get_current_page(notebook)+1);
         }
@@ -207,7 +207,7 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
         gtk_main_quit();
 				return TRUE;
 			case GDK_KEY_t:
-        badwolf_new_tab(notebook, new_browser(window, NULL, NULL), TRUE);
+        badwolf_new_tab(notebook, new_browser(window, NULL, NULL), TRUE, FALSE);
 				return TRUE;
 			}
 		}
@@ -335,7 +335,7 @@ open_site_on_new_tab(struct Window *window, const gchar *url, gboolean jsEnabled
 
   if (nbrowser != NULL)
   {
-    badwolf_new_tab(GTK_NOTEBOOK(window->notebook), nbrowser, FALSE);
+    badwolf_new_tab(GTK_NOTEBOOK(window->notebook), nbrowser, FALSE, FALSE);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(nbrowser->javascript), jsEnabled);
     gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook),
         gtk_notebook_get_current_page(notebook)+1);

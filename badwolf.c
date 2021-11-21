@@ -28,7 +28,8 @@ GtkTreeModel *bookmarks_completion_model;
 
 gboolean g_dark_mode = FALSE;
 gboolean g_kiosk_mode = FALSE;
-static gchar *dark_mode_css = "a { color: #40ECD0 !important; }" //lightgreen
+
+static gchar *dark_mode_css = "a { color: #40ECD0 !important; }"
     "article, aside, body, blockquote, dd, dl, dt, form, "
     "h1, h2, h3, h4, h5, header, div, iframe, input, label, "
     "li, option, p, pre, root, select, span, table, td, th, tr, ul "
@@ -339,16 +340,7 @@ WebViewCb_create(WebKitWebView *related_web_view,
 
   browser = new_browser(old_browser->window, NULL, old_browser);
 
-  /*if(badwolf_new_tab(GTK_NOTEBOOK(old_browser->window->notebook), browser, FALSE) < 0)
-    return NULL;
-  else
-    return browser->webView;
-  */
-
-  //struct Window *window  = (struct Window *)user_data;
-  //struct Client *browser = new_browser(window, NULL, related_web_view);
-
-  gint newtab=badwolf_new_tab(GTK_NOTEBOOK(old_browser->window->notebook), browser, FALSE);
+  gint newtab=badwolf_new_tab(GTK_NOTEBOOK(old_browser->window->notebook), browser, FALSE, FALSE);
 	if(newtab == 0)
 	{
     WebKitSettings *oldSettings = webkit_web_view_get_settings(related_web_view);
@@ -455,7 +447,8 @@ WebViewCb_load_failed_with_tls_errors(WebKitWebView *web_view,
 	(void)web_view;
 	(void)certificate;
 	(void)errors;
-	struct Client *browser = (struct Client *)user_data;
+
+  struct Client *browser = (struct Client *)user_data;
 	gchar *error_details   = detail_tls_certificate_flags(errors);
 	gint dialog_response;
 
@@ -830,7 +823,7 @@ new_browser(struct Window *window, const gchar *target_url, struct Client *old_b
     bookmarks_completion_setup(location_completion, location_completion_model);
     gtk_entry_set_completion(GTK_ENTRY(browser->location), location_completion);
 
-    g_signal_connect(G_OBJECT(location_completion), "match-selected", G_CALLBACK(locationCompletion_match_selected), browser); //(gpointer)NULL);
+    g_signal_connect(G_OBJECT(location_completion), "match-selected", G_CALLBACK(locationCompletion_match_selected), browser);
   }
 
 	gtk_entry_set_text(GTK_ENTRY(browser->location), target_url);
@@ -943,12 +936,14 @@ new_browser(struct Window *window, const gchar *target_url, struct Client *old_b
  */
 
 int
-badwolf_new_tab(GtkNotebook *notebook, struct Client *browser, bool auto_switch)
+badwolf_new_tab(GtkNotebook *notebook, struct Client *browser, bool auto_switch, bool force_kiosk_mode)
 {
-	gint current_page = gtk_notebook_get_current_page(notebook);
+  if (g_kiosk_mode == TRUE && force_kiosk_mode == FALSE) return -2;
+
+  gint current_page = gtk_notebook_get_current_page(notebook);
 	gchar *title      = _("New tab");
 
-  if(browser == NULL || isKioskMode()) return -2;
+  if(browser == NULL) return -2;
 
 	gtk_widget_show_all(browser->box);
 
@@ -978,7 +973,7 @@ new_tabCb_clicked(GtkButton *new_tab, gpointer user_data)
 	struct Window *window  = (struct Window *)user_data;
 	struct Client *browser = new_browser(window, NULL, NULL);
 
-	badwolf_new_tab(GTK_NOTEBOOK(window->notebook), browser, TRUE);
+  badwolf_new_tab(GTK_NOTEBOOK(window->notebook), browser, TRUE, FALSE);
 }
 
 static void
@@ -1178,14 +1173,26 @@ main(int argc, char *argv[])
   if(argc == 1)
   {
     browser = new_browser(window, NULL, NULL);
-    badwolf_new_tab(GTK_NOTEBOOK(window->notebook), browser, FALSE);
+    badwolf_new_tab(GTK_NOTEBOOK(window->notebook), browser, FALSE, FALSE);
   }
   else
   {
     for(int i = 1; i < argc; ++i)
     {
+      if (strcmp(argv[i], "--kiosk")==0)
+      {
+        g_kiosk_mode = TRUE;
+        if (argc == 2)
+        {
+          browser = new_browser(window, NULL, NULL);
+          badwolf_new_tab(GTK_NOTEBOOK(window->notebook), browser, FALSE, TRUE);
+          break;
+        }
+        continue;
+      }
+
       browser = new_browser(window, argv[i], NULL);
-      badwolf_new_tab(GTK_NOTEBOOK(window->notebook), browser, FALSE);
+      badwolf_new_tab(GTK_NOTEBOOK(window->notebook), browser, FALSE, g_kiosk_mode);
     }
   }
 
@@ -1253,7 +1260,7 @@ WebViewCb_button_press_event(GtkWidget *widget, GdkEvent  *event, gpointer user_
   {
     if (strlen(gtk_label_get_text(GTK_LABEL(oldBrowser->statuslabel)))==0) return FALSE;
 
-    gint newtab=badwolf_new_tab(GTK_NOTEBOOK(oldBrowser->window->notebook), browser, TRUE);
+    gint newtab=badwolf_new_tab(GTK_NOTEBOOK(oldBrowser->window->notebook), browser, TRUE, FALSE);
     if(newtab == 0)
     {
       gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(browser->javascript), jsEnabled);
@@ -1301,18 +1308,20 @@ locationCompletion_match_selected(GtkEntryCompletion *widget,
                                    gpointer            user_data)
 {
   (void)widget;
-  (void)model;
-  (void)iter;
+
+  const gchar *location = NULL;
+  gtk_tree_model_get(model, iter, 0, &location, -1);
+  if (location == NULL) return FALSE;
 
   struct Client *browser = (struct Client *)user_data;
 
-  if (openProtocolOnExternalApp(g_strdup(gtk_entry_get_text(GTK_ENTRY(browser->location)))))
+  if (openProtocolOnExternalApp(g_strdup(location)))
   {
     return TRUE;
   }
 
   webkit_web_view_load_uri(browser->webView,
-                           badwolf_ensure_uri_scheme(gtk_entry_get_text(GTK_ENTRY(browser->location)), TRUE));
+                           badwolf_ensure_uri_scheme(location, TRUE));
 
   if(browser != NULL)
     gtk_widget_grab_focus (GTK_WIDGET (browser->webView));
@@ -1367,9 +1376,6 @@ notebookCb_switch__page(GtkNotebook *notebook, GtkWidget *page, guint page_num, 
 {
   (void)page_num;
   struct Window *window = (struct Window *)user_data;
-  //struct Client *browser = (struct Client *)user_data;
-  //struct Window *window = browser->window;
-
   GtkWidget *label      = gtk_notebook_get_tab_label(notebook, page);
 
   // TODO: Maybe find a better way to store the title
@@ -1443,6 +1449,7 @@ set_kiosk_mode(struct Client *browser)
     }
   }
 }
+
 /*
  * Toggles between DARK and NORMAL modes, calling the stylesheet
  * method and refreshing the webpage
