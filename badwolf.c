@@ -33,7 +33,7 @@ static gchar *dark_mode_css = "a { color: #40ECD0 !important; }"
     "article, aside, body, blockquote, dd, dl, dt, form, "
     "h1, h2, h3, h4, h5, header, div, iframe, input, label, "
     "li, option, p, pre, root, select, span, table, td, th, tr, ul "
-    "{ background: none !important; background-color: #212529 !important; color: #aeb3b7 !important; }"; //#a3aaaf #899095
+    "{ border: 0px !important; background: none !important; background-color: #212529 !important; color: #aeb3b7 !important; }"; //#a3aaaf #899095
 
 static gboolean
 openProtocolOnExternalApp(gchar *givenUrl);
