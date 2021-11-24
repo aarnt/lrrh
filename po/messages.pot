@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Badwolf 1.2.1+g9f879bb.main\n"
+"Project-Id-Version: Badwolf 1.2.1+gfc5ff73.main\n"
 "Report-Msgid-Bugs-To: contact+badwolf-msgid@hacktivis.me\n"
-"POT-Creation-Date: 2021-11-21 08:21-0300\n"
+"POT-Creation-Date: 2021-11-24 10:28-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -77,23 +77,23 @@ msgstr ""
 msgid "Bookmarks: unable to parse file \"%s\"\n"
 msgstr ""
 
-#: badwolf.c:1075
+#: badwolf.c:1078
 #, c-format
 msgid "Buildtime WebKit version: %d.%d.%d\n"
 msgstr ""
 
-#: badwolf.c:470
+#: badwolf.c:473
 msgid "Continue"
 msgstr ""
 
-#: badwolf.c:414
+#: badwolf.c:417
 msgid ""
 "Couldn't verify the TLS certificate to ensure a better security of the "
 "connection. You might want to verify your machine and network.\n"
 "\n"
 msgstr ""
 
-#: badwolf.c:136
+#: badwolf.c:139
 msgid "Crashed"
 msgstr ""
 
@@ -105,31 +105,31 @@ msgstr ""
 msgid "Downloads"
 msgstr ""
 
-#: badwolf.c:437
+#: badwolf.c:440
 msgid "Error: Some unknown error occurred validating the certificate.\n"
 msgstr ""
 
-#: badwolf.c:418
+#: badwolf.c:421
 msgid "Error: The X509 Certificate Authority is unknown.\n"
 msgstr ""
 
-#: badwolf.c:431
+#: badwolf.c:434
 msgid "Error: The certificate has been revoked.\n"
 msgstr ""
 
-#: badwolf.c:428
+#: badwolf.c:431
 msgid "Error: The certificate has expired. Check your system's clock.\n"
 msgstr ""
 
-#: badwolf.c:434
+#: badwolf.c:437
 msgid "Error: The certificate is considered to be insecure.\n"
 msgstr ""
 
-#: badwolf.c:425
+#: badwolf.c:428
 msgid "Error: The certificate isn't valid yet. Check your system's clock.\n"
 msgstr ""
 
-#: badwolf.c:421
+#: badwolf.c:424
 msgid "Error: The given identity doesn't match the expected one.\n"
 msgstr ""
 
@@ -137,99 +137,99 @@ msgstr ""
 msgid "LRRH Downloads"
 msgstr ""
 
-#: badwolf.c:946
+#: badwolf.c:949
 msgid "New tab"
 msgstr ""
 
-#: badwolf.c:1151
+#: badwolf.c:1154
 msgid "Open new tab"
 msgstr ""
 
-#: badwolf.c:140
+#: badwolf.c:143
 msgid "Out of Memory"
 msgstr ""
 
-#: badwolf.c:1073
+#: badwolf.c:1076
 #, c-format
 msgid "Running Badwolf version: %s\n"
 msgstr ""
 
-#: badwolf.c:1080
+#: badwolf.c:1083
 #, c-format
 msgid "Runtime WebKit version: %d.%d.%d\n"
 msgstr ""
 
-#: badwolf.c:467
+#: badwolf.c:470
 #, c-format
 msgid "TLS Error for %s."
 msgstr ""
 
-#: badwolf.c:470
+#: badwolf.c:473
 msgid "Temporarily Add Exception"
 msgstr ""
 
-#: badwolf.c:687
+#: badwolf.c:690
 msgid "Toggle javascript"
 msgstr ""
 
-#: badwolf.c:692
+#: badwolf.c:695
 msgid "Toggle loading images automatically"
 msgstr ""
 
-#: badwolf.c:144
+#: badwolf.c:147
 msgid "Unknown Crash"
 msgstr ""
 
-#: badwolf.c:690
+#: badwolf.c:693
 msgid "_IMG"
 msgstr ""
 
-#: badwolf.c:685
+#: badwolf.c:688
 msgid "_JS"
 msgstr ""
 
-#: badwolf.c:1016
+#: badwolf.c:1019
 #, c-format
 msgid "badwolf: content-filter loaded, adding to content-manager…\n"
 msgstr ""
 
-#: badwolf.c:1036 badwolf.c:1043
+#: badwolf.c:1039 badwolf.c:1046
 #, c-format
 msgid "badwolf: failed to compile content-filters.json, err: [%d] %s\n"
 msgstr ""
 
-#: badwolf.c:1004 badwolf.c:1009
+#: badwolf.c:1007 badwolf.c:1012
 #, c-format
 msgid "badwolf: failed to load content-filter, err: [%d] %s\n"
 msgstr ""
 
-#: badwolf.c:1107
+#: badwolf.c:1110
 #, c-format
 msgid "content-filters file set to: %s\n"
 msgstr ""
 
-#: badwolf.c:834
+#: badwolf.c:837
 msgid "search in current page"
 msgstr ""
 
-#: badwolf.c:135
+#: badwolf.c:138
 msgid "the web process crashed.\n"
 msgstr ""
 
-#: badwolf.c:139
+#: badwolf.c:142
 msgid "the web process exceeded the memory limit.\n"
 msgstr ""
 
-#: badwolf.c:143
+#: badwolf.c:146
 msgid "the web process terminated for an unknown reason.\n"
 msgstr ""
 
-#: badwolf.c:1092
+#: badwolf.c:1095
 #, c-format
 msgid "webkit-web-extension directory set to: %s\n"
 msgstr ""
 
 #. TRANSLATOR Ignore this entry. Done for forcing Unicode in xgettext.
-#: badwolf.c:1212
+#: badwolf.c:1218
 msgid "ø"
 msgstr ""

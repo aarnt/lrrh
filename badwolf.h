@@ -12,6 +12,8 @@
 extern const gchar *homepage;
 extern const gchar *version;
 
+extern gint g_bkp_current_page;
+
 struct Window
 {
 	GtkWidget *main_window;

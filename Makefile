@@ -27,8 +27,8 @@ include config.mk
 #ICON_SIZES = icons/hicolor/24x24/apps/lrrh.png icons/hicolor/32x32/apps/lrrh.png icons/hicolor/48x48/apps/lrrh.png icons/hicolor/64x64/apps/lrrh.png icons/hicolor/128x128/apps/lrrh.png icons/hicolor/256x256/apps/lrrh.png
 
 #DEPS  = gtk+-3.0 webkit2gtk-4.0 libsoup-2.4 xml2
-SRCS  = bookmarks.c uri.c uri_test.c keybindings.c downloads.c badwolf.c
-OBJS  = bookmarks.o uri.o keybindings.o downloads.o badwolf.o
+SRCS  = tabstack.c bookmarks.c uri.c uri_test.c keybindings.c downloads.c badwolf.c
+OBJS  = tabstack.o bookmarks.o uri.o keybindings.o downloads.o badwolf.o
 OBJS_test = uri_test.o
 EXE   = lrrh
 EXE_test = uri_test

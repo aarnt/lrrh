@@ -4,6 +4,7 @@
 
 #include "badwolf.h"
 
+#include "tabstack.h"
 #include "bookmarks.h"
 #include "config.h"
 #include "downloads.h"
@@ -21,6 +22,8 @@
 
 const gchar *homepage = "https://hacktivis.me/projects/badwolf";
 const gchar *version  = VERSION;
+
+gint g_bkp_current_page;
 
 static gchar *web_extensions_directory;
 static uint64_t context_id_counter = 0;
@@ -1164,8 +1167,11 @@ main(int argc, char *argv[])
       window->main_window, "key-press-event", G_CALLBACK(main_windowCb_key_press_event), window);
 
 	g_signal_connect(window->main_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
-	g_signal_connect(window->new_tab, "clicked", G_CALLBACK(new_tabCb_clicked), window);
+	g_signal_connect(window->new_tab, "clicked", G_CALLBACK(new_tabCb_clicked), window);  
+
+  /* signals for Notebook tab history control */
   g_signal_connect(window->notebook, "switch-page", G_CALLBACK(notebookCb_switch__page), window);
+  g_signal_connect(window->notebook, "page-removed", G_CALLBACK(notebookPage_removed), NULL);
 
 	gtk_widget_show(window->new_tab);
 	gtk_widget_show_all(window->main_window);
@@ -1376,9 +1382,11 @@ WebViewCb_load_changed(WebKitWebView *webView, WebKitLoadEvent load_event, gpoin
 static void
 notebookCb_switch__page(GtkNotebook *notebook, GtkWidget *page, guint page_num, gpointer user_data)
 {
-  (void)page_num;
   struct Window *window = (struct Window *)user_data;
   GtkWidget *label      = gtk_notebook_get_tab_label(notebook, page);
+
+  g_bkp_current_page = (gtk_notebook_get_current_page(notebook));
+  tabstack_push(gtk_notebook_get_nth_page(notebook, (int)page_num));
 
   // TODO: Maybe find a better way to store the title
   gtk_window_set_title(GTK_WINDOW(window->main_window), gtk_widget_get_tooltip_text(label));
