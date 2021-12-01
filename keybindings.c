@@ -119,11 +119,6 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
           gtk_notebook_get_current_page(notebook)+1);
         }
         return TRUE;
-      case GDK_KEY_plus:
-				zoom = webkit_web_view_get_zoom_level(WEBKIT_WEB_VIEW(browser->webView));
-				zoom += zoom * 0.1;
-				webkit_web_view_set_zoom_level(WEBKIT_WEB_VIEW(browser->webView), zoom);
-				return TRUE;
       case GDK_KEY_r:
         webkit_web_view_reload_bypass_cache(browser->webView);
         return TRUE;
@@ -138,6 +133,11 @@ commonCb_key_press_event(struct Window *window, GdkEvent *event, struct Client *
 			{
 			case GDK_KEY_0:
 				webkit_web_view_set_zoom_level(WEBKIT_WEB_VIEW(browser->webView), 1);
+				return TRUE;
+      case GDK_KEY_equal:
+				zoom = webkit_web_view_get_zoom_level(WEBKIT_WEB_VIEW(browser->webView));
+				zoom += zoom * 0.1;
+				webkit_web_view_set_zoom_level(WEBKIT_WEB_VIEW(browser->webView), zoom);
 				return TRUE;
 			case GDK_KEY_minus:
 				zoom = webkit_web_view_get_zoom_level(WEBKIT_WEB_VIEW(browser->webView));
