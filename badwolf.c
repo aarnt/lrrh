@@ -18,7 +18,13 @@
 #include <locale.h>       /* LC_* */
 #include <stdio.h>        /* perror(), fprintf(), snprintf() */
 #include <stdlib.h>       /* malloc() */
+
 #include <unistd.h>       /* access() */
+
+#ifdef __OpenBSD__
+  #include <sys/stat.h>
+  #include <sys/types.h>
+#endif
 
 const gchar *homepage = "https://hacktivis.me/projects/badwolf";
 const gchar *version  = VERSION;
@@ -954,7 +960,7 @@ badwolf_new_tab(GtkNotebook *notebook, struct Client *browser, bool auto_switch,
 
 	if(gtk_notebook_insert_page(notebook, browser->box, NULL, (current_page + 1)) == -1) return -1;
 
-  //gtk_notebook_set_tab_reorderable(notebook, browser->box, TRUE);
+	//gtk_notebook_set_tab_reorderable(notebook, browser->box, TRUE);
 	gtk_notebook_set_tab_label(notebook, browser->box, badwolf_new_tab_box(title, browser));
 	gtk_notebook_set_menu_label_text(GTK_NOTEBOOK(notebook), browser->box, title);
 
@@ -965,8 +971,8 @@ badwolf_new_tab(GtkNotebook *notebook, struct Client *browser, bool auto_switch,
 		gtk_notebook_set_current_page(notebook, gtk_notebook_page_num(notebook, browser->box));
 	}
 
-  set_dark_mode(browser->webView);
-  set_kiosk_mode(browser);
+	set_dark_mode(browser->webView);	
+	set_kiosk_mode(browser);
 
 	return 0;
 }
@@ -1090,17 +1096,17 @@ main(int argc, char *argv[])
   struct tm tm = *localtime(&t);
   if (tm.tm_hour >= 18 || tm.tm_hour < 7) g_dark_mode = TRUE;
 
-	web_extensions_directory =
-	    g_build_filename(g_get_user_data_dir(), "badwolf", "webkit-web-extension", NULL);
-	fprintf(stderr, _("webkit-web-extension directory set to: %s\n"), web_extensions_directory);
+  web_extensions_directory =
+  g_build_filename(g_get_user_data_dir(), "badwolf", "webkit-web-extension", NULL);
+  fprintf(stderr, _("webkit-web-extension directory set to: %s\n"), web_extensions_directory);
 
   bookmarks_completion_model = bookmarks_completion_init();
   g_object_ref(bookmarks_completion_model);
 
-	window->main_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	window->notebook    = gtk_notebook_new();
-	window->new_tab = gtk_button_new_from_icon_name("tab-new-symbolic", GTK_ICON_SIZE_SMALL_TOOLBAR);
-	window->downloads_tab = badwolf_downloads_tab_new();
+  window->main_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  window->notebook    = gtk_notebook_new();
+  window->new_tab = gtk_button_new_from_icon_name("tab-new-symbolic", GTK_ICON_SIZE_SMALL_TOOLBAR);
+  window->downloads_tab = badwolf_downloads_tab_new();
 
   window->content_manager = webkit_user_content_manager_new();
 
@@ -1166,17 +1172,82 @@ main(int argc, char *argv[])
   g_signal_connect(
       window->main_window, "key-press-event", G_CALLBACK(main_windowCb_key_press_event), window);
 
-	g_signal_connect(window->main_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
-	g_signal_connect(window->new_tab, "clicked", G_CALLBACK(new_tabCb_clicked), window);  
+  g_signal_connect(window->main_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+  g_signal_connect(window->new_tab, "clicked", G_CALLBACK(new_tabCb_clicked), window);  
 
   /* signals for Notebook tab history control */
   g_signal_connect(window->notebook, "switch-page", G_CALLBACK(notebookCb_switch__page), window);
   g_signal_connect(window->notebook, "page-removed", G_CALLBACK(notebookPage_removed), NULL);
 
-	gtk_widget_show(window->new_tab);
-	gtk_widget_show_all(window->main_window);
+  gtk_widget_show(window->new_tab);
+  gtk_widget_show_all(window->main_window);
 
   struct Client *browser=NULL;
+
+  #ifdef __OpenBSD__
+    char *login;
+    login=(char *)malloc(30*sizeof(char));
+    getlogin_r(login,30);
+
+    char path[80] = "/home/";
+    strlcat(path, (const char*)login, sizeof(path));
+    
+    char downloads[100];
+    strlcpy(downloads, path, sizeof(downloads));
+    strlcat(downloads, "/Downloads", sizeof(downloads));
+  
+    char local[100];
+    strlcpy(local, path, sizeof(local));
+    strlcat(local, "/.local", sizeof(local));
+ 
+    char cache[100];
+    strlcpy(cache, path, sizeof(cache));
+    strlcat(cache, "/.cache", sizeof(cache));
+
+    char config[100];
+    strlcpy(config, path, sizeof(config));
+    strlcat(config, "/.config", sizeof(config));
+    
+    struct stat st = {0};
+    if (stat(downloads, &st) == -1) {
+       mkdir(downloads, 0755);
+    } 
+   
+
+/*
+~/.XCompose r
+~/.Xauthority r
+~/.Xdefaults r
+~/.fontconfig r
+~/.fonts r
+~/.fonts.conf r
+~/.fonts.conf.d r
+~/.icons r
+~/.pki rwc
+~/.sndio rwc
+~/.terminfo r 
+
+*/
+
+    int ret = unveil("/usr", "rx");
+
+    ret = unveil("/dev/dri", "rwx");
+    ret = unveil("/dev/video", "rw");
+    ret = unveil("/dev/fido", "rw");
+    ret = unveil("/dev/null", "r");
+
+    ret = unveil("/tmp", "crw");
+    ret = unveil("/var/run", "rw");
+    
+    ret = unveil(downloads, "crw");
+    ret = unveil(local, "crw");
+    ret = unveil(cache, "crw");
+    ret = unveil(config, "crw");
+    ret = unveil(NULL, NULL);
+
+
+    free(login);
+  #endif
 
   if(argc == 1)
   {
@@ -1455,7 +1526,7 @@ set_kiosk_mode(struct Client *browser)
       gtk_widget_show(browser->toolbar);
       gtk_widget_show(browser->statusbar);
 
-      gtk_window_unfullscreen (GTK_WINDOW(browser->window->main_window));
+      //gtk_window_unfullscreen (GTK_WINDOW(browser->window->main_window));
     }
   }
 }

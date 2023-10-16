@@ -87,7 +87,24 @@ downloadCb_decide_destination(WebKitDownload *webkit_download,
 	    gtk_file_chooser_native_new(NULL, parent_window, GTK_FILE_CHOOSER_ACTION_SAVE, NULL, NULL);
 	GtkFileChooser *file_chooser = GTK_FILE_CHOOSER(file_dialog);
 
-	gtk_file_chooser_set_current_name(file_chooser, suggested_filename);
+	#ifdef __OpenBSD__
+          char *login;
+          login=(char *)malloc(30*sizeof(char));
+          getlogin_r(login,30);
+          
+          char path[80] = "/home/";
+          strlcat(path, (const char*)login, sizeof(path));
+
+          char downloads[100];
+          strlcpy(downloads, path, sizeof(downloads));
+          strlcat(downloads, "/Downloads", sizeof(downloads));
+
+          puts(downloads);
+          gtk_file_chooser_set_current_folder(file_chooser, downloads);
+          free(login);
+        #endif
+
+        gtk_file_chooser_set_current_name(file_chooser, suggested_filename);
 	gtk_file_chooser_set_do_overwrite_confirmation(file_chooser, TRUE);
 	webkit_download_set_allow_overwrite(webkit_download, TRUE);
 
@@ -99,6 +116,8 @@ downloadCb_decide_destination(WebKitDownload *webkit_download,
 		webkit_download_cancel(webkit_download);
 
 	g_object_unref(file_dialog);
+
+        puts("CAME HERE!");
 
 	return FALSE; /* Let it propagate */
 }

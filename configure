@@ -12,7 +12,7 @@ PKGCONFIG="${PKGCONFIG:-pkg-config}"
 MSGFMT="${MSGFMT:-msgfmt}"
 INKSCAPE="${INKSCAPE:-inkscape}"
 CC="${CC:-cc}"
-CFLAGS="${CFLAGS:--g -O2 -pie -fPIE} -fstack-protector-strong -D_FORTIFY_SOURCE=2 -Wall -Wextra -Wconversion -Wsign-conversion -Werror=implicit-function-declaration -Werror=implicit-int -Werror=vla ${EXTRA_CFLAGS}"
+CFLAGS="${CFLAGS:--g -O2 -pie -fPIE} -fstack-protector-strong -D_FORTIFY_SOURCE=2 -Wall -Wextra -Wconversion -Wsign-conversion -Werror=implicit-int -Werror=vla ${EXTRA_CFLAGS}"
 MANDOC="mandoc"
 
 DEPS="gtk+-3.0 libxml-2.0"
@@ -112,7 +112,7 @@ MSGFMT = ${MSGFMT}
 DBG = ${DBG}
 MANDOC = ${MANDOC}
 
-CFLAGS = ${CFLAGS} -DDATADIR=\"\${DATADIR}\" -DPACKAGE=\"\${PACKAGE}\" -D_XOPEN_SOURCE=700 -D_POSIX_C_SOURCE=200809L -DVERSION=\"\${VERSION_FULL}\" ${DEPS_cflags}
+CFLAGS = ${CFLAGS} -DDATADIR=\"\${DATADIR}\" -DPACKAGE=\"\${PACKAGE}\" -D_XOPEN_SOURCE=700 -DVERSION=\"\${VERSION_FULL}\" ${DEPS_cflags}
 LIBS = ${DEPS_libs}
 ICON_SIZES = ${ICON_SIZES}
 EOF
