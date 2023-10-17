@@ -15,22 +15,22 @@ static void web_view_get_selected_text(WebKitWebView *web_view, struct Window *w
 static gboolean
 about_dialogCb_activate_link(GtkAboutDialog *about_dialog, gchar *uri, gpointer user_data)
 {
-	(void)about_dialog;
-	struct Window *window = (struct Window *)user_data;
+  (void)about_dialog;
+  struct Window *window = (struct Window *)user_data;
 
   badwolf_new_tab(GTK_NOTEBOOK(window->notebook), new_browser(window, uri, NULL), TRUE, FALSE);
   gtk_window_close(GTK_WINDOW(about_dialog));
 
-	return TRUE;
+  return TRUE;
 }
 
 static void
 badwolf_about_dialog(GtkWindow *main_window, gpointer user_data)
 {
-	struct Window *window   = (struct Window *)user_data;
-	GtkWidget *about_dialog = gtk_about_dialog_new();
+  struct Window *window   = (struct Window *)user_data;
+  GtkWidget *about_dialog = gtk_about_dialog_new();
 
-	char *comments = NULL;
+  char *comments = NULL;
 
   comments = g_strdup_printf(_("Another tiny & fast & functional WebKitGTK browser\n"
 	                             "Runtime WebKit version: %d.%d.%d"),
@@ -38,23 +38,23 @@ badwolf_about_dialog(GtkWindow *main_window, gpointer user_data)
 	                           webkit_get_minor_version(),
 	                           webkit_get_micro_version());
 
-	gtk_window_set_transient_for(GTK_WINDOW(about_dialog), main_window);
-	gtk_window_set_destroy_with_parent(GTK_WINDOW(about_dialog), TRUE);
+  gtk_window_set_transient_for(GTK_WINDOW(about_dialog), main_window);
+  gtk_window_set_destroy_with_parent(GTK_WINDOW(about_dialog), TRUE);
 
-	gtk_about_dialog_set_license(GTK_ABOUT_DIALOG(about_dialog),
-	                             "SPDX-License-Identifier: BSD-3-Clause");
-	gtk_about_dialog_set_copyright(
-	    GTK_ABOUT_DIALOG(about_dialog),
-      "2019-2021 Badwolf Authors <https://hacktivis.me/projects/badwolf>\n2021 Alexandre A Arnt");
-	gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(about_dialog), homepage);
-	gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about_dialog), comments);
-	gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about_dialog), version);
-	gtk_about_dialog_set_logo_icon_name(GTK_ABOUT_DIALOG(about_dialog), "lrrh");
+  gtk_about_dialog_set_license(GTK_ABOUT_DIALOG(about_dialog),
+                             "SPDX-License-Identifier: BSD-3-Clause");
+  gtk_about_dialog_set_copyright(
+    GTK_ABOUT_DIALOG(about_dialog),
+    "2019-2021 Badwolf Authors <https://hacktivis.me/projects/badwolf>\n2021-2023 Alexandre A Arnt <https://tintaescura.com>");
+  gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(about_dialog), homepage);
+  gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about_dialog), comments);
+  gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about_dialog), version);
+  gtk_about_dialog_set_logo_icon_name(GTK_ABOUT_DIALOG(about_dialog), "lrrh");
 
-	g_signal_connect(about_dialog, "activate-link", G_CALLBACK(about_dialogCb_activate_link), window);
+  g_signal_connect(about_dialog, "activate-link", G_CALLBACK(about_dialogCb_activate_link), window);
 
-	(void)gtk_dialog_run(GTK_DIALOG(about_dialog));
-	gtk_widget_destroy(about_dialog);
+  (void)gtk_dialog_run(GTK_DIALOG(about_dialog));
+  gtk_widget_destroy(about_dialog);
 }
 
 static void
@@ -416,21 +416,19 @@ web_view_javascript_get_selected_text_finished(GObject  *object,
                              GAsyncResult *result,
                              gpointer      user_data)
 {
-	WebKitJavascriptResult *js_result;
-	JSCValue               *value;
-	GError                 *error = NULL;
+  JSCValue               *value;
+  GError                 *error = NULL;
   struct Window *window = (struct Window*)user_data;
   gchar *lang = NULL;
 
-	js_result = webkit_web_view_run_javascript_finish (WEBKIT_WEB_VIEW (object), result, &error);
-	if (!js_result) {
-		g_warning ("Error running javascript: %s", error->message);
-		g_error_free (error);
-		return;
-	}
+  value = webkit_web_view_evaluate_javascript_finish (WEBKIT_WEB_VIEW (object), result, &error);
+  if (!value) {
+    g_warning ("Error running javascript: %s", error->message);
+	g_error_free (error);
+	return;
+  }
 
-	value = webkit_javascript_result_get_js_value (js_result);
-	if(jsc_value_is_undefined(value))
+  if(jsc_value_is_undefined(value))
   {
     printf("Value is undefined!\n\n");
   }
@@ -463,8 +461,6 @@ web_view_javascript_get_selected_text_finished(GObject  *object,
     }
 
     g_free (str_value);
-
-    webkit_javascript_result_unref (js_result);
   }
 }
 
@@ -476,6 +472,8 @@ web_view_get_selected_text(WebKitWebView *web_view, struct Window *window)
 {
   const gchar *script = "window.getSelection().toString();";
 
-  webkit_web_view_run_javascript (WEBKIT_WEB_VIEW(web_view),
-    script, NULL, web_view_javascript_get_selected_text_finished, window);
+  webkit_web_view_evaluate_javascript (WEBKIT_WEB_VIEW(web_view),
+    script, -1, NULL, NULL, NULL, web_view_javascript_get_selected_text_finished, window);
+    
+  //g_free (script);  
 }

@@ -16,32 +16,32 @@ extern gint g_bkp_current_page;
 
 struct Window
 {
-	GtkWidget *main_window;
-	GtkWidget *notebook;
-	GtkWidget *new_tab;
-	GtkWidget *downloads_tab;
+  GtkWidget *main_window;
+  GtkWidget *notebook;
+  GtkWidget *new_tab;
+  GtkWidget *downloads_tab;
+  
   WebKitUserContentManager *content_manager;
   WebKitUserContentFilterStore *content_store;
 };
 
 struct Client
 {
-	GtkWidget *box;
-
-	GtkWidget *toolbar;
-	GtkWidget *back;
-	GtkWidget *forward;
-	GtkWidget *javascript;
-	GtkWidget *auto_load_images;
-	GtkWidget *location;
+  GtkWidget *box;
+  GtkWidget *toolbar;
+  GtkWidget *back;
+  GtkWidget *forward;
+  GtkWidget *javascript;
+  GtkWidget *auto_load_images;
+  GtkWidget *location;
 
   uint64_t context_id;
   WebKitWebView *webView;
-	struct Window *window;
+  struct Window *window;
 
-	GtkWidget *statusbar;
-	GtkWidget *statuslabel;
-	GtkWidget *search;
+  GtkWidget *statusbar;
+  GtkWidget *statuslabel;
+  GtkWidget *search;
 };
 
 GtkWidget *badwolf_new_tab_box(const gchar *title, struct Client *browser);

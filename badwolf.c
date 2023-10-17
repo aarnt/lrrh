@@ -24,6 +24,7 @@
 #ifdef __OpenBSD__
   #include <sys/stat.h>
   #include <sys/types.h>
+  #include <string.h>
 #endif
 
 const gchar *homepage = "https://hacktivis.me/projects/badwolf";
@@ -675,8 +676,8 @@ new_browser(struct Window *window, const gchar *target_url, struct Client *old_b
 	if(browser == NULL) return NULL;
 
 	browser->window = window;
-  browser->context_id = old_browser == NULL ? context_id_counter++ : old_browser->context_id;
-  browser->box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    browser->context_id = old_browser == NULL ? context_id_counter++ : old_browser->context_id;
+    browser->box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	gtk_widget_set_name(browser->box, "browser__box");
 
 	browser->toolbar = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
@@ -719,8 +720,8 @@ new_browser(struct Window *window, const gchar *target_url, struct Client *old_b
     web_context = webkit_web_context_new_with_website_data_manager(website_data_manager);
     g_object_unref(website_data_manager);
     webkit_web_context_set_sandbox_enabled(web_context, TRUE);
-    webkit_web_context_set_process_model(web_context,
-                                         WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES);
+    //webkit_web_context_set_process_model(web_context,
+    //                                     WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES);
     webkit_web_context_set_web_extensions_directory(web_context, web_extensions_directory);
 
     g_signal_connect(G_OBJECT(web_context),
@@ -1212,29 +1213,17 @@ main(int argc, char *argv[])
     if (stat(downloads, &st) == -1) {
        mkdir(downloads, 0755);
     } 
-   
-
-/*
-~/.XCompose r
-~/.Xauthority r
-~/.Xdefaults r
-~/.fontconfig r
-~/.fonts r
-~/.fonts.conf r
-~/.fonts.conf.d r
-~/.icons r
-~/.pki rwc
-~/.sndio rwc
-~/.terminfo r 
-
-*/
 
     int ret = unveil("/usr", "rx");
 
+    ret = unveil("/dev", "r");
     ret = unveil("/dev/dri", "rwx");
     ret = unveil("/dev/video", "rw");
     ret = unveil("/dev/fido", "rw");
     ret = unveil("/dev/null", "r");
+    
+    ret = unveil("/usr/X11R6/lib", "r");
+    ret = unveil("/usr/X11R6/share", "r");
 
     ret = unveil("/tmp", "crw");
     ret = unveil("/var/run", "rw");
@@ -1244,7 +1233,6 @@ main(int argc, char *argv[])
     ret = unveil(cache, "crw");
     ret = unveil(config, "crw");
     ret = unveil(NULL, NULL);
-
 
     free(login);
   #endif
