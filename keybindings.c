@@ -411,6 +411,7 @@ getLangCode()
 /*
   Opens the Google translate site to get a translated version of the user selected content
 */
+#ifdef WEBKIT_CHECK_VERSION(2, 40, 0)
 static void
 web_view_javascript_get_selected_text_finished(GObject  *object,
                              GAsyncResult *result,
@@ -463,6 +464,64 @@ web_view_javascript_get_selected_text_finished(GObject  *object,
     g_free (str_value);
   }
 }
+#else
+static void
+web_view_javascript_get_selected_text_finished(GObject  *object,
+                             GAsyncResult *result,
+                             gpointer      user_data)
+{
+	WebKitJavascriptResult *js_result;
+	JSCValue               *value;
+	GError                 *error = NULL;
+  struct Window *window = (struct Window*)user_data;
+  gchar *lang = NULL;
+
+	js_result = webkit_web_view_run_javascript_finish (WEBKIT_WEB_VIEW (object), result, &error);
+	if (!js_result) {
+		g_warning ("Error running javascript: %s", error->message);
+		g_error_free (error);
+		return;
+	}
+
+	value = webkit_javascript_result_get_js_value (js_result);
+	if(jsc_value_is_undefined(value))
+  {
+    printf("Value is undefined!\n\n");
+  }
+  else if(jsc_value_is_string (value))
+  {
+    JSCException *exception;
+    gchar        *str_value;
+
+    str_value = jsc_value_to_string (value);
+    exception = jsc_context_get_exception (jsc_value_get_context (value));
+
+    if (!exception)
+    {
+      lang = getLangCode();
+
+      gchar gtrans[64]="";
+      gchar *gsite="https://translate.google.com/?sl=auto&tl=";
+      strcat(gtrans, gsite);
+      strcat(gtrans, lang);
+      strcat(gtrans, "&q=");
+
+      char **split = g_strsplit(str_value, " ", -1);
+      g_free(str_value);
+      str_value = g_strjoinv("+", split);
+      g_strfreev(split);
+
+      gchar *url=g_strconcat(gtrans, str_value, NULL);
+      open_site_on_new_tab(window, url, true);
+      g_free(url);
+    }
+
+    g_free (str_value);
+
+    webkit_javascript_result_unref (js_result);
+  }
+}
+#endif
 
 /*
   Calls a javascript script to execute some computation over the user selected text
@@ -472,8 +531,11 @@ web_view_get_selected_text(WebKitWebView *web_view, struct Window *window)
 {
   const gchar *script = "window.getSelection().toString();";
 
+#ifdef WEBKIT_CHECK_VERSION(2, 40, 0)
   webkit_web_view_evaluate_javascript (WEBKIT_WEB_VIEW(web_view),
     script, -1, NULL, NULL, NULL, web_view_javascript_get_selected_text_finished, window);
-    
-  //g_free (script);  
+#else
+  webkit_web_view_run_javascript (WEBKIT_WEB_VIEW(web_view),
+    script, NULL, web_view_javascript_get_selected_text_finished, window);
+#endif    
 }
