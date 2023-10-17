@@ -411,7 +411,7 @@ getLangCode()
 /*
   Opens the Google translate site to get a translated version of the user selected content
 */
-#ifdef WEBKIT_CHECK_VERSION(2, 42, 0)
+#if WEBKIT_CHECK_VERSION(2, 40, 0)
 static void
 web_view_javascript_get_selected_text_finished(GObject  *object,
                              GAsyncResult *result,
@@ -531,7 +531,7 @@ web_view_get_selected_text(WebKitWebView *web_view, struct Window *window)
 {
   const gchar *script = "window.getSelection().toString();";
 
-#ifdef WEBKIT_CHECK_VERSION(2, 42, 0)
+#if WEBKIT_CHECK_VERSION(2, 40, 0)
   webkit_web_view_evaluate_javascript (WEBKIT_WEB_VIEW(web_view),
     script, -1, NULL, NULL, NULL, web_view_javascript_get_selected_text_finished, window);
 #else
